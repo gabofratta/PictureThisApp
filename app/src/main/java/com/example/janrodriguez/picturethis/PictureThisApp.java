@@ -8,7 +8,7 @@ import com.parse.ParseACL;
 /**
  * Created by Gabo on 4/17/15.
  */
-public class MyApplication extends Application {
+public class PictureThisApp extends Application {
 
     private static final String APPLICATION_ID = "NJb4JPoE4FuysgID0eFJuoZnpadAbqng69bfO61Z";
     private static final String CLIENT_KEY = "cb4uD5M680fPaPXwPCE2YkuWDiXkATFXxXsBSR7l";

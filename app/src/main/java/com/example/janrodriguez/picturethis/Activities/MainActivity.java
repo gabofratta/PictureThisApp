@@ -1,9 +1,11 @@
-package com.example.janrodriguez.picturethis;
+package com.example.janrodriguez.picturethis.Activities;
 
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import com.example.janrodriguez.picturethis.R;
 
 
 public class MainActivity extends ActionBarActivity {
