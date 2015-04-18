@@ -21,15 +21,18 @@ public class User implements Parcelable {
         this.name = source.readString();
     }
 
-    /**Getters**/
-    public String getId() {
-        return id;
-    }
+    //Must have this for parcelable objects
+    public static final Creator CREATOR = new Creator() {
+        @Override
+        public User createFromParcel(Parcel source) {
+            return new User(source);
+        }
 
-    public String getName() {
-        return name;
-    }
-    /**\Getters**/
+        @Override
+        public User[] newArray(int size) {
+            return new User[size];
+        }
+    };
 
     @Override
     public int describeContents() {
@@ -41,5 +44,18 @@ public class User implements Parcelable {
         dest.writeString(id);
         dest.writeString(name);
     }
+
+
+    /**Getters**/
+    public String getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+    /**\Getters**/
+
+
 
 }

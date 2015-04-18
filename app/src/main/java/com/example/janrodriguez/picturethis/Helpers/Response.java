@@ -2,9 +2,7 @@ package com.example.janrodriguez.picturethis.Helpers;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.util.Log;
 
-import java.util.ArrayList;
 import java.util.Date;
 
 /**
@@ -16,11 +14,11 @@ public class Response implements Parcelable {
     public static final String STATUS_DECLINED = "declined";
     public static final String STATUS_PENDING = "pending";
 
-    private String id;
+    private String id = "";
     private Challenge challenge;
     private User responder;
     private String status;
-    private Date createdAt;
+    private Date createdAt = new Date();
 
     public Response (Challenge challenge, User responder, String status) {
         this.challenge = challenge;
@@ -42,6 +40,19 @@ public class Response implements Parcelable {
         this.createdAt = (Date)source.readValue(Date.class.getClassLoader());
     }
 
+    //Must have this for parcelable objects
+    public static final Creator CREATOR = new Creator() {
+        @Override
+        public Response createFromParcel(Parcel source) {
+            return new Response(source);
+        }
+
+        @Override
+        public Response[] newArray(int size) {
+            return new Response[size];
+        }
+    };
+
     @Override
     public int describeContents() {
         return 0;
@@ -54,5 +65,25 @@ public class Response implements Parcelable {
         dest.writeValue(responder);
         dest.writeString(status);
         dest.writeValue(createdAt);
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public Challenge getChallenge() {
+        return challenge;
+    }
+
+    public User getResponder() {
+        return responder;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public Date getCreatedAt() {
+        return createdAt;
     }
 }
