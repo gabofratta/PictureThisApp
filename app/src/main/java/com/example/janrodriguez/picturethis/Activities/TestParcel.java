@@ -30,8 +30,19 @@ public class TestParcel extends ActionBarActivity {
 
         Intent i = getIntent();
         User testUser = (User)i.getParcelableExtra("user");
+        Log.d(TAG, testUser.getId());
+        Log.d(TAG, testUser.getName());
         Challenge chall = (Challenge)i.getParcelableExtra("chall");
+        Log.d(TAG, chall.getId());
+        Log.d(TAG, chall.getTitle());
+        Log.d(TAG, chall.getLocation().toString());
+        Log.d(TAG, chall.getChallengedList().toString());
+        Log.d(TAG, String.valueOf(chall.isActive()));
+        Log.d(TAG, String.valueOf(chall.isMultiplayer()));
+        Log.d(TAG, chall.getCreatedAt().toString());
         Response response = (Response)i.getParcelableExtra("resp");
+        Log.d(TAG, response.getStatus());
+        Log.d(TAG, response.getResponder().getName());
         return true;
     }
 
