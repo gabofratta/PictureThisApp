@@ -25,7 +25,7 @@
     android:showDividers="beginning|middle|end"
     android:layout_below="@+id/textView1"
     android:layout_alignParentLeft="true"
-    android:layout_marginTop="37dp"
+    android:layout_marginTop="15dp"
     android:gravity="center_horizontal">
 
     <TableRow
@@ -58,7 +58,7 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:orientation="horizontal"
-        android:id="@+id/"
+        android:id="@+id/tablerow1"
         android:gravity="center_horizontal">
 
         <ImageButton
@@ -87,7 +87,7 @@
     android:id="@+id/table2"
     android:stretchColumns="2"
     android:touchscreenBlocksFocus="true"
-    android:layout_marginTop="39dp"
+    android:layout_marginTop="15dp"
     android:layout_below="@+id/table1"
     android:layout_alignParentLeft="true">
 
@@ -116,7 +116,7 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:orientation="horizontal"
-        android:id="@+id/">
+        android:id="@+id/tablerow2">
 
         <TextView
             android:layout_width="wrap_content"
@@ -138,7 +138,7 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:orientation="horizontal"
-        android:id="@+id/">
+        android:id="@+id/tablerow3">
 
         <TextView
             android:layout_width="wrap_content"
@@ -162,7 +162,7 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:orientation="horizontal"
-        android:id="@+id/">
+        android:id="@+id/tablerow4">
 
         <TextView
             android:layout_width="wrap_content"
