@@ -24,4 +24,14 @@
         android:layout_centerHorizontal="true"
         android:onClick="viewSentActivity" />
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Open New Act"
+        android:id="@+id/open_pacel_act_btn"
+        android:layout_below="@+id/button3"
+        android:layout_centerHorizontal="true"
+        android:onClick="viewSentActivity" />
+
 </RelativeLayout>
+
