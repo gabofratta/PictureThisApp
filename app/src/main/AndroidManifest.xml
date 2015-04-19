@@ -20,6 +20,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".Activities.ReceivedActivity"
+            android:label="@string/title_activity_received" >
+        </activity>
+        <activity
+            android:name=".Activities.SentActivity"
+            android:label="@string/title_activity_sent" >
+        </activity>
     </application>
 
 </manifest>
