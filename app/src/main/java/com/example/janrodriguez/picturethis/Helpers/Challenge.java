@@ -5,7 +5,6 @@ import android.os.Parcelable;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 /**
  * Created by janrodriguez on 4/18/15.
@@ -17,20 +16,25 @@ public class Challenge implements Parcelable {
     private User challenger;
     private ArrayList<User> challengedList = new ArrayList<User>();
     private MyGeoPoint location;
+    private String localFilePath;
+    private String remoteFilePath;
     private boolean active;
     private boolean multiplayer;
     private Date createdAt = new Date();
 
-    public  Challenge (String title, MyGeoPoint location, ArrayList<User> challengedList) {
+    public  Challenge (String title, User challenger, MyGeoPoint location, ArrayList<User> challengedList, String localFilePath) {
         this.title = title;
+        this.challenger = challenger;
         this.location = location;
         this.challengedList = challengedList;
+        this.localFilePath = localFilePath;
         this.multiplayer = challengedList.size() > 1;
     }
 
-    public Challenge (String id, String title, MyGeoPoint location, ArrayList<User> challengedList, boolean active, Date createdAt) {
-        this(title, location, challengedList);
+    public Challenge (String id, User challenger, String title, MyGeoPoint location, ArrayList<User> challengedList, String remoteFilePath, boolean active, Date createdAt) {
+        this(title, challenger, location, challengedList, null);
         this.id = id;
+        this.remoteFilePath = remoteFilePath;
         this.active = active;
         this.createdAt = createdAt;
     }
@@ -41,6 +45,8 @@ public class Challenge implements Parcelable {
         this.title = source.readString();
         this.challenger = (User)source.readValue(User.class.getClassLoader());
         source.readList(challengedList, User.class.getClassLoader());
+        this.localFilePath = source.readString();
+        this.remoteFilePath = source.readString();
         this.location = (MyGeoPoint)source.readValue(MyGeoPoint.class.getClassLoader());
         this.active = source.readByte() == 1;
         this.multiplayer = source.readByte() == 1;
@@ -72,6 +78,8 @@ public class Challenge implements Parcelable {
         dest.writeString(title);
         dest.writeValue(challenger);
         dest.writeList(challengedList);
+        dest.writeString(localFilePath);
+        dest.writeString(remoteFilePath);
         dest.writeValue(location);
         dest.writeByte((byte) (active ? 1 : 0));
         dest.writeByte((byte)(multiplayer ? 1 : 0));
@@ -88,9 +96,17 @@ public class Challenge implements Parcelable {
         return title;
     }
 
+    public User getChallenger() {
+        return challenger;
+    }
+
     public MyGeoPoint getLocation() {
         return location;
     }
+
+    public String getLocalFilePath() { return localFilePath; }
+
+    public String getRemoteFilePath() { return remoteFilePath; }
 
     public boolean isActive() {
         return active;

@@ -8,13 +8,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
-import com.example.janrodriguez.picturethis.Helpers.Challenge;
-import com.example.janrodriguez.picturethis.Helpers.MyGeoPoint;
-import com.example.janrodriguez.picturethis.Helpers.Response;
-import com.example.janrodriguez.picturethis.Helpers.User;
 import com.example.janrodriguez.picturethis.R;
-
-import java.util.ArrayList;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -28,16 +22,16 @@ public class MainActivity extends ActionBarActivity {
         openNewActBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                User newUser = new User("test", "mcTesterson");
-                ArrayList<User> userList = new ArrayList<User>();
-                userList.add(newUser);
-                Challenge newChall = new Challenge("Test title", new MyGeoPoint(), userList);
-                Response challResp = new Response(newChall, newUser, Response.STATUS_ACCEPTED);
-                Intent intent = new Intent(MainActivity.this, TestParcel.class);
-                intent.putExtra("user", newUser);
-                intent.putExtra("chall", newChall);
-                intent.putExtra("resp", challResp);
-                startActivity(intent);
+//                User newUser = new User("test", "mcTesterson");
+//                ArrayList<User> userList = new ArrayList<User>();
+//                userList.add(newUser);
+//                Challenge newChall = new Challenge("Test title", newUser, new MyGeoPoint(), userList);
+//                Response challResp = new Response(newChall, newUser, Response.STATUS_ACCEPTED);
+//                Intent intent = new Intent(MainActivity.this, TestParcel.class);
+//                intent.putExtra("user", newUser);
+//                intent.putExtra("chall", newChall);
+//                intent.putExtra("resp", challResp);
+//                startActivity(intent);
 
             }
         });
