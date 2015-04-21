@@ -8,8 +8,11 @@ import com.parse.FindCallback;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
-import com.parse.ParseRelation;
 import com.parse.SaveCallback;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -39,12 +42,21 @@ public class ParseHelper {
         challengePO.put(ParseQueryHelper.CHALLENGE_LOCATION, challenge.getLocation());
         challengePO.put(ParseQueryHelper.CHALLENGE_PICTURE, file);
         challengePO.put(ParseQueryHelper.CHALLENGE_ACTIVE, true);
-        ParseRelation<ParseObject> relation = challengePO.getRelation(ParseQueryHelper.CHALLENGED_CHALLENGED);
 
+        JSONArray pointerArray = new JSONArray();
         for (User challenged : challenge.getChallengedList()) {
-            relation.add(ParseObject.createWithoutData(ParseQueryHelper.USER_TABLE, challenged.getId()));
+            try {
+                pointerArray.put(new JSONObject()
+                            .put("__type", "Pointer")
+                            .put("className", "User")
+                            .put("objectId", challenged.getId()));
+            } catch (JSONException e) {
+                Log.e(TAG, "Error: " + e.getMessage());
+                return;
+            }
         }
 
+        challengePO.put(ParseQueryHelper.CHALLENGE_CHALLENGED, pointerArray);
         challengePO.saveInBackground(callback);
     }
 
@@ -91,17 +103,29 @@ public class ParseHelper {
         ParseObject challengerPO = ParseObject.createWithoutData(ParseQueryHelper.USER_TABLE, user.getId());
         ParseQuery<ParseObject> query = ParseQuery.getQuery(ParseQueryHelper.CHALLENGE_TABLE);
         query.include(ParseQueryHelper.CHALLENGE_CHALLENGER);
+        query.include(ParseQueryHelper.CHALLENGE_CHALLENGED);
         query.whereEqualTo(ParseQueryHelper.CHALLENGE_CHALLENGER, challengerPO);
         query.orderByDescending(ParseQueryHelper.CHALLENGE_CREATED_AT);
         query.findInBackground(callback);
     }
 
     static public void GetChallengesReceivedByUser(User user, FindCallback<ParseObject> callback) {
+        JSONObject challenged;
+        try {
+            challenged = new JSONObject()
+                    .put("__type", "Pointer")
+                    .put("className", "User")
+                    .put("objectId", user.getId());
+        } catch (JSONException e) {
+            Log.e(TAG, "Error: " + e.getMessage());
+            return;
+        }
+
         ParseObject challengedPO = ParseObject.createWithoutData(ParseQueryHelper.USER_TABLE, user.getId());
         ParseQuery<ParseObject> query = ParseQuery.getQuery(ParseQueryHelper.CHALLENGE_TABLE);
         query.include(ParseQueryHelper.CHALLENGE_CHALLENGER);
         query.include(ParseQueryHelper.CHALLENGE_CHALLENGED);
-        query.whereEqualTo(ParseQueryHelper.CHALLENGE_CHALLENGED, challengedPO);
+        query.whereEqualTo(ParseQueryHelper.CHALLENGE_CHALLENGED, challenged);
         query.orderByDescending(ParseQueryHelper.CHALLENGE_CREATED_AT);
         query.findInBackground(callback);
     }
