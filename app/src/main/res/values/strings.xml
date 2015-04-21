@@ -8,4 +8,7 @@
     <string name="title_activity_test_parcel">TestParcel</string>
     <string name="title_activity_google_plus_base">GooglePlusBaseActivity</string>
     <string name="title_activity_login">LoginActivity</string>
+    <string name="play_services_error">Error in play services</string>
+    <string name="close">close</string>
+    <string name="configuration_error">Configuration Error!!!</string>
 </resources>
