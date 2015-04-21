@@ -9,15 +9,22 @@ import android.os.Parcelable;
 public class User implements Parcelable {
 
     private String id;
+    private String googleId;
     private String name;
 
-    public User (String id, String name) {
-        this.id = id;
+    public User (String googleId, String name) {
+        this.googleId = googleId;
         this.name = name;
+    }
+
+    public User (String id, String googleId, String name) {
+        this(googleId, name);
+        this.id = id;
     }
 
     public User (Parcel source) {
         this.id = source.readString();
+        this.googleId = source.readString();
         this.name = source.readString();
     }
 
@@ -42,6 +49,7 @@ public class User implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(id);
+        dest.writeString(googleId);
         dest.writeString(name);
     }
 
@@ -49,6 +57,10 @@ public class User implements Parcelable {
     /**Getters**/
     public String getId() {
         return id;
+    }
+
+    public String getGoogleId() {
+        return googleId;
     }
 
     public String getName() {

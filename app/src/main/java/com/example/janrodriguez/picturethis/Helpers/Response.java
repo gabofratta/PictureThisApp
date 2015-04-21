@@ -17,18 +17,22 @@ public class Response implements Parcelable {
     private String id = "";
     private Challenge challenge;
     private User responder;
+    private String localFilePath;
+    private String remoteFilePath;
     private String status;
     private Date createdAt = new Date();
 
-    public Response (Challenge challenge, User responder, String status) {
+    public Response (Challenge challenge, User responder, String localFilePath) {
         this.challenge = challenge;
         this.responder = responder;
-        this.status = status;
+        this.status = "pending";
     }
 
-    public Response (String id, Challenge challenge, User responder, String status, Date createdAt) {
-        this(challenge, responder, status);
+    public Response (String id, Challenge challenge, User responder, String remoteFilePath, String status, Date createdAt) {
+        this(challenge, responder, null);
         this.id = id;
+        this.status = status;
+        this.remoteFilePath = remoteFilePath;
         this.createdAt = createdAt;
     }
 
@@ -36,6 +40,8 @@ public class Response implements Parcelable {
         this.id = source.readString();
         this.challenge = (Challenge)source.readValue(Challenge.class.getClassLoader());
         this.responder = (User)source.readValue(User.class.getClassLoader());
+        this.localFilePath = source.readString();
+        this.remoteFilePath = source.readString();
         this.status = source.readString();
         this.createdAt = (Date)source.readValue(Date.class.getClassLoader());
     }
@@ -63,6 +69,8 @@ public class Response implements Parcelable {
         dest.writeString(id);
         dest.writeValue(challenge);
         dest.writeValue(responder);
+        dest.writeString(localFilePath);
+        dest.writeString(remoteFilePath);
         dest.writeString(status);
         dest.writeValue(createdAt);
     }
@@ -77,6 +85,14 @@ public class Response implements Parcelable {
 
     public User getResponder() {
         return responder;
+    }
+
+    public String getLocalFilePath() {
+        return localFilePath;
+    }
+
+    public String getRemoteFilePath() {
+        return remoteFilePath;
     }
 
     public String getStatus() {
