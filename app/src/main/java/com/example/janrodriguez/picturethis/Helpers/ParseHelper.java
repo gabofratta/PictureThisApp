@@ -162,7 +162,7 @@ public class ParseHelper {
         query.findInBackground(callback);
     }
 
-    static private byte[] GetImageBytes(String filePath) {
+    static public byte[] GetImageBytes(String filePath) {
         Bitmap bitmap = BitmapFactory.decodeFile(filePath);
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);

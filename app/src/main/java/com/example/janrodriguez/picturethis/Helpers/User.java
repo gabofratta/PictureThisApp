@@ -3,6 +3,8 @@ package com.example.janrodriguez.picturethis.Helpers;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.parse.ParseObject;
+
 /**
  * Created by janrodriguez on 4/18/15.
  */
@@ -11,6 +13,12 @@ public class User implements Parcelable {
     private String id;
     private String googleId;
     private String name;
+
+    public User (ParseObject po) {
+        this.id = po.getObjectId();
+        this.googleId = po.getString(ParseQueryHelper.USER_GOOGLE_ID);
+        this.name = po.getString(ParseQueryHelper.USER_NAME);
+    }
 
     public User (String googleId, String name) {
         this.googleId = googleId;
@@ -53,6 +61,13 @@ public class User implements Parcelable {
         dest.writeString(name);
     }
 
+    public ParseObject createParseObject() {
+        ParseObject userPO = new ParseObject(ParseQueryHelper.USER_TABLE);
+        userPO.put(ParseQueryHelper.USER_NAME, getName());
+        userPO.put(ParseQueryHelper.USER_GOOGLE_ID, getGoogleId());
+
+        return userPO;
+    }
 
     /**Getters**/
     public String getId() {

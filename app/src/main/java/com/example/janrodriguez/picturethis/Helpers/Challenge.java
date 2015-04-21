@@ -3,6 +3,10 @@ package com.example.janrodriguez.picturethis.Helpers;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.parse.ParseFile;
+import com.parse.ParseObject;
+
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -21,6 +25,25 @@ public class Challenge implements Parcelable {
     private boolean active;
     private boolean multiplayer;
     private Date createdAt = new Date();
+
+    public Challenge(ParseObject po) {
+        this.id = po.getObjectId();
+        this.title = po.getString(ParseQueryHelper.CHALLENGE_TITLE);
+        ParseObject userPO = po.getParseObject(ParseQueryHelper.CHALLENGE_CHALLENGER);
+        this.challenger = new User(userPO);
+        this.location = (MyGeoPoint) po.getParseGeoPoint(ParseQueryHelper.CHALLENGE_LOCATION);
+
+        ArrayList<ParseObject> challenged = (ArrayList<ParseObject>)po.get(ParseQueryHelper.CHALLENGE_CHALLENGED);
+        for(ParseObject challengedPO : challenged) {
+            challengedList.add(new User(challengedPO));
+        }
+
+        this.remoteFilePath = po.getParseFile(ParseQueryHelper.CHALLENGE_PICTURE).getUrl();
+        this.active = po.getBoolean(ParseQueryHelper.CHALLENGE_ACTIVE);
+        this.multiplayer = po.getBoolean(ParseQueryHelper.CHALLENGE_MULTIPLAYER);
+        this.createdAt = po.getCreatedAt();
+
+    }
 
     public  Challenge (String title, User challenger, MyGeoPoint location, ArrayList<User> challengedList, String localFilePath) {
         this.title = title;
@@ -86,6 +109,24 @@ public class Challenge implements Parcelable {
         dest.writeValue(createdAt);
     }
     /**\PARCELABLE IMPLEMENTATION**/
+
+    public ParseObject createParseObject () {
+
+        String fileName = new File(localFilePath).getName();
+        byte[] fileBytes = ParseHelper.GetImageBytes(localFilePath);
+        ParseFile file = new ParseFile(fileName, fileBytes);
+
+        ParseObject challengerPO = ParseObject.createWithoutData(ParseQueryHelper.USER_TABLE, challenger.getId());
+
+        ParseObject challengePO = new ParseObject(ParseQueryHelper.CHALLENGE_TABLE);
+        challengePO.put(ParseQueryHelper.CHALLENGE_TITLE, title);
+        challengePO.put(ParseQueryHelper.CHALLENGE_CHALLENGER, challengerPO);
+        challengePO.put(ParseQueryHelper.CHALLENGE_LOCATION, location);
+        challengePO.put(ParseQueryHelper.CHALLENGE_PICTURE, file);
+        challengePO.put(ParseQueryHelper.CHALLENGE_ACTIVE, true);
+
+        return challengePO;
+    }
 
     /**Getters**/
     public String getId() {
