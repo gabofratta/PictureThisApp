@@ -2,14 +2,9 @@ package com.example.janrodriguez.picturethis.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.widget.TextView;
 
 import com.example.janrodriguez.picturethis.R;
 import com.google.android.gms.common.SignInButton;
-import com.google.android.gms.plus.Plus;
-import com.google.android.gms.plus.model.people.Person;
 
 public class LoginActivity extends GooglePlusBaseActivity {
 

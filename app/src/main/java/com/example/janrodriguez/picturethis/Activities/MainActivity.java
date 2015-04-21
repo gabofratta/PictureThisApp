@@ -2,12 +2,22 @@ package com.example.janrodriguez.picturethis.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
+import com.example.janrodriguez.picturethis.Helpers.Challenge;
+import com.example.janrodriguez.picturethis.Helpers.ParseHelper;
+import com.example.janrodriguez.picturethis.Helpers.User;
 import com.example.janrodriguez.picturethis.R;
+import com.parse.FindCallback;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.SaveCallback;
+
+import java.util.List;
 
 public class MainActivity extends GooglePlusBaseActivity {
 
@@ -15,6 +25,32 @@ public class MainActivity extends GooglePlusBaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
+        SaveCallback saveCallback = new SaveCallback() {
+            public void done(ParseException e) {
+                if (e == null) {
+
+                } else {
+                    Log.e("Parse", "Error: " + e.getMessage());
+                }
+            }
+        };
+
+        FindCallback<ParseObject> findCallback = new FindCallback<ParseObject>() {
+            public void done(List<ParseObject> objects, ParseException e) {
+                if (e == null) {
+                    for (ParseObject object : objects) {
+                        Challenge ch = new Challenge(object);
+                    }
+                } else {
+                    Log.e("Parse", "Error: " + e.getMessage());
+                }
+            }
+        };
+
+        User user = new User("UCp7CwZwEq", "3", "gnf");
+        ParseHelper.GetActiveChallengesInitiatedByUser(user, findCallback);
 
         Button openNewActBtn = (Button)findViewById(R.id.open_pacel_act_btn);
         openNewActBtn.setOnClickListener(new View.OnClickListener() {
@@ -34,7 +70,6 @@ public class MainActivity extends GooglePlusBaseActivity {
             }
         });
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

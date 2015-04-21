@@ -16,8 +16,8 @@ public class User implements Parcelable {
 
     public User (ParseObject po) {
         this.id = po.getObjectId();
-        this.googleId = po.getString(ParseQueryHelper.USER_GOOGLE_ID);
-        this.name = po.getString(ParseQueryHelper.USER_NAME);
+        this.googleId = po.getString(ParseTableConstants.USER_GOOGLE_ID);
+        this.name = po.getString(ParseTableConstants.USER_NAME);
     }
 
     public User (String googleId, String name) {
@@ -62,9 +62,9 @@ public class User implements Parcelable {
     }
 
     public ParseObject createParseObject() {
-        ParseObject userPO = new ParseObject(ParseQueryHelper.USER_TABLE);
-        userPO.put(ParseQueryHelper.USER_NAME, getName());
-        userPO.put(ParseQueryHelper.USER_GOOGLE_ID, getGoogleId());
+        ParseObject userPO = new ParseObject(ParseTableConstants.USER_TABLE);
+        userPO.put(ParseTableConstants.USER_NAME, getName());
+        userPO.put(ParseTableConstants.USER_GOOGLE_ID, getGoogleId());
 
         return userPO;
     }

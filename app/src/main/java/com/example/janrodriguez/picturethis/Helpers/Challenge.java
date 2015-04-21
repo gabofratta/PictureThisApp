@@ -6,6 +6,10 @@ import android.os.Parcelable;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
@@ -28,19 +32,19 @@ public class Challenge implements Parcelable {
 
     public Challenge(ParseObject po) {
         this.id = po.getObjectId();
-        this.title = po.getString(ParseQueryHelper.CHALLENGE_TITLE);
-        ParseObject userPO = po.getParseObject(ParseQueryHelper.CHALLENGE_CHALLENGER);
+        this.title = po.getString(ParseTableConstants.CHALLENGE_TITLE);
+        ParseObject userPO = po.getParseObject(ParseTableConstants.CHALLENGE_CHALLENGER);
         this.challenger = new User(userPO);
-        this.location = (MyGeoPoint) po.getParseGeoPoint(ParseQueryHelper.CHALLENGE_LOCATION);
+        this.location = (MyGeoPoint) po.getParseGeoPoint(ParseTableConstants.CHALLENGE_LOCATION);
 
-        ArrayList<ParseObject> challenged = (ArrayList<ParseObject>)po.get(ParseQueryHelper.CHALLENGE_CHALLENGED);
+        ArrayList<ParseObject> challenged = (ArrayList<ParseObject>)po.get(ParseTableConstants.CHALLENGE_CHALLENGED);
         for(ParseObject challengedPO : challenged) {
             challengedList.add(new User(challengedPO));
         }
 
-        this.remoteFilePath = po.getParseFile(ParseQueryHelper.CHALLENGE_PICTURE).getUrl();
-        this.active = po.getBoolean(ParseQueryHelper.CHALLENGE_ACTIVE);
-        this.multiplayer = po.getBoolean(ParseQueryHelper.CHALLENGE_MULTIPLAYER);
+        this.remoteFilePath = po.getParseFile(ParseTableConstants.CHALLENGE_PICTURE).getUrl();
+        this.active = po.getBoolean(ParseTableConstants.CHALLENGE_ACTIVE);
+        this.multiplayer = po.getBoolean(ParseTableConstants.CHALLENGE_MULTIPLAYER);
         this.createdAt = po.getCreatedAt();
 
     }
@@ -110,20 +114,29 @@ public class Challenge implements Parcelable {
     }
     /**\PARCELABLE IMPLEMENTATION**/
 
-    public ParseObject createParseObject () {
+    public ParseObject createParseObject () throws JSONException {
 
         String fileName = new File(localFilePath).getName();
         byte[] fileBytes = ParseHelper.GetImageBytes(localFilePath);
         ParseFile file = new ParseFile(fileName, fileBytes);
 
-        ParseObject challengerPO = ParseObject.createWithoutData(ParseQueryHelper.USER_TABLE, challenger.getId());
+        ParseObject challengerPO = ParseObject.createWithoutData(ParseTableConstants.USER_TABLE, challenger.getId());
 
-        ParseObject challengePO = new ParseObject(ParseQueryHelper.CHALLENGE_TABLE);
-        challengePO.put(ParseQueryHelper.CHALLENGE_TITLE, title);
-        challengePO.put(ParseQueryHelper.CHALLENGE_CHALLENGER, challengerPO);
-        challengePO.put(ParseQueryHelper.CHALLENGE_LOCATION, location);
-        challengePO.put(ParseQueryHelper.CHALLENGE_PICTURE, file);
-        challengePO.put(ParseQueryHelper.CHALLENGE_ACTIVE, true);
+        JSONArray pointerArray = new JSONArray();
+        for (User challenged : getChallengedList()) {
+            pointerArray.put(new JSONObject()
+                .put("__type", "Pointer")
+                .put("className", "User")
+                .put("objectId", challenged.getId()));
+        }
+
+        ParseObject challengePO = new ParseObject(ParseTableConstants.CHALLENGE_TABLE);
+        challengePO.put(ParseTableConstants.CHALLENGE_TITLE, title);
+        challengePO.put(ParseTableConstants.CHALLENGE_CHALLENGER, challengerPO);
+        challengePO.put(ParseTableConstants.CHALLENGE_CHALLENGED, pointerArray);
+        challengePO.put(ParseTableConstants.CHALLENGE_LOCATION, location);
+        challengePO.put(ParseTableConstants.CHALLENGE_PICTURE, file);
+        challengePO.put(ParseTableConstants.CHALLENGE_ACTIVE, true);
 
         return challengePO;
     }

@@ -3,7 +3,6 @@ package com.example.janrodriguez.picturethis.Helpers;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.parse.Parse;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
 
@@ -29,10 +28,10 @@ public class Response implements Parcelable {
 
     public Response (ParseObject po) {
         this.id = po.getObjectId();
-        this.challenge = new Challenge(po.getParseObject(ParseQueryHelper.RESPONSE_CHALLENGE));
-        this.responder = new User(po.getParseObject(ParseQueryHelper.RESPONSE_RESPONDER));
-        this.remoteFilePath = po.getParseFile(ParseQueryHelper.RESPONSE_PICTURE).getUrl();
-        this.status = po.getString(ParseQueryHelper.RESPONSE_STATUS);
+        this.challenge = new Challenge(po.getParseObject(ParseTableConstants.RESPONSE_CHALLENGE));
+        this.responder = new User(po.getParseObject(ParseTableConstants.RESPONSE_RESPONDER));
+        this.remoteFilePath = po.getParseFile(ParseTableConstants.RESPONSE_PICTURE).getUrl();
+        this.status = po.getString(ParseTableConstants.RESPONSE_STATUS);
         this.createdAt = po.getCreatedAt();
     }
 
@@ -95,14 +94,14 @@ public class Response implements Parcelable {
         byte[] fileBytes = ParseHelper.GetImageBytes(getLocalFilePath());
         ParseFile file = new ParseFile(fileName, fileBytes);
 
-        ParseObject responderPO = ParseObject.createWithoutData(ParseQueryHelper.USER_TABLE, getResponder().getId());
-        ParseObject challengePO = ParseObject.createWithoutData(ParseQueryHelper.CHALLENGE_TABLE, getChallenge().getId());
+        ParseObject responderPO = ParseObject.createWithoutData(ParseTableConstants.USER_TABLE, getResponder().getId());
+        ParseObject challengePO = ParseObject.createWithoutData(ParseTableConstants.CHALLENGE_TABLE, getChallenge().getId());
 
-        ParseObject responsePO = new ParseObject(ParseQueryHelper.RESPONSE_TABLE);
-        responsePO.put(ParseQueryHelper.RESPONSE_RESPONDER, responderPO);
-        responsePO.put(ParseQueryHelper.RESPONSE_CHALLENGE, challengePO);
-        responsePO.put(ParseQueryHelper.RESPONSE_PICTURE, file);
-        responsePO.put(ParseQueryHelper.RESPONSE_STATUS, getStatus());
+        ParseObject responsePO = new ParseObject(ParseTableConstants.RESPONSE_TABLE);
+        responsePO.put(ParseTableConstants.RESPONSE_RESPONDER, responderPO);
+        responsePO.put(ParseTableConstants.RESPONSE_CHALLENGE, challengePO);
+        responsePO.put(ParseTableConstants.RESPONSE_PICTURE, file);
+        responsePO.put(ParseTableConstants.RESPONSE_STATUS, getStatus());
 
         return responsePO;
     }
