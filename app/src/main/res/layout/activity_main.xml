@@ -8,30 +8,48 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="View Received Activity"
-        android:id="@+id/button2"
+        android:text="Open New Account"
+        android:id="@+id/open_pacel_act_btn"
+        android:layout_marginTop="67dp"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="70dp"
-        android:onClick="viewReceivedActivity"/>
+        android:layout_centerHorizontal="true" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="View Sent Activity"
+        android:text="Create New Challenge"
+        android:id="@+id/button2"
+        android:layout_below="@+id/open_pacel_act_btn"
+        android:layout_centerHorizontal="true"
+        android:onClick="createNewChallenge" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="View Received Challenge"
         android:id="@+id/button3"
         android:layout_below="@+id/button2"
         android:layout_centerHorizontal="true"
-        android:onClick="viewSentActivity" />
+        android:onClick="viewReceivedChallenge"/>
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Open New Act"
-        android:id="@+id/open_pacel_act_btn"
+        android:text="View Sent Challenge"
+        android:id="@+id/button4"
         android:layout_below="@+id/button3"
         android:layout_centerHorizontal="true"
-        android:onClick="viewSentActivity" />
+        android:onClick="viewSentChallenge" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="View Login Page"
+        android:id="@+id/button7"
+        android:layout_below="@+id/button4"
+        android:layout_centerHorizontal="true"
+        android:onClick="viewLoginPage" />
+
 
 </RelativeLayout>
 

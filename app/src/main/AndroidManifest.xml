@@ -14,13 +14,18 @@
         <activity
             android:name=".Activities.MainActivity"
             android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
         <activity
-            android:name=".Activities.ReceivedActivity"
+            android:name=".Activities.ReceivedChallengeActivity"
             android:label="@string/title_activity_received" >
         </activity>
         <activity
-            android:name=".Activities.SentActivity"
+            android:name=".Activities.SentChallengeActivity"
             android:label="@string/title_activity_sent" >
         </activity>
         <activity
@@ -34,16 +39,16 @@
         <activity
             android:name=".Activities.LoginActivity"
             android:label="@string/title_activity_login" >
-
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
+
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
+
+        <activity
+            android:name=".Activities.CreateChallengeActivity"
+            android:label="@string/title_activity_create_challenge" >
+        </activity>
     </application>
 
 </manifest>

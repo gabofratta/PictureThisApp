@@ -83,13 +83,24 @@ public class MainActivity extends GooglePlusBaseActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void viewReceivedActivity(View view) {
-        Intent intent = new Intent(this, ReceivedActivity.class);
+
+    public void viewReceivedChallenge(View view) {
+        Intent intent = new Intent(this, ReceivedChallengeActivity.class);
         startActivity(intent);
     }
 
-    public void viewSentActivity(View view) {
-        Intent intent = new Intent(this, SentActivity.class);
+    public void viewSentChallenge(View view) {
+        Intent intent = new Intent(this, SentChallengeActivity.class);
+        startActivity(intent);
+    }
+
+    public void createNewChallenge(View view){
+        Intent intent = new Intent(this, CreateChallengeActivity.class);
+        startActivity(intent);
+    }
+
+    public void viewLoginPage(View view){
+        Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);
     }
 }

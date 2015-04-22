@@ -7,19 +7,19 @@ import android.view.MenuItem;
 
 import com.example.janrodriguez.picturethis.R;
 
-public class ReceivedActivity extends ActionBarActivity {
+public class SentChallengeActivity extends ActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_received);
+        setContentView(R.layout.activity_sent_challenge);
     }
 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_received, menu);
+        getMenuInflater().inflate(R.menu.menu_sent, menu);
         return true;
     }
 
