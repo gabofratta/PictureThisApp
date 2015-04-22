@@ -38,6 +38,7 @@ public class Response implements Parcelable {
     public Response (Challenge challenge, User responder, String localFilePath) {
         this.challenge = challenge;
         this.responder = responder;
+        this.localFilePath = localFilePath;
         this.status = "pending";
     }
 
@@ -89,7 +90,6 @@ public class Response implements Parcelable {
     }
 
     public ParseObject createParseObject() {
-
         String fileName = new File(getLocalFilePath()).getName();
         byte[] fileBytes = ParseHelper.GetImageBytes(getLocalFilePath());
         ParseFile file = new ParseFile(fileName, fileBytes);

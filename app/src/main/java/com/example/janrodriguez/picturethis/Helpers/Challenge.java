@@ -35,7 +35,7 @@ public class Challenge implements Parcelable {
         this.title = po.getString(ParseTableConstants.CHALLENGE_TITLE);
         ParseObject userPO = po.getParseObject(ParseTableConstants.CHALLENGE_CHALLENGER);
         this.challenger = new User(userPO);
-        this.location = (MyGeoPoint) po.getParseGeoPoint(ParseTableConstants.CHALLENGE_LOCATION);
+        this.location = new MyGeoPoint(po.getParseGeoPoint(ParseTableConstants.CHALLENGE_LOCATION));
 
         ArrayList<ParseObject> challenged = (ArrayList<ParseObject>)po.get(ParseTableConstants.CHALLENGE_CHALLENGED);
         for(ParseObject challengedPO : challenged) {
@@ -115,7 +115,6 @@ public class Challenge implements Parcelable {
     /**\PARCELABLE IMPLEMENTATION**/
 
     public ParseObject createParseObject () throws JSONException {
-
         String fileName = new File(localFilePath).getName();
         byte[] fileBytes = ParseHelper.GetImageBytes(localFilePath);
         ParseFile file = new ParseFile(fileName, fileBytes);
@@ -137,6 +136,7 @@ public class Challenge implements Parcelable {
         challengePO.put(ParseTableConstants.CHALLENGE_LOCATION, location);
         challengePO.put(ParseTableConstants.CHALLENGE_PICTURE, file);
         challengePO.put(ParseTableConstants.CHALLENGE_ACTIVE, true);
+        challengePO.put(ParseTableConstants.CHALLENGE_MULTIPLAYER, multiplayer);
 
         return challengePO;
     }

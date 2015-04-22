@@ -8,9 +8,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
-import com.example.janrodriguez.picturethis.Helpers.Challenge;
-import com.example.janrodriguez.picturethis.Helpers.ParseHelper;
-import com.example.janrodriguez.picturethis.Helpers.User;
 import com.example.janrodriguez.picturethis.R;
 import com.parse.FindCallback;
 import com.parse.ParseException;
@@ -26,13 +23,12 @@ public class MainActivity extends GooglePlusBaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
-        SaveCallback saveCallback = new SaveCallback() {
+        final SaveCallback saveCallback = new SaveCallback() {
             public void done(ParseException e) {
                 if (e == null) {
 
                 } else {
-                    Log.e("Parse", "Error: " + e.getMessage());
+                    Log.e("Tag", "Error: " + e.getMessage());
                 }
             }
         };
@@ -40,17 +36,12 @@ public class MainActivity extends GooglePlusBaseActivity {
         FindCallback<ParseObject> findCallback = new FindCallback<ParseObject>() {
             public void done(List<ParseObject> objects, ParseException e) {
                 if (e == null) {
-                    for (ParseObject object : objects) {
-                        Challenge ch = new Challenge(object);
-                    }
+
                 } else {
-                    Log.e("Parse", "Error: " + e.getMessage());
+                    Log.e("Tag", "Error: " + e.getMessage());
                 }
             }
         };
-
-        User user = new User("UCp7CwZwEq", "3", "gnf");
-        ParseHelper.GetActiveChallengesInitiatedByUser(user, findCallback);
 
         Button openNewActBtn = (Button)findViewById(R.id.open_pacel_act_btn);
         openNewActBtn.setOnClickListener(new View.OnClickListener() {
@@ -66,7 +57,6 @@ public class MainActivity extends GooglePlusBaseActivity {
 //                intent.putExtra("chall", newChall);
 //                intent.putExtra("resp", challResp);
 //                startActivity(intent);
-
             }
         });
     }
