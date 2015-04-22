@@ -26,6 +26,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import com.example.janrodriguez.picturethis.Helpers.ParseHelper;
+import com.example.janrodriguez.picturethis.Helpers.User;
 import com.example.janrodriguez.picturethis.R;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -34,6 +36,11 @@ import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
 import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.plus.Plus;
+import com.google.android.gms.plus.model.people.Person;
+import com.parse.FindCallback;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.SaveCallback;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -63,7 +70,9 @@ public class GooglePlusBaseActivity extends FragmentActivity implements
         View.OnClickListener,
         GoogleApiClient.ServerAuthCodeCallbacks {
 
-    private static final String TAG = "android-plus-quickstart";
+    protected static User currentUser;
+
+    private static final String TAG = "GooglePlusBase";
 
     private static final int STATE_DEFAULT = 0;
     private static final int STATE_SIGN_IN = 1;
@@ -228,6 +237,33 @@ public class GooglePlusBaseActivity extends FragmentActivity implements
     public void onConnected(Bundle connectionHint) {
         // Reaching onConnected means we consider the user signed in.
         Log.i(TAG, "onConnected");
+
+        // Retrieve some profile information to personalize our app for the user.
+        final Person currentGPUser = Plus.PeopleApi.getCurrentPerson(mGoogleApiClient);
+
+        currentUser = new User(currentGPUser.getId(), currentGPUser.getDisplayName());
+        ParseHelper.GetUserByGoogleId(currentUser, new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> parseObjects, ParseException e) {
+                if (e == null) {
+                    if(parseObjects.size() == 0) { //User not found
+                        ParseHelper.CreateUser(currentUser, new SaveCallback() {
+                            @Override
+                            public void done(ParseException e) {
+                                if(e != null) {
+                                    Log.e(TAG, "Error creating user.");
+                                    return;
+                                }
+                            }
+                        });
+                    }else{ //User found
+                        currentUser = new User(parseObjects.get(0));
+                    }
+                }else {
+                    Log.e(TAG, "Error getting user from google plus id");
+                }
+            }
+        });
 
         // Indicate that the sign in process is complete.
         mSignInProgress = STATE_DEFAULT;
