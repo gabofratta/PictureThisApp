@@ -2,18 +2,19 @@ package com.example.janrodriguez.picturethis.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
-import com.example.janrodriguez.picturethis.Helpers.Challenge;
-import com.example.janrodriguez.picturethis.Helpers.MyGeoPoint;
-import com.example.janrodriguez.picturethis.Helpers.Response;
-import com.example.janrodriguez.picturethis.Helpers.User;
 import com.example.janrodriguez.picturethis.R;
+import com.parse.FindCallback;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.SaveCallback;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends GooglePlusBaseActivity {
 
@@ -22,25 +23,43 @@ public class MainActivity extends GooglePlusBaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        final SaveCallback saveCallback = new SaveCallback() {
+            public void done(ParseException e) {
+                if (e == null) {
+
+                } else {
+                    Log.e("Tag", "Error: " + e.getMessage());
+                }
+            }
+        };
+
+        FindCallback<ParseObject> findCallback = new FindCallback<ParseObject>() {
+            public void done(List<ParseObject> objects, ParseException e) {
+                if (e == null) {
+
+                } else {
+                    Log.e("Tag", "Error: " + e.getMessage());
+                }
+            }
+        };
+
         Button openNewActBtn = (Button)findViewById(R.id.open_pacel_act_btn);
         openNewActBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                User newUser = new User("test", "mcTesterson");
-                ArrayList<User> userList = new ArrayList<User>();
-                userList.add(newUser);
-                Challenge newChall = new Challenge("Test title", new MyGeoPoint(), userList);
-                Response challResp = new Response(newChall, newUser, Response.STATUS_ACCEPTED);
-                Intent intent = new Intent(MainActivity.this, TestParcel.class);
-                intent.putExtra("user", newUser);
-                intent.putExtra("chall", newChall);
-                intent.putExtra("resp", challResp);
-                startActivity(intent);
-
+//                User newUser = new User("test", "mcTesterson");
+//                ArrayList<User> userList = new ArrayList<User>();
+//                userList.add(newUser);
+//                Challenge newChall = new Challenge("Test title", newUser, new MyGeoPoint(), userList);
+//                Response challResp = new Response(newChall, newUser, Response.STATUS_ACCEPTED);
+//                Intent intent = new Intent(MainActivity.this, TestParcel.class);
+//                intent.putExtra("user", newUser);
+//                intent.putExtra("chall", newChall);
+//                intent.putExtra("resp", challResp);
+//                startActivity(intent);
             }
         });
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

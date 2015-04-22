@@ -3,6 +3,10 @@ package com.example.janrodriguez.picturethis.Helpers;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.parse.ParseFile;
+import com.parse.ParseObject;
+
+import java.io.File;
 import java.util.Date;
 
 /**
@@ -17,18 +21,32 @@ public class Response implements Parcelable {
     private String id = "";
     private Challenge challenge;
     private User responder;
+    private String localFilePath;
+    private String remoteFilePath;
     private String status;
     private Date createdAt = new Date();
 
-    public Response (Challenge challenge, User responder, String status) {
-        this.challenge = challenge;
-        this.responder = responder;
-        this.status = status;
+    public Response (ParseObject po) {
+        this.id = po.getObjectId();
+        this.challenge = new Challenge(po.getParseObject(ParseTableConstants.RESPONSE_CHALLENGE));
+        this.responder = new User(po.getParseObject(ParseTableConstants.RESPONSE_RESPONDER));
+        this.remoteFilePath = po.getParseFile(ParseTableConstants.RESPONSE_PICTURE).getUrl();
+        this.status = po.getString(ParseTableConstants.RESPONSE_STATUS);
+        this.createdAt = po.getCreatedAt();
     }
 
-    public Response (String id, Challenge challenge, User responder, String status, Date createdAt) {
-        this(challenge, responder, status);
+    public Response (Challenge challenge, User responder, String localFilePath) {
+        this.challenge = challenge;
+        this.responder = responder;
+        this.localFilePath = localFilePath;
+        this.status = "pending";
+    }
+
+    public Response (String id, Challenge challenge, User responder, String remoteFilePath, String status, Date createdAt) {
+        this(challenge, responder, null);
         this.id = id;
+        this.status = status;
+        this.remoteFilePath = remoteFilePath;
         this.createdAt = createdAt;
     }
 
@@ -36,6 +54,8 @@ public class Response implements Parcelable {
         this.id = source.readString();
         this.challenge = (Challenge)source.readValue(Challenge.class.getClassLoader());
         this.responder = (User)source.readValue(User.class.getClassLoader());
+        this.localFilePath = source.readString();
+        this.remoteFilePath = source.readString();
         this.status = source.readString();
         this.createdAt = (Date)source.readValue(Date.class.getClassLoader());
     }
@@ -63,8 +83,27 @@ public class Response implements Parcelable {
         dest.writeString(id);
         dest.writeValue(challenge);
         dest.writeValue(responder);
+        dest.writeString(localFilePath);
+        dest.writeString(remoteFilePath);
         dest.writeString(status);
         dest.writeValue(createdAt);
+    }
+
+    public ParseObject createParseObject() {
+        String fileName = new File(getLocalFilePath()).getName();
+        byte[] fileBytes = ParseHelper.GetImageBytes(getLocalFilePath());
+        ParseFile file = new ParseFile(fileName, fileBytes);
+
+        ParseObject responderPO = ParseObject.createWithoutData(ParseTableConstants.USER_TABLE, getResponder().getId());
+        ParseObject challengePO = ParseObject.createWithoutData(ParseTableConstants.CHALLENGE_TABLE, getChallenge().getId());
+
+        ParseObject responsePO = new ParseObject(ParseTableConstants.RESPONSE_TABLE);
+        responsePO.put(ParseTableConstants.RESPONSE_RESPONDER, responderPO);
+        responsePO.put(ParseTableConstants.RESPONSE_CHALLENGE, challengePO);
+        responsePO.put(ParseTableConstants.RESPONSE_PICTURE, file);
+        responsePO.put(ParseTableConstants.RESPONSE_STATUS, getStatus());
+
+        return responsePO;
     }
 
     public String getId() {
@@ -77,6 +116,14 @@ public class Response implements Parcelable {
 
     public User getResponder() {
         return responder;
+    }
+
+    public String getLocalFilePath() {
+        return localFilePath;
+    }
+
+    public String getRemoteFilePath() {
+        return remoteFilePath;
     }
 
     public String getStatus() {

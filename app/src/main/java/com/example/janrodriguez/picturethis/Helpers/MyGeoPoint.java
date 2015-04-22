@@ -14,6 +14,16 @@ public class MyGeoPoint extends ParseGeoPoint implements Parcelable {
         super();
     }
 
+    public MyGeoPoint(double latitude, double longitude) {
+        this.setLatitude(latitude);
+        this.setLongitude(longitude);
+    }
+
+    public MyGeoPoint(ParseGeoPoint geoPointPO) {
+        this.setLatitude(geoPointPO.getLatitude());
+        this.setLongitude(geoPointPO.getLongitude());
+    }
+
     public MyGeoPoint(Parcel source) {
         this.setLatitude(source.readDouble());
         this.setLongitude(source.readDouble());
