@@ -27,9 +27,10 @@ public class User implements Parcelable {
         this.name = name;
     }
 
-    public User (String id, String googleId, String name) {
+    public User (String id, String googleId, String name, int score) {
         this(googleId, name);
         this.id = id;
+        this.score = score;
     }
 
     public User (Parcel source) {
