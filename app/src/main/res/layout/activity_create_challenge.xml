@@ -110,6 +110,16 @@
         android:maxHeight="250dp"
         android:layout_below="@+id/linearLayout3" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Medium Text"
+        android:id="@+id/usersTextView"
+        android:layout_toRightOf="@+id/linearLayout3"
+        android:layout_alignTop="@+id/linearLayout3"
+        android:layout_marginTop="10dp" />
+
     <ListView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
