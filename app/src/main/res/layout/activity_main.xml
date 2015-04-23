@@ -50,6 +50,14 @@
         android:layout_centerHorizontal="true"
         android:onClick="viewLoginPage" />
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/view_achievements"
+        android:id="@+id/view_achieve_btn"
+        android:layout_below="@+id/button7"
+        android:layout_centerHorizontal="true" />
+
 
 </RelativeLayout>
 

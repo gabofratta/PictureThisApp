@@ -8,7 +8,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
+import com.example.janrodriguez.picturethis.Helpers.Achievement;
 import com.example.janrodriguez.picturethis.R;
+import com.google.android.gms.games.Games;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -18,8 +20,13 @@ import java.util.List;
 
 public class MainActivity extends BaseGameActivity {
 
+    private static String TAG = "MainActivity";
+
+    private static final int REQUEST_ACHIEVEMENTS = 1000;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -43,20 +50,11 @@ public class MainActivity extends BaseGameActivity {
             }
         };
 
-        Button openNewActBtn = (Button)findViewById(R.id.open_pacel_act_btn);
+        Button openNewActBtn = (Button)findViewById(R.id.view_achieve_btn);
         openNewActBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                User newUser = new User("test", "mcTesterson");
-//                ArrayList<User> userList = new ArrayList<User>();
-//                userList.add(newUser);
-//                Challenge newChall = new Challenge("Test title", newUser, new MyGeoPoint(), userList);
-//                Response challResp = new Response(newChall, newUser, Response.STATUS_ACCEPTED);
-//                Intent intent = new Intent(MainActivity.this, TestParcel.class);
-//                intent.putExtra("user", newUser);
-//                intent.putExtra("chall", newChall);
-//                intent.putExtra("resp", challResp);
-//                startActivity(intent);
+                startActivityForResult(Games.Achievements.getAchievementsIntent(getApiClient()), REQUEST_ACHIEVEMENTS);
             }
         });
     }
@@ -102,5 +100,13 @@ public class MainActivity extends BaseGameActivity {
     public void viewLoginPage(View view){
         Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);
+    }
+
+    @Override
+    public void onSignInSucceeded() {
+        super.onSignInSucceeded();
+        Log.d(TAG, "Signed in successfully");
+        Games.Achievements.unlock(getApiClient(), Achievement.INSTALL_AND_SIGN_IN);
+
     }
 }

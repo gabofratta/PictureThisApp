@@ -75,6 +75,7 @@ public abstract class BaseGameActivity extends FragmentActivity implements
 
     private final static String TAG = "BaseGameActivity";
     protected boolean mDebugLog = false;
+    protected boolean mConnectOnStart = true;
 
     /**
      * Constructs a BaseGameActivity with default client (GamesClient).
@@ -112,7 +113,7 @@ public abstract class BaseGameActivity extends FragmentActivity implements
         if (mHelper == null) {
             mHelper = new GameHelper(this, mRequestedClients);
             mHelper.enableDebugLog(mDebugLog);
-            mHelper.setConnectOnStart(false);
+            mHelper.setConnectOnStart(mConnectOnStart);
         }
         return mHelper;
     }
