@@ -86,7 +86,6 @@ public class CreateChallengeActivity extends BaseGameActivity {
             public void onResult(People.LoadPeopleResult peopleData) {
                 if (peopleData.getStatus().getStatusCode() == CommonStatusCodes.SUCCESS) {
                     usersList.clear();
-
                     PersonBuffer personBuffer = peopleData.getPersonBuffer();
                     try {
                         int count = personBuffer.getCount();

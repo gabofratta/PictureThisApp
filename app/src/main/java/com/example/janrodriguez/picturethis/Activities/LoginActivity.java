@@ -12,6 +12,8 @@ public class LoginActivity extends BaseGameActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        mConnectOnStart = false;
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
