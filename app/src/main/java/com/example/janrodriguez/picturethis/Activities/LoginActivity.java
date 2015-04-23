@@ -6,7 +6,7 @@ import android.os.Bundle;
 import com.example.janrodriguez.picturethis.R;
 import com.google.android.gms.common.SignInButton;
 
-public class LoginActivity extends GooglePlusBaseActivity {
+public class LoginActivity extends BaseGameActivity {
 
     private SignInButton signinBtn;
 
@@ -27,9 +27,9 @@ public class LoginActivity extends GooglePlusBaseActivity {
 
     //Connected to google acount, start main activity and close this one
     @Override
-    public void onConnected(Bundle connectionHint) {
+    public void onSignInSucceeded() {
 
-        super.onConnected(connectionHint);
+        super.onSignInSucceeded();
 
         Intent intent = new Intent(this, MainActivity.class);
         finish();
