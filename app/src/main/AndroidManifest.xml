@@ -35,10 +35,6 @@
             android:label="@string/title_activity_test_parcel" >
         </activity>
         <activity
-            android:name=".Activities.GooglePlusBaseActivity"
-            android:label="@string/title_activity_google_plus_base" >
-        </activity>
-        <activity
             android:name=".Activities.LoginActivity"
             android:label="@string/title_activity_login" >
             <intent-filter>

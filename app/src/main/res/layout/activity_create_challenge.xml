@@ -26,7 +26,7 @@
         <EditText
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/editText"
+            android:id="@+id/titleEditText"
             android:layout_weight="1" />
     </LinearLayout>
 
@@ -53,16 +53,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text=""
-            android:id="@+id/checkbox1"
+            android:id="@+id/checkLocation"
             android:layout_below="@+id/linearLayout"
             android:layout_centerHorizontal="true"
-            android:enabled="false" />
+            android:enabled="true" />
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="View Map"
-            android:id="@+id/button4" />
+            android:id="@+id/viewMapBtn" />
 
     </LinearLayout>
 
@@ -88,7 +88,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Select"
-            android:id="@+id/button5" />
+            android:id="@+id/selectUsersBtn" />
 
     </LinearLayout>
 
@@ -96,14 +96,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Send Challenge"
-        android:id="@+id/button6"
-        android:layout_below="@+id/imageButton"
+        android:id="@+id/sendChallengeBtn"
+        android:layout_below="@+id/picture"
         android:layout_centerHorizontal="true" />
 
     <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/imageButton"
+        android:id="@+id/picture"
         android:src="@drawable/camera1"
         android:layout_centerHorizontal="true"
         android:maxWidth="250dp"
@@ -113,14 +113,14 @@
     <ListView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/listView"
+        android:id="@+id/usersListView"
         android:layout_weight="1"
         android:visibility="invisible"
         android:layout_toRightOf="@+id/linearLayout3"
         android:layout_alignTop="@+id/linearLayout3"
         android:background="#ffffffff"
         android:layout_alignParentEnd="false"
-        android:layout_alignBottom="@+id/imageButton" />
+        android:layout_alignBottom="@+id/picture" />
 
 </RelativeLayout>
 

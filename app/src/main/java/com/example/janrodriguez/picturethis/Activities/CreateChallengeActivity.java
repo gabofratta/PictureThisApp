@@ -9,14 +9,12 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.example.janrodriguez.picturethis.Helpers.Challenge;
@@ -52,7 +50,7 @@ public class CreateChallengeActivity extends BaseGameActivity implements ResultC
     private Button sendButton;
 
     private Uri currentPictureUri;
-    private boolean inListView;
+    private boolean listViewOpen;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,27 +61,7 @@ public class CreateChallengeActivity extends BaseGameActivity implements ResultC
     }
 
     private void initialize() {
-        inListView = false;
-
-        RelativeLayout layout = (RelativeLayout) findViewById(R.id.root);
-        layout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!inListView) {
-                    usersListView.setVisibility(View.INVISIBLE);
-                } else {
-                    inListView = false;
-                }
-            }
-        });
-
-        usersListView = (ListView) findViewById(R.id.listView);
-        usersListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> myAdapter, View myView, int pos, long mylng) {
-                inListView = true;
-            }
-        });
+        listViewOpen = false;
 
         usersList = new ArrayList<String>();
         usersAdapter = new ArrayAdapter<String>(this, R.layout.user_item, usersList);
@@ -91,7 +69,7 @@ public class CreateChallengeActivity extends BaseGameActivity implements ResultC
 //        Plus.PeopleApi.loadVisible(mGoogleApiClient, null)
 //                .setResultCallback(this);
 
-        imageButton = (ImageButton) findViewById(R.id.imageButton);
+        imageButton = (ImageButton) findViewById(R.id.picture);
         imageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -111,7 +89,7 @@ public class CreateChallengeActivity extends BaseGameActivity implements ResultC
             }
         });
 
-        mapButton = (Button) findViewById(R.id.button4);
+        mapButton = (Button) findViewById(R.id.viewMapBtn);
         mapButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -122,19 +100,25 @@ public class CreateChallengeActivity extends BaseGameActivity implements ResultC
             }
         });
 
-        usersButton = (Button) findViewById(R.id.button5);
+        usersButton = (Button) findViewById(R.id.selectUsersBtn);
         usersButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                usersListView.setVisibility(View.VISIBLE);
+                if (listViewOpen) {
+                    usersListView.setVisibility(View.INVISIBLE);
+                    listViewOpen = false;
+                } else {
+                    usersListView.setVisibility(View.VISIBLE);
+                    listViewOpen = true;
+                }
             }
         });
 
-        sendButton = (Button) findViewById(R.id.button6);
+        sendButton = (Button) findViewById(R.id.sendChallengeBtn);
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                EditText titleField = (EditText) findViewById(R.id.editText);
+                EditText titleField = (EditText) findViewById(R.id.titleEditText);
                 String title = titleField.getText().toString();
 
                 MyGeoPoint location = null;
