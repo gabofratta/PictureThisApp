@@ -192,7 +192,7 @@ public abstract class BaseGameActivity extends FragmentActivity implements
 
     @Override
     public void onSignInFailed() {
-        Log.d(TAG, "Because fuck you");
+        Log.d(TAG, "Failed to sign in.");
 
     }
 
