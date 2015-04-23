@@ -16,7 +16,7 @@ import com.parse.SaveCallback;
 
 import java.util.List;
 
-public class MainActivity extends GooglePlusBaseActivity {
+public class MainActivity extends BaseGameActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

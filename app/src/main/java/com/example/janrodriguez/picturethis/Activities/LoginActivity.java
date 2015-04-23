@@ -2,11 +2,12 @@ package com.example.janrodriguez.picturethis.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 
 import com.example.janrodriguez.picturethis.R;
 import com.google.android.gms.common.SignInButton;
 
-public class LoginActivity extends GooglePlusBaseActivity {
+public class LoginActivity extends BaseGameActivity {
 
     private SignInButton signinBtn;
 
@@ -20,16 +21,21 @@ public class LoginActivity extends GooglePlusBaseActivity {
 
     private void initialize() {
         signinBtn = (SignInButton)findViewById(R.id.sign_in_button);
-        signinBtn.setOnClickListener(this);
+        signinBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                reconnectClient();
+            }
+        });
     }
 
 
 
     //Connected to google acount, start main activity and close this one
     @Override
-    public void onConnected(Bundle connectionHint) {
+    public void onSignInSucceeded() {
 
-        super.onConnected(connectionHint);
+        super.onSignInSucceeded();
 
         Intent intent = new Intent(this, MainActivity.class);
         finish();
