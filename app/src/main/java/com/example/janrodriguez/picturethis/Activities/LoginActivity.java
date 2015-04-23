@@ -2,7 +2,6 @@ package com.example.janrodriguez.picturethis.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 
 import com.example.janrodriguez.picturethis.R;
 import com.google.android.gms.common.SignInButton;
@@ -21,12 +20,7 @@ public class LoginActivity extends BaseGameActivity {
 
     private void initialize() {
         signinBtn = (SignInButton)findViewById(R.id.sign_in_button);
-        signinBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                reconnectClient();
-            }
-        });
+        signinBtn.setOnClickListener(this);
     }
 
 

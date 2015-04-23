@@ -685,7 +685,7 @@ public class GameHelper implements GoogleApiClient.ConnectionCallbacks,
         }
     }
 
-    void connect() {
+    public void connect() {
         if (mGoogleApiClient.isConnected()) {
             debugLog("Already connected.");
             return;

@@ -20,10 +20,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
+import android.view.View;
 
 import com.example.janrodriguez.picturethis.Helpers.GameHelper;
 import com.example.janrodriguez.picturethis.Helpers.ParseHelper;
 import com.example.janrodriguez.picturethis.Helpers.User;
+import com.example.janrodriguez.picturethis.R;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.plus.Plus;
 import com.google.android.gms.plus.model.people.Person;
@@ -52,7 +54,9 @@ import java.util.List;
  * @author Bruno Oliveira (Google)
  */
 public abstract class BaseGameActivity extends FragmentActivity implements
-        GameHelper.GameHelperListener {
+        GameHelper.GameHelperListener,
+        View.OnClickListener
+{
 
     protected User currentUser;
 
@@ -72,15 +76,18 @@ public abstract class BaseGameActivity extends FragmentActivity implements
     private final static String TAG = "BaseGameActivity";
     protected boolean mDebugLog = false;
 
-    /** Constructs a BaseGameActivity with default client (GamesClient). */
+    /**
+     * Constructs a BaseGameActivity with default client (GamesClient).
+     */
     protected BaseGameActivity() {
         super();
     }
 
     /**
      * Constructs a BaseGameActivity with the requested clients.
+     *
      * @param requestedClients The requested clients (a combination of CLIENT_GAMES,
-     *         CLIENT_PLUS and CLIENT_APPSTATE).
+     *                         CLIENT_PLUS and CLIENT_APPSTATE).
      */
     protected BaseGameActivity(int requestedClients) {
         super();
@@ -95,7 +102,7 @@ public abstract class BaseGameActivity extends FragmentActivity implements
      * is a no-op.
      *
      * @param requestedClients A combination of the flags CLIENT_GAMES, CLIENT_PLUS
-     *         and CLIENT_APPSTATE, or CLIENT_ALL to request all available clients.
+     *                         and CLIENT_APPSTATE, or CLIENT_ALL to request all available clients.
      */
     protected void setRequestedClients(int requestedClients) {
         mRequestedClients = requestedClients;
@@ -105,6 +112,7 @@ public abstract class BaseGameActivity extends FragmentActivity implements
         if (mHelper == null) {
             mHelper = new GameHelper(this, mRequestedClients);
             mHelper.enableDebugLog(mDebugLog);
+            mHelper.setConnectOnStart(false);
         }
         return mHelper;
     }
@@ -182,6 +190,10 @@ public abstract class BaseGameActivity extends FragmentActivity implements
         mHelper.reconnectClient();
     }
 
+    protected void connectClient() {
+        mHelper.connect();
+    }
+
     protected boolean hasSignInError() {
         return mHelper.hasSignInError();
     }
@@ -225,4 +237,13 @@ public abstract class BaseGameActivity extends FragmentActivity implements
             }
         });
     }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.sign_in_button:
+                mHelper.beginUserInitiatedSignIn();
+        }
+    }
+
 }
