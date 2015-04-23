@@ -36,12 +36,12 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class CreateChallengeActivity extends GooglePlusBaseActivity implements ResultCallback<People.LoadPeopleResult> {
+public class CreateChallengeActivity extends BaseGameActivity implements ResultCallback<People.LoadPeopleResult> {
 
     private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
+    private static final String TAG = "CreateChallengeActivity";
     private static final int HEIGHT = 200;
     private static final int WIDTH = 200;
-    private static final String TAG = "CreateChallengeActivity";
 
     private ArrayList<String> usersList;
     private ArrayAdapter<String> usersAdapter;

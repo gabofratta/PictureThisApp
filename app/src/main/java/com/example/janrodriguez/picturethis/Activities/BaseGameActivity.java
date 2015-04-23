@@ -58,7 +58,7 @@ public abstract class BaseGameActivity extends FragmentActivity implements
         View.OnClickListener
 {
 
-    protected User currentUser;
+    public static User currentUser;
 
     // The game helper object. This class is mainly a wrapper around this object.
     protected GameHelper mHelper;
@@ -190,10 +190,6 @@ public abstract class BaseGameActivity extends FragmentActivity implements
         mHelper.reconnectClient();
     }
 
-    protected void connectClient() {
-        mHelper.connect();
-    }
-
     protected boolean hasSignInError() {
         return mHelper.hasSignInError();
     }
@@ -211,31 +207,32 @@ public abstract class BaseGameActivity extends FragmentActivity implements
     @Override
     public void onSignInSucceeded() {
         // Retrieve some profile information to personalize our app for the user.
-        final Person currentGPUser = Plus.PeopleApi.getCurrentPerson(getApiClient());
-
-        currentUser = new User(currentGPUser.getId(), currentGPUser.getDisplayName());
-        ParseHelper.GetUserByGoogleId(currentUser, new FindCallback<ParseObject>() {
-            @Override
-            public void done(List<ParseObject> parseObjects, ParseException e) {
-                if (e == null) {
-                    if (parseObjects.size() == 0) { //User not found
-                        ParseHelper.CreateUser(currentUser, new SaveCallback() {
-                            @Override
-                            public void done(ParseException e) {
-                                if (e != null) {
-                                    Log.e(TAG, "Error creating user.");
-                                    return;
+        if (currentUser == null) {
+            final Person currentGPUser = Plus.PeopleApi.getCurrentPerson(getApiClient());
+            currentUser = new User(currentGPUser.getId(), currentGPUser.getDisplayName());
+            ParseHelper.GetUserByGoogleId(currentUser, new FindCallback<ParseObject>() {
+                @Override
+                public void done(List<ParseObject> parseObjects, ParseException e) {
+                    if (e == null) {
+                        if (parseObjects.size() == 0) { //User not found
+                            ParseHelper.CreateUser(currentUser, new SaveCallback() {
+                                @Override
+                                public void done(ParseException e) {
+                                    if (e != null) {
+                                        Log.e(TAG, "Error creating user.");
+                                        return;
+                                    }
                                 }
-                            }
-                        });
-                    } else { //User found
-                        currentUser = new User(parseObjects.get(0));
+                            });
+                        } else { //User found
+                            currentUser = new User(parseObjects.get(0));
+                        }
+                    } else {
+                        Log.e(TAG, "Error getting user from google plus id");
                     }
-                } else {
-                    Log.e(TAG, "Error getting user from google plus id");
                 }
-            }
-        });
+            });
+        }
     }
 
     @Override
