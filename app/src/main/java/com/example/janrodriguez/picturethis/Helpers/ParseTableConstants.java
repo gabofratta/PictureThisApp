@@ -25,5 +25,6 @@ public class ParseTableConstants {
     static public final String USER_TABLE = "User";
     static public final String USER_NAME = "name";
     static public final String USER_GOOGLE_ID = "googleId";
+    static public final String USER_SCORE = "Score";
 
 }
