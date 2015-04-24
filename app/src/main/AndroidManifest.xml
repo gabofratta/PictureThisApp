@@ -41,13 +41,6 @@
             android:label="@string/title_activity_sent" >
         </activity>
         <activity
-            android:name=".Activities.BaseSidePanelActivity"
-            android:label="@string/title_activity_test_parcel" >
-
-            <!-- android:theme="@style/AppThemeNoActionBar"> -->
-
-        </activity>
-        <activity
             android:name=".Activities.LoginActivity"
             android:label="@string/title_activity_login" >
             <intent-filter>
@@ -79,6 +72,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.janrodriguez.picturethis.Activities.CreateChallengeActivity" />
         </activity>
+        <!--android:theme="@style/AppThemeNoActionBar">-->
     </application>
 
 </manifest>

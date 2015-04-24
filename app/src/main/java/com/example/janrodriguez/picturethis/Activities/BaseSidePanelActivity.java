@@ -46,7 +46,7 @@ public class BaseSidePanelActivity extends BaseGameActivity implements
                 startActivity(loginIntent);
                 break;
             case SettingsAdapter.ACHIEVEMENTS_POSITION:
-                if(mRequestedClients == (CLIENT_GAMES | CLIENT_PLUS)){
+                if((mRequestedClients & CLIENT_GAMES )== 0){
                     startActivityForResult(Games.Achievements.getAchievementsIntent(getApiClient()), REQUEST_ACHIEVEMENTS);
                 }else {
                     Toast.makeText(this, "Not logged in to google games.", Toast.LENGTH_LONG).show();

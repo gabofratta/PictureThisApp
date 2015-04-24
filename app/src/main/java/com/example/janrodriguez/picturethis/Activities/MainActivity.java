@@ -3,9 +3,13 @@ package com.example.janrodriguez.picturethis.Activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
 import android.view.View;
+import android.widget.Button;
 
+import com.example.janrodriguez.picturethis.Helpers.Achievement;
 import com.example.janrodriguez.picturethis.R;
+import com.google.android.gms.games.Games;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -15,8 +19,13 @@ import java.util.List;
 
 public class MainActivity extends BaseSidePanelActivity {
 
+    private static String TAG = "MainActivity";
+
+    private static final int REQUEST_ACHIEVEMENTS = 1000;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -63,6 +72,17 @@ public class MainActivity extends BaseSidePanelActivity {
     public void viewLoginPage(View view){
         Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);
+    }
+
+    @Override
+    public void onSignInSucceeded() {
+        super.onSignInSucceeded();
+        Log.d(TAG, "Signed in successfully");
+        if ((mRequestedClients & CLIENT_GAMES) != 0) {
+            Games.Achievements.unlock(getApiClient(), Achievement.INSTALL_AND_SIGN_IN);
+        } else {
+            Log.d(TAG, "Not signed into google games.");
+        }
     }
 
     public void viewHistory(View view) {

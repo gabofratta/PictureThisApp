@@ -8,6 +8,8 @@ import com.google.android.gms.common.SignInButton;
 
 public class LoginActivity extends BaseGameActivity {
 
+    private static String TAG = "LoginActivity";
+
     private SignInButton signinBtn;
 
     @Override
@@ -24,8 +26,6 @@ public class LoginActivity extends BaseGameActivity {
         signinBtn = (SignInButton)findViewById(R.id.sign_in_button);
         signinBtn.setOnClickListener(this);
     }
-
-
 
     //Connected to google acount, start main activity and close this one
     @Override
