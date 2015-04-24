@@ -18,7 +18,7 @@ package com.example.janrodriguez.picturethis.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 
@@ -53,7 +53,7 @@ import java.util.List;
  *
  * @author Bruno Oliveira (Google)
  */
-public abstract class BaseGameActivity extends FragmentActivity implements
+public abstract class BaseGameActivity extends AppCompatActivity implements
         GameHelper.GameHelperListener,
         View.OnClickListener
 {
@@ -70,8 +70,11 @@ public abstract class BaseGameActivity extends FragmentActivity implements
     public static final int CLIENT_PLUS = GameHelper.CLIENT_PLUS;
     public static final int CLIENT_ALL = GameHelper.CLIENT_ALL;
 
+    public static final int REQUEST_ACHIEVEMENTS = 100;
+
     // Requested clients. By default, that's just the games client.
-    protected int mRequestedClients = CLIENT_GAMES | CLIENT_PLUS;
+//    protected int mRequestedClients = CLIENT_GAMES | CLIENT_PLUS;
+    protected int mRequestedClients = CLIENT_PLUS;
 
     private final static String TAG = "BaseGameActivity";
     protected boolean mDebugLog = false;
@@ -121,6 +124,7 @@ public abstract class BaseGameActivity extends FragmentActivity implements
     @Override
     protected void onCreate(Bundle b) {
         super.onCreate(b);
+
         if (mHelper == null) {
             getGameHelper();
         }
@@ -201,7 +205,7 @@ public abstract class BaseGameActivity extends FragmentActivity implements
 
     @Override
     public void onSignInFailed() {
-        Log.d(TAG, "Failed to sign in.");
+//        Log.d(TAG, "Failed to sign in.");
 
     }
 
@@ -241,6 +245,7 @@ public abstract class BaseGameActivity extends FragmentActivity implements
         switch (view.getId()) {
             case R.id.sign_in_button:
                 mHelper.beginUserInitiatedSignIn();
+                break;
         }
     }
 

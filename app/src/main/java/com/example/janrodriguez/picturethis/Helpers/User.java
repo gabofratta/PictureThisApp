@@ -92,6 +92,9 @@ public class User implements Parcelable {
     }
     /**\Getters**/
 
-
+    @Override
+    public String toString() {
+        return name;
+    }
 
 }
