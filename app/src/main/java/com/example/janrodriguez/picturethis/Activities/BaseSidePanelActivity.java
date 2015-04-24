@@ -26,7 +26,7 @@ public class BaseSidePanelActivity extends BaseGameActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
-    
+
     @Override
     public void onClick(View view, int position) {
         Log.d(TAG, "Clicked item at position: " + position);
@@ -72,12 +72,10 @@ public class BaseSidePanelActivity extends BaseGameActivity implements
                 R.string.drawer_close  /* "close drawer" description for accessibility */
         ) {
             public void onDrawerClosed(View view) {
-                Log.d(TAG, "Closed");
                 invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
             }
 
             public void onDrawerOpened(View drawerView) {
-                Log.d(TAG, "Opened");
                 invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
             }
         };
