@@ -18,7 +18,7 @@ package com.example.janrodriguez.picturethis.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 
@@ -53,7 +53,7 @@ import java.util.List;
  *
  * @author Bruno Oliveira (Google)
  */
-public abstract class BaseGameActivity extends FragmentActivity implements
+public abstract class BaseGameActivity extends AppCompatActivity implements
         GameHelper.GameHelperListener,
         View.OnClickListener
 {
@@ -120,6 +120,7 @@ public abstract class BaseGameActivity extends FragmentActivity implements
     @Override
     protected void onCreate(Bundle b) {
         super.onCreate(b);
+
         if (mHelper == null) {
             getGameHelper();
         }
@@ -200,7 +201,7 @@ public abstract class BaseGameActivity extends FragmentActivity implements
 
     @Override
     public void onSignInFailed() {
-        Log.d(TAG, "Failed to sign in.");
+//        Log.d(TAG, "Failed to sign in.");
 
     }
 

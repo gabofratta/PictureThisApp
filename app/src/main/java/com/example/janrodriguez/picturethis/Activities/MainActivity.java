@@ -47,16 +47,8 @@ public class MainActivity extends BaseGameActivity {
         openNewActBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                User newUser = new User("test", "mcTesterson");
-//                ArrayList<User> userList = new ArrayList<User>();
-//                userList.add(newUser);
-//                Challenge newChall = new Challenge("Test title", newUser, new MyGeoPoint(), userList);
-//                Response challResp = new Response(newChall, newUser, Response.STATUS_ACCEPTED);
-//                Intent intent = new Intent(MainActivity.this, TestParcel.class);
-//                intent.putExtra("user", newUser);
-//                intent.putExtra("chall", newChall);
-//                intent.putExtra("resp", challResp);
-//                startActivity(intent);
+            Intent intent = new Intent(MainActivity.this, BaseSidePanelActivity.class);
+            startActivity(intent);
             }
         });
     }
