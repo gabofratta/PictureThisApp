@@ -46,9 +46,9 @@
         android:layout_height="wrap_content"
         android:text="View Login Page"
         android:id="@+id/button7"
-        android:layout_below="@+id/viewMapBtn"
         android:layout_centerHorizontal="true"
-        android:onClick="viewLoginPage" />
+        android:onClick="viewLoginPage"
+        android:layout_below="@+id/button4" />
 
     <Button
         android:layout_width="wrap_content"
@@ -56,6 +56,15 @@
         android:text="@string/sign_out"
         android:id="@+id/sign_out_button"
         android:layout_below="@+id/button7"
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="View Map Activity "
+        android:id="@+id/button4"
+        android:onClick="viewMapPage"
+        android:layout_below="@+id/viewMapBtn"
         android:layout_centerHorizontal="true" />
 
 

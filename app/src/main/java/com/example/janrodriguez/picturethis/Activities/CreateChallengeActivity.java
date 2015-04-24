@@ -77,17 +77,20 @@ public class CreateChallengeActivity extends BaseGameActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_challenge);
+        super.onCreate(savedInstanceState);
 
-        initializeUsersList();
         initializeUiComponents();
         initializeLocationServices();
     }
 
-    private void initializeUsersList() {
-        listViewOpen = false;
+    @Override
+    public void onSignInSucceeded() {
+        super.onSignInSucceeded();
+        initializeUsersList();
+    }
 
+    private void initializeUsersList() {
         resultCallback = new ResultCallback<People.LoadPeopleResult>() {
             @Override
             public void onResult(People.LoadPeopleResult peopleData) {
@@ -127,6 +130,10 @@ public class CreateChallengeActivity extends BaseGameActivity {
         };
 
         Plus.PeopleApi.loadVisible(getApiClient(), null).setResultCallback(resultCallback);
+    }
+
+    private void initializeUiComponents() {
+        listViewOpen = false;
 
         challengedList = new ArrayList<User>();
         usersList = new ArrayList<User>();
@@ -135,9 +142,7 @@ public class CreateChallengeActivity extends BaseGameActivity {
         usersListView = (ListView) findViewById(R.id.usersListView);
         usersListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
         usersListView.setAdapter(usersAdapter);
-    }
 
-    private void initializeUiComponents() {
         RelativeLayout relativeLayout = (RelativeLayout) findViewById(R.id.root);
         relativeLayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -195,14 +200,10 @@ public class CreateChallengeActivity extends BaseGameActivity {
                 }
 
                 if (currentLocation != null) {
-                    StringBuilder query = new StringBuilder("geo:0,0?q=")
-                                                .append(currentLocation.getLatitude())
-                                                .append(",")
-                                                .append(currentLocation.getLongitude())
-                                                .append("(Your Location)");
-                    Uri geoLocation = Uri.parse(query.toString());
-                    Intent intent = new Intent(Intent.ACTION_VIEW);
-                    intent.setData(geoLocation);
+                    Intent intent = new Intent(CreateChallengeActivity.this, MapActivity.class);
+                    intent.putExtra("showRadius", false);
+                    intent.putExtra("latitude", currentLocation.getLatitude());
+                    intent.putExtra("longitude", currentLocation.getLongitude());
                     startActivity(intent);
                 } else {
                     Toast.makeText(getApplicationContext(), getString(R.string.location_missing), Toast.LENGTH_SHORT).show();
@@ -271,6 +272,7 @@ public class CreateChallengeActivity extends BaseGameActivity {
         if (!locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
             AlertDialog.Builder dialog = new AlertDialog.Builder(CreateChallengeActivity.this);
             dialog.setMessage(getString(R.string.enable_network_location));
+
             dialog.setPositiveButton(getString(R.string.change_settings), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface paramDialogInterface, int paramInt) {
@@ -278,10 +280,12 @@ public class CreateChallengeActivity extends BaseGameActivity {
                     startActivity(intent);
                 }
             });
+
             dialog.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface paramDialogInterface, int paramInt) {}
             });
+
             dialog.show();
         }
 

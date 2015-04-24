@@ -24,6 +24,7 @@
     <string name="select">Select</string>
     <string name="send_challenge">Send Challenge</string>
     <string name="enable_network_location">Please enable network location services in order to create a new challenge.</string>
+    <string name="enable_location_providers">Please enable location service providers to see your location on the map.</string>
     <string name="change_settings">Change Settings</string>
     <string name="cancel">Cancel</string>
     <string name="challenge_created">Challenge created</string>
@@ -31,4 +32,6 @@
     <string name="challenged_missing">Challenged user(s) missing</string>
     <string name="location_missing">Location is missing</string>
     <string name="title_missing">Title is missing</string>
+    <string name="title_activity_map">MapActivity</string>
+    <string name="marker">Marker</string>
 </resources>
