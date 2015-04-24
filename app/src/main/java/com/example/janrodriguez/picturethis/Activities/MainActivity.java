@@ -65,11 +65,16 @@ public class MainActivity extends BaseSidePanelActivity {
         startActivity(intent);
     }
 
+    public void viewHistory(View view) {
+        Intent intent = new Intent(this, HistoryActivity.class);
+        startActivity(intent);
+    }
+
     public void viewMapPage(View view){
         Intent intent = new Intent(this, MapActivity.class);
-        intent.putExtra("showRadius", true);
-        intent.putExtra("latitude", 42.3579452);
-        intent.putExtra("longitude", -71.0937901);
+        intent.putExtra(MapActivity.INTENT_SHOW_RADIUS, true);
+        intent.putExtra(MapActivity.INTENT_LATITUDE, 42.3579452);
+        intent.putExtra(MapActivity.INTENT_LONGITUDE, -71.0937901);
         startActivity(intent);
     }
 }

@@ -11,6 +11,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -18,6 +19,8 @@ import java.util.Date;
  * Created by janrodriguez on 4/18/15.
  */
 public class Challenge implements Parcelable {
+
+    static public final String INTENT_TAG = "challenge";
 
     private String id = "";
     private String title;
@@ -185,5 +188,11 @@ public class Challenge implements Parcelable {
     }
     /**\Setters**/
 
-
+    @Override
+    public String toString() {
+        return new StringBuilder(title)
+                .append(": ")
+                .append(new SimpleDateFormat("yyyy-MM-dd").format(createdAt))
+                .toString();
+    }
 }
