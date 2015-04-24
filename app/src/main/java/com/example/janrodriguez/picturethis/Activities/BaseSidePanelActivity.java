@@ -1,5 +1,6 @@
 package com.example.janrodriguez.picturethis.Activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -11,6 +12,7 @@ import android.view.View;
 
 import com.example.janrodriguez.picturethis.Helpers.SettingsAdapter;
 import com.example.janrodriguez.picturethis.R;
+import com.google.android.gms.plus.Plus;
 
 public class BaseSidePanelActivity extends BaseGameActivity implements
         SettingsAdapter.OnItemClickListener{
@@ -34,7 +36,11 @@ public class BaseSidePanelActivity extends BaseGameActivity implements
         switch (position) {
             case SettingsAdapter.LOG_OUT_POSITION:
                 //TODO: ADD LOGOUT FUNCTIONALITY
-                Log.d(TAG, "Clicked logout");
+                Plus.AccountApi.clearDefaultAccount(getApiClient());
+                getApiClient().disconnect();
+                Intent loginIntent = new Intent(this, LoginActivity.class);
+                loginIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(loginIntent);
         }
     }
 
