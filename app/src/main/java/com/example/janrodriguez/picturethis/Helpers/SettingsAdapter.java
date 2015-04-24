@@ -13,7 +13,7 @@ import com.example.janrodriguez.picturethis.R;
  */
 public class SettingsAdapter extends RecyclerView.Adapter <SettingsAdapter.ViewHolder> {
 
-    private String[] mSettingsArray = {"Log Out"};
+    private String[] mSettingsArray = {"Log Out", "Other Setting", "More stuff", "Foo", "Bar", "Baz"};
     private OnItemClickListener mListener;
 
     public SettingsAdapter (OnItemClickListener listener) {

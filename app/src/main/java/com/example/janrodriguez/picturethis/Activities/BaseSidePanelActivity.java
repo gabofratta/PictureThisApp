@@ -25,15 +25,34 @@ public class BaseSidePanelActivity extends BaseGameActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_base_side_panel);
+    }
+    
+    @Override
+    public void onClick(View view, int position) {
+        Log.d(TAG, "Clicked item at position: " + position);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Pass the event to ActionBarDrawerToggle, if it returns
+        // true, then it has handled the app icon touch event
+        if (mDrawerToggle.onOptionsItemSelected(item)) {
+            return true;
+        }
+        // Handle your other action bar items...
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    protected void setUpSidePanel() {
         //Get side panel
         mDrawerList = (RecyclerView) findViewById(R.id.left_drawer);
 //        mToolBar = (Toolbar)findViewById(R.id.app_toolbar);
         mDrawerLayout = (DrawerLayout)findViewById(R.id.drawer_layout);
 
-        if(mDrawerList == null) {
-            Log.e(TAG, "Side panel drawer not found. Make sure to set include leftDrawerLayout and setContentView before calling super.onCreate().");
-            throw new Error("Side panel drawer not found. Make sure to set include leftDrawerLayout and setContentView before calling super.onCreate().");
+        if(mDrawerList == null || mDrawerLayout == null) {
+            Log.e(TAG, "Side panel drawer not found. Make sure to set include leftDrawerLayout. Look at layout/activity_base_side_panel.xml as a reference.");
+            throw new Error("Side panel drawer not found. Make sure to set include leftDrawerLayout. Look at layout/activity_base_side_panel.xml as a reference.");
         }
 
         mDrawerList.setHasFixedSize(true);
@@ -69,23 +88,6 @@ public class BaseSidePanelActivity extends BaseGameActivity implements
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
         mDrawerToggle.syncState();
-    }
 
-
-    @Override
-    public void onClick(View view, int position) {
-        Log.d(TAG, "Yes, touch me like that.");
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Pass the event to ActionBarDrawerToggle, if it returns
-        // true, then it has handled the app icon touch event
-        if (mDrawerToggle.onOptionsItemSelected(item)) {
-            return true;
-        }
-        // Handle your other action bar items...
-
-        return super.onOptionsItemSelected(item);
     }
 }
