@@ -71,6 +71,14 @@
             android:label="@string/title_activity_history"
             android:parentActivityName=".Activities.MainActivity" >
         </activity>
+        <activity
+            android:name=".Activities.ViewChallengeActivity"
+            android:label="@string/title_activity_view_challenge"
+            android:parentActivityName=".Activities.CreateChallengeActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.janrodriguez.picturethis.Activities.CreateChallengeActivity" />
+        </activity>
     </application>
 
 </manifest>
