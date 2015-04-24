@@ -1,5 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
 <!--
-  Copyright 2013 The Android Open Source Project
+  Copyright 2014 The Android Open Source Project
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -14,17 +15,9 @@
   limitations under the License.
   -->
 
-<resources>
-
-    <!-- Activity themes -->
-
-    <style name="Theme.Base" parent="Theme.AppCompat.Light"/>
-    <style name="Theme.Sample" parent="Theme.Base" />
-
-    <style name="AppTheme" parent="Theme.Sample"/>
-    <style name="AppThemeNoActionBar" parent="Theme.Sample">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-    </style>
-
-</resources>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@android:id/text1"
+    android:textSize="@dimen/abc_text_size_large_material"
+    android:padding="15dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"/>
