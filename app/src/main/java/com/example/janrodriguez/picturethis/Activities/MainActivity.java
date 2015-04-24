@@ -104,4 +104,12 @@ public class MainActivity extends BaseGameActivity {
         Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);
     }
+
+    public void viewMapPage(View view){
+        Intent intent = new Intent(this, MapActivity.class);
+        intent.putExtra("showRadius", true);
+        intent.putExtra("latitude", 42.3579452);
+        intent.putExtra("longitude", -71.0937901);
+        startActivity(intent);
+    }
 }
