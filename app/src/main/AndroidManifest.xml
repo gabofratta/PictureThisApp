@@ -5,6 +5,8 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <application
         android:name=".PictureThisApp"
@@ -18,6 +20,10 @@
         <meta-data
             android:name="com.google.android.gms.games.APP_ID"
             android:value="@string/app_id" />
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyC1Hr2VmBjN2jrGz_SKlsYh8kID_FOxnto"/>
+
 
         <activity
             android:name=".Activities.MainActivity"
@@ -35,6 +41,7 @@
             android:name=".Activities.BaseSidePanelActivity"
             android:label="@string/title_activity_test_parcel">
             <!--android:theme="@style/AppThemeNoActionBar">-->
+
         </activity>
         <activity
             android:name=".Activities.LoginActivity"
@@ -49,6 +56,14 @@
             android:name=".Activities.CreateChallengeActivity"
             android:label="@string/title_activity_create_challenge" >
         </activity>
+        <activity
+            android:name=".Activities.MapActivity"
+            android:label="@string/title_activity_map" >
+        </activity>
     </application>
+
+    <uses-feature
+        android:glEsVersion="0x00020000"
+        android:required="true"/>
 
 </manifest>

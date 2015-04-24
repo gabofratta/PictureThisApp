@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 
 import com.example.janrodriguez.picturethis.R;
 import com.parse.FindCallback;
@@ -44,15 +43,6 @@ public class MainActivity extends BaseSidePanelActivity {
                 }
             }
         };
-
-        Button openNewActBtn = (Button)findViewById(R.id.open_pacel_act_btn);
-        openNewActBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-            Intent intent = new Intent(MainActivity.this, BaseSidePanelActivity.class);
-            startActivity(intent);
-            }
-        });
     }
 
     public void viewReceivedChallenge(View view) {
@@ -72,6 +62,14 @@ public class MainActivity extends BaseSidePanelActivity {
 
     public void viewLoginPage(View view){
         Intent intent = new Intent(this, LoginActivity.class);
+        startActivity(intent);
+    }
+
+    public void viewMapPage(View view){
+        Intent intent = new Intent(this, MapActivity.class);
+        intent.putExtra("showRadius", true);
+        intent.putExtra("latitude", 42.3579452);
+        intent.putExtra("longitude", -71.0937901);
         startActivity(intent);
     }
 }

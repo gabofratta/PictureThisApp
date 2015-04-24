@@ -242,6 +242,7 @@ public abstract class BaseGameActivity extends AppCompatActivity implements
         switch (view.getId()) {
             case R.id.sign_in_button:
                 mHelper.beginUserInitiatedSignIn();
+                break;
         }
     }
 

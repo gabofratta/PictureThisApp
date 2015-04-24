@@ -2,6 +2,7 @@ package com.example.janrodriguez.picturethis.Helpers;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Environment;
 
 import java.io.File;
@@ -15,8 +16,9 @@ import java.util.Date;
 public class ImageHelper {
 
     static private final String PICTURE_THIS_FOLDER = "/PictureThis";
+    static private final String TAG = "ImageHelper";
 
-    static public File createImageFile() throws IOException {
+    static public File CreateImageFile() throws IOException {
         String storageDirPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).toString() + PICTURE_THIS_FOLDER ;
         File storageDir = new File(storageDirPath);
         storageDir.mkdirs();
@@ -32,21 +34,26 @@ public class ImageHelper {
         return image;
     }
 
-    static public Bitmap decodeSampledBitmapFromResource(String filePath, int reqWidth, int reqHeight) {
+    static public boolean DeleteImageFile(Uri imageUri) {
+        File imageFile = new File(imageUri.getPath());
+        return imageFile.delete();
+    }
+
+    static public Bitmap DecodeSampledBitmapFromResource(String filePath, int reqWidth, int reqHeight) {
         // First decode with inJustDecodeBounds=true to check dimensions
         final BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
         BitmapFactory.decodeFile(filePath, options);
 
         // Calculate inSampleSize
-        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+        options.inSampleSize = CalculateInSampleSize(options, reqWidth, reqHeight);
 
         // Decode bitmap with inSampleSize set
         options.inJustDecodeBounds = false;
         return BitmapFactory.decodeFile(filePath, options);
     }
 
-    static public int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
+    static public int CalculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
         // Raw height and width of image
         final int height = options.outHeight;
         final int width = options.outWidth;
@@ -67,5 +74,4 @@ public class ImageHelper {
 
         return inSampleSize;
     }
-
 }
