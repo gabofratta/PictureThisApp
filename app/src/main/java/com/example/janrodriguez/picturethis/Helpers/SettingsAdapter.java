@@ -5,6 +5,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.janrodriguez.picturethis.R;
@@ -17,8 +19,10 @@ public class SettingsAdapter extends RecyclerView.Adapter <RecyclerView.ViewHold
     private static final int LOG_OUT_TYPE = 0;
     private static final int REGULAR_TYPE = 1;
 
-    private static final String[] mSettingsArray = {"Other Setting", "More stuff", "Foo", "Bar", "Baz", "Log Out"};
-    public static final int LOG_OUT_POSITION = 5;
+    private static final String[] mSettingsArray = {"History", "Achievements", "Log Out"};
+    public static final int HISTORY_POSITION = 0;
+    public static final int ACHIEVEMENTS_POSITION = 1;
+    public static final int LOG_OUT_POSITION = 2;
 
     private OnItemClickListener mListener;
 
@@ -49,18 +53,25 @@ public class SettingsAdapter extends RecyclerView.Adapter <RecyclerView.ViewHold
             Button btn = (Button)v.findViewById(android.R.id.button1);
             return new LogOutViewHolder(btn);
         }else{
-            View v = vi.inflate(R.layout.drawer_list_item, parent, false);
+            LinearLayout v = (LinearLayout)vi.inflate(R.layout.drawer_list_item, parent, false);
             TextView tv = (TextView)v.findViewById(android.R.id.text1);
-            return new ViewHolder(tv);
+            ImageView iv = (ImageView)v.findViewById(R.id.drawerImage);
+            return new ViewHolder(v, tv, iv);
         }
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
+
+        ViewHolder viewHolder = null;
+
+        if(position != LOG_OUT_POSITION) {
+            viewHolder = (ViewHolder)holder;
+        }
         switch (position) {
             case LOG_OUT_POSITION:
-                LogOutViewHolder logOutHolder = (LogOutViewHolder)holder;
-                logOutHolder.mButton.setOnClickListener(new View.OnClickListener(){
+                LogOutViewHolder logOutHolder = (LogOutViewHolder) holder;
+                logOutHolder.mButton.setOnClickListener(new View.OnClickListener() {
 
                     @Override
                     public void onClick(View v) {
@@ -68,8 +79,19 @@ public class SettingsAdapter extends RecyclerView.Adapter <RecyclerView.ViewHold
                     }
                 });
                 break;
-            default:
-                ViewHolder viewHolder = (ViewHolder)holder;
+            case ACHIEVEMENTS_POSITION:
+                viewHolder = (ViewHolder) holder;
+                viewHolder.mImageView.setImageResource(R.drawable.games_achievements);
+                viewHolder.mTextView.setText(mSettingsArray[position]);
+                viewHolder.mTextView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mListener.onClick(v, position);
+                    }
+                });
+                break;
+            case HISTORY_POSITION:
+                viewHolder.mImageView.setImageResource(R.drawable.ic_action_view_as_list);
                 viewHolder.mTextView.setText(mSettingsArray[position]);
                 viewHolder.mTextView.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -89,10 +111,14 @@ public class SettingsAdapter extends RecyclerView.Adapter <RecyclerView.ViewHold
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public final TextView mTextView;
+        public final ImageView mImageView;
+        public final LinearLayout mLayout;
 
-        public ViewHolder(TextView textView) {
-            super(textView);
+        public ViewHolder(LinearLayout v, TextView textView, ImageView imageView) {
+            super(v);
+            mLayout = v;
             mTextView = textView;
+            mImageView = imageView;
         }
     }
 
