@@ -9,9 +9,11 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.example.janrodriguez.picturethis.Helpers.SettingsAdapter;
 import com.example.janrodriguez.picturethis.R;
+import com.google.android.gms.games.Games;
 import com.google.android.gms.plus.Plus;
 
 public class BaseSidePanelActivity extends BaseGameActivity implements
@@ -23,6 +25,7 @@ public class BaseSidePanelActivity extends BaseGameActivity implements
     private RecyclerView mDrawerList;
 //    private Toolbar mToolBar;
     private ActionBarDrawerToggle mDrawerToggle;
+    private SettingsAdapter mSettingsAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,12 +38,23 @@ public class BaseSidePanelActivity extends BaseGameActivity implements
 
         switch (position) {
             case SettingsAdapter.LOG_OUT_POSITION:
-                //TODO: ADD LOGOUT FUNCTIONALITY
                 Plus.AccountApi.clearDefaultAccount(getApiClient());
                 getApiClient().disconnect();
                 Intent loginIntent = new Intent(this, LoginActivity.class);
                 loginIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(loginIntent);
+                break;
+            case SettingsAdapter.ACHIEVEMENTS_POSITION:
+                if(mRequestedClients == (CLIENT_GAMES | CLIENT_PLUS)){
+                    startActivityForResult(Games.Achievements.getAchievementsIntent(getApiClient()), REQUEST_ACHIEVEMENTS);
+                }else {
+                    Toast.makeText(this, "Not logged in to google games.", Toast.LENGTH_LONG).show();
+                }
+                break;
+            case SettingsAdapter.HISTORY_POSITION:
+                //TODO: VIEW HISTORY
+                Log.d(TAG, "Add history activity here");
+                break;
         }
     }
 
@@ -70,7 +84,9 @@ public class BaseSidePanelActivity extends BaseGameActivity implements
         mDrawerList.setHasFixedSize(true);
         mDrawerList.setLayoutManager(new LinearLayoutManager(this));
 
-        mDrawerList.setAdapter(new SettingsAdapter(this));
+        mSettingsAdapter = new SettingsAdapter(this);
+
+        mDrawerList.setAdapter(mSettingsAdapter);
 
 //        setSupportActionBar(mToolBar);
 
