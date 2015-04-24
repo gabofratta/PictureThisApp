@@ -31,4 +31,10 @@
     <string name="challenged_missing">Challenged user(s) missing</string>
     <string name="location_missing">Location is missing</string>
     <string name="title_missing">Title is missing</string>
+    <string name="title_activity_challenge_feed">ChallengeFeedActivity</string>
+
+
+    <string name="title_section1">Section 1</string>
+    <string name="title_section2">Section 2</string>
+    <string name="title_section3">Section 3</string>
 </resources>
