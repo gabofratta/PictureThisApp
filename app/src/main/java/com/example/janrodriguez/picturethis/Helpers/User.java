@@ -10,6 +10,8 @@ import com.parse.ParseObject;
  */
 public class User implements Parcelable {
 
+    static public final String INTENT_TAG = "user";
+
     private String id;
     private String googleId;
     private String name;

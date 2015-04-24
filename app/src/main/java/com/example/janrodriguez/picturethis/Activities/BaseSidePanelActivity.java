@@ -53,8 +53,8 @@ public class BaseSidePanelActivity extends BaseGameActivity implements
                 }
                 break;
             case SettingsAdapter.HISTORY_POSITION:
-                //TODO: VIEW HISTORY
-                Log.d(TAG, "Add history activity here");
+                Intent intent = new Intent(this, HistoryActivity.class);
+                startActivity(intent);
                 break;
         }
     }

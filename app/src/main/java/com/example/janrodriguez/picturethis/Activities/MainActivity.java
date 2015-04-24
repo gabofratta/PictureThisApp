@@ -78,19 +78,23 @@ public class MainActivity extends BaseSidePanelActivity {
     public void onSignInSucceeded() {
         super.onSignInSucceeded();
         Log.d(TAG, "Signed in successfully");
-        if((mRequestedClients & CLIENT_GAMES) != 0) {
+        if ((mRequestedClients & CLIENT_GAMES) != 0) {
             Games.Achievements.unlock(getApiClient(), Achievement.INSTALL_AND_SIGN_IN);
-        }else{
+        } else {
             Log.d(TAG, "Not signed into google games.");
         }
+    }
 
+    public void viewHistory(View view) {
+        Intent intent = new Intent(this, HistoryActivity.class);
+        startActivity(intent);
     }
 
     public void viewMapPage(View view){
         Intent intent = new Intent(this, MapActivity.class);
-        intent.putExtra("showRadius", true);
-        intent.putExtra("latitude", 42.3579452);
-        intent.putExtra("longitude", -71.0937901);
+        intent.putExtra(MapActivity.INTENT_SHOW_RADIUS, true);
+        intent.putExtra(MapActivity.INTENT_LATITUDE, 42.3579452);
+        intent.putExtra(MapActivity.INTENT_LONGITUDE, -71.0937901);
         startActivity(intent);
     }
 }

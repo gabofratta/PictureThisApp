@@ -8,6 +8,8 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import com.example.janrodriguez.picturethis.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -20,6 +22,10 @@ import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 
 public class MapActivity extends BaseGameActivity implements OnMapReadyCallback {
+
+    static public final String INTENT_SHOW_RADIUS = "showRadius";
+    static public final String INTENT_LATITUDE = "latitude";
+    static public final String INTENT_LONGITUDE = "longitude";
 
     static private final String TAG = "MapActivity";
     static private final double noiseMax = 0.001;
@@ -34,14 +40,17 @@ public class MapActivity extends BaseGameActivity implements OnMapReadyCallback 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
 
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+
         MapFragment mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
-            showRadius = extras.getBoolean("showRadius");
-            latitude = extras.getDouble("latitude");
-            longitude = extras.getDouble("longitude");
+            showRadius = extras.getBoolean(INTENT_SHOW_RADIUS);
+            latitude = extras.getDouble(INTENT_LATITUDE);
+            longitude = extras.getDouble(INTENT_LONGITUDE);
         } else {
             Log.e(TAG, "Called map activity without any arguments.");
         }
@@ -109,5 +118,31 @@ public class MapActivity extends BaseGameActivity implements OnMapReadyCallback 
         });
 
         dialog.show();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_map, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+
+        switch (item.getItemId()) {
+            case R.id.action_settings:
+                return true;
+
+            case R.id.home:
+                finish();
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }
