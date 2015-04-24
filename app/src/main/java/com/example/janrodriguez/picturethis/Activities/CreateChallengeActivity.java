@@ -199,9 +199,9 @@ public class CreateChallengeActivity extends BaseGameActivity {
 
                 if (currentLocation != null) {
                     Intent intent = new Intent(CreateChallengeActivity.this, MapActivity.class);
-                    intent.putExtra("showRadius", false);
-                    intent.putExtra("latitude", currentLocation.getLatitude());
-                    intent.putExtra("longitude", currentLocation.getLongitude());
+                    intent.putExtra(MapActivity.INTENT_SHOW_RADIUS, false);
+                    intent.putExtra(MapActivity.INTENT_LATITUDE, currentLocation.getLatitude());
+                    intent.putExtra(MapActivity.INTENT_LONGITUDE, currentLocation.getLongitude());
                     startActivity(intent);
                 } else {
                     Toast.makeText(getApplicationContext(), getString(R.string.location_missing), Toast.LENGTH_SHORT).show();

@@ -47,6 +47,8 @@
     <string name="challenged_missing">Challenged user(s) missing</string>
     <string name="location_missing">Location is missing</string>
     <string name="title_missing">Title is missing</string>
-    <string name="title_activity_map">MapActivity</string>
+    <string name="title_activity_map">Map</string>
     <string name="marker">Marker</string>
+    <string name="title_activity_history">History</string>
+    <string name="menu_add_item">Menu add item</string>
 </resources>

@@ -21,6 +21,10 @@ import com.google.android.gms.maps.model.LatLng;
 
 public class MapActivity extends BaseGameActivity implements OnMapReadyCallback {
 
+    static public final String INTENT_SHOW_RADIUS = "showRadius";
+    static public final String INTENT_LATITUDE = "latitude";
+    static public final String INTENT_LONGITUDE = "longitude";
+
     static private final String TAG = "MapActivity";
     static private final double noiseMax = 0.001;
     static private final int radius = 200; // meters
@@ -39,9 +43,9 @@ public class MapActivity extends BaseGameActivity implements OnMapReadyCallback 
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
-            showRadius = extras.getBoolean("showRadius");
-            latitude = extras.getDouble("latitude");
-            longitude = extras.getDouble("longitude");
+            showRadius = extras.getBoolean(INTENT_SHOW_RADIUS);
+            latitude = extras.getDouble(INTENT_LATITUDE);
+            longitude = extras.getDouble(INTENT_LONGITUDE);
         } else {
             Log.e(TAG, "Called map activity without any arguments.");
         }
