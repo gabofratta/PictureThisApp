@@ -30,6 +30,12 @@ public class BaseSidePanelActivity extends BaseGameActivity implements
     @Override
     public void onClick(View view, int position) {
         Log.d(TAG, "Clicked item at position: " + position);
+
+        switch (position) {
+            case SettingsAdapter.LOG_OUT_POSITION:
+                //TODO: ADD LOGOUT FUNCTIONALITY
+                Log.d(TAG, "Clicked logout");
+        }
     }
 
     @Override
