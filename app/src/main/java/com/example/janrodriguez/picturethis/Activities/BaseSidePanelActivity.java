@@ -3,7 +3,6 @@ package com.example.janrodriguez.picturethis.Activities;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -13,7 +12,7 @@ import android.view.View;
 import com.example.janrodriguez.picturethis.Helpers.SettingsAdapter;
 import com.example.janrodriguez.picturethis.R;
 
-public class BaseSidePanelActivity extends AppCompatActivity implements
+public class BaseSidePanelActivity extends BaseGameActivity implements
         SettingsAdapter.OnItemClickListener{
 
     private static String TAG = "BaseSidePanelActvity";
