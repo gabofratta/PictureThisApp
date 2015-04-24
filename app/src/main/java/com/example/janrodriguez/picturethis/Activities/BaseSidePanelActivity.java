@@ -40,6 +40,7 @@ public class BaseSidePanelActivity extends BaseGameActivity implements
                 getApiClient().disconnect();
                 Intent loginIntent = new Intent(this, LoginActivity.class);
                 loginIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                finish();
                 startActivity(loginIntent);
         }
     }
