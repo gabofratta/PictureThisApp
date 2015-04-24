@@ -1,6 +1,8 @@
 package com.example.janrodriguez.picturethis.Activities;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.location.Location;
@@ -9,6 +11,7 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.provider.Settings;
 import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.Menu;
@@ -21,6 +24,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -64,6 +68,7 @@ public class CreateChallengeActivity extends BaseGameActivity {
 
     private ResultCallback<People.LoadPeopleResult> resultCallback;
     private Uri currentPictureUri;
+    private Uri tempPictureUri;
     private boolean listViewOpen;
 
     private LocationListener locationListener;
@@ -75,10 +80,12 @@ public class CreateChallengeActivity extends BaseGameActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_challenge);
 
-        initialize();
+        initializeUsersList();
+        initializeUiComponents();
+        initializeLocationServices();
     }
 
-    private void initialize() {
+    private void initializeUsersList() {
         listViewOpen = false;
 
         resultCallback = new ResultCallback<People.LoadPeopleResult>() {
@@ -114,38 +121,12 @@ public class CreateChallengeActivity extends BaseGameActivity {
                         }
                     });
                 } else {
-                    Log.e(TAG, "Error requesting visible circles: " + peopleData.getStatus());
+                    Log.e(TAG, "Error requesting circles: " + peopleData.getStatus());
                 }
             }
         };
 
         Plus.PeopleApi.loadVisible(getApiClient(), null).setResultCallback(resultCallback);
-
-        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-
-        locationListener = new LocationListener() {
-            @Override
-            public void onLocationChanged(Location location) {
-                if (currentLocation == null) {
-                    currentLocation = new MyGeoPoint();
-                    CheckBox checkLocation = (CheckBox) findViewById(R.id.checkLocation);
-                    checkLocation.setChecked(true);
-                }
-                currentLocation.setLatitude(location.getLatitude());
-                currentLocation.setLongitude(location.getLongitude());
-            }
-
-            @Override
-            public void onStatusChanged(String provider, int status, Bundle extras) {}
-
-            @Override
-            public void onProviderEnabled(String provider) {}
-
-            @Override
-            public void onProviderDisabled(String provider) {}
-        };
-
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
 
         challengedList = new ArrayList<User>();
         usersList = new ArrayList<User>();
@@ -154,6 +135,30 @@ public class CreateChallengeActivity extends BaseGameActivity {
         usersListView = (ListView) findViewById(R.id.usersListView);
         usersListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
         usersListView.setAdapter(usersAdapter);
+    }
+
+    private void initializeUiComponents() {
+        RelativeLayout relativeLayout = (RelativeLayout) findViewById(R.id.root);
+        relativeLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (listViewOpen) {
+                    closeListViewAndSaveSelection();
+                    return;
+                }
+            }
+        });
+
+        EditText titleEditText = (EditText) findViewById(R.id.titleEditText);
+        titleEditText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (listViewOpen) {
+                    closeListViewAndSaveSelection();
+                    return;
+                }
+            }
+        });
 
         imageButton = (ImageButton) findViewById(R.id.picture);
         imageButton.setOnClickListener(new View.OnClickListener() {
@@ -171,10 +176,10 @@ public class CreateChallengeActivity extends BaseGameActivity {
                     Log.e(TAG, "Error: " + e.getMessage());
                 }
 
-                currentPictureUri = Uri.fromFile(imageFile);
+                tempPictureUri = Uri.fromFile(imageFile);
                 Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                 if (intent.resolveActivity(getPackageManager()) != null && imageFile != null) {
-                    intent.putExtra(MediaStore.EXTRA_OUTPUT, currentPictureUri);
+                    intent.putExtra(MediaStore.EXTRA_OUTPUT, tempPictureUri);
                     startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
                 }
             }
@@ -200,7 +205,7 @@ public class CreateChallengeActivity extends BaseGameActivity {
                     intent.setData(geoLocation);
                     startActivity(intent);
                 } else {
-                    Toast.makeText(getApplicationContext(), "Location is missing", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), getString(R.string.location_missing), Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -231,16 +236,16 @@ public class CreateChallengeActivity extends BaseGameActivity {
                 String title = titleField.getText().toString();
 
                 if (title.trim().length() == 0) {
-                    Toast.makeText(getApplicationContext(), "Title is missing", Toast.LENGTH_SHORT).show();
-                    return;
-                } else if (currentPictureUri == null) {
-                    Toast.makeText(getApplicationContext(), "Picture is missing", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), getString(R.string.title_missing), Toast.LENGTH_SHORT).show();
                     return;
                 } else if (currentLocation == null) {
-                    Toast.makeText(getApplicationContext(), "Location is missing", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), getString(R.string.location_missing), Toast.LENGTH_SHORT).show();
                     return;
                 } else if (challengedList.size() == 0) {
-                    Toast.makeText(getApplicationContext(), "Challenged user(s) missing", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), getString(R.string.challenged_missing), Toast.LENGTH_SHORT).show();
+                    return;
+                } else if (currentPictureUri == null) {
+                    Toast.makeText(getApplicationContext(), getString(R.string.picture_missing), Toast.LENGTH_SHORT).show();
                     return;
                 }
 
@@ -248,7 +253,7 @@ public class CreateChallengeActivity extends BaseGameActivity {
                 ParseHelper.CreateChallenge(challenge, new SaveCallback() {
                     public void done(ParseException e) {
                         if (e == null) {
-                            Toast.makeText(getApplicationContext(), "Challenge created", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), getString(R.string.challenge_created), Toast.LENGTH_SHORT).show();
                         } else {
                             Log.e(TAG, "Error: " + e.getMessage());
                         }
@@ -260,8 +265,53 @@ public class CreateChallengeActivity extends BaseGameActivity {
         });
     }
 
+    private void initializeLocationServices() {
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
+        if (!locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+            AlertDialog.Builder dialog = new AlertDialog.Builder(CreateChallengeActivity.this);
+            dialog.setMessage(getString(R.string.enable_network_location));
+            dialog.setPositiveButton(getString(R.string.change_settings), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+                    Intent intent = new Intent( Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                    startActivity(intent);
+                }
+            });
+            dialog.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface paramDialogInterface, int paramInt) {}
+            });
+            dialog.show();
+        }
+
+        locationListener = new LocationListener() {
+            @Override
+            public void onLocationChanged(Location location) {
+                if (currentLocation == null) {
+                    currentLocation = new MyGeoPoint();
+                    CheckBox checkLocation = (CheckBox) findViewById(R.id.checkLocation);
+                    checkLocation.setChecked(true);
+                }
+                currentLocation.setLatitude(location.getLatitude());
+                currentLocation.setLongitude(location.getLongitude());
+            }
+
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle extras) {}
+
+            @Override
+            public void onProviderEnabled(String provider) {}
+
+            @Override
+            public void onProviderDisabled(String provider) {}
+        };
+
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
+    }
+
     private void closeListViewAndSaveSelection() {
-        StringBuilder selectedUsersText = new StringBuilder();
+        StringBuilder usersDisplayText = new StringBuilder();
         SparseBooleanArray checked = usersListView.getCheckedItemPositions();
         challengedList.clear();
 
@@ -270,15 +320,14 @@ public class CreateChallengeActivity extends BaseGameActivity {
 
             if (checked.valueAt(i)) {
                 User user = usersAdapter.getItem(position);
-                selectedUsersText.append(user.getName()).append(", ");
+                usersDisplayText.append(user.getName()).append(", ");
                 challengedList.add(user);
             }
         }
 
-        if (selectedUsersText.length() > 2) {
-            TextView usersTextView = (TextView) findViewById(R.id.usersTextView);
-            usersTextView.setText(selectedUsersText.substring(0, selectedUsersText.length() - 2));
-        }
+        TextView usersTextView = (TextView) findViewById(R.id.usersTextView);
+        String displayText = (usersDisplayText.length() > 2) ? usersDisplayText.substring(0, usersDisplayText.length() - 2) : "";
+        usersTextView.setText(displayText);
 
         usersListView.setVisibility(View.INVISIBLE);
         listViewOpen = false;
@@ -287,6 +336,7 @@ public class CreateChallengeActivity extends BaseGameActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK && requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
+            currentPictureUri = tempPictureUri;
             Bitmap bitmap = null;
             try {
                 bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), currentPictureUri);
@@ -299,8 +349,7 @@ public class CreateChallengeActivity extends BaseGameActivity {
                 imageButton.setImageBitmap(decodedBitmap);
             }
         } else if (resultCode == RESULT_CANCELED && requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
-            ImageHelper.DeleteImageFile(currentPictureUri);
-            currentPictureUri = null;
+            ImageHelper.DeleteImageFile(tempPictureUri);
         }
     }
 

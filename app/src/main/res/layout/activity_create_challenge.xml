@@ -20,14 +20,17 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Title"
-            android:id="@+id/textView9" />
+            android:text="@string/title"
+            android:id="@+id/textView9"
+            android:singleLine="false" />
 
         <EditText
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:maxLength="30"
             android:id="@+id/titleEditText"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:singleLine="true" />
     </LinearLayout>
 
     <LinearLayout
@@ -42,8 +45,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Location"
+            android:text="@string/location"
             android:id="@+id/textView10"
             android:layout_below="@+id/linearLayout"
             android:layout_alignParentLeft="true"
@@ -56,12 +58,12 @@
             android:id="@+id/checkLocation"
             android:layout_below="@+id/linearLayout"
             android:layout_centerHorizontal="true"
-            android:enabled="true" />
+            android:enabled="false" />
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="View Map"
+            android:text="@string/view_map"
             android:id="@+id/viewMapBtn" />
 
     </LinearLayout>
@@ -81,13 +83,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Users"
+            android:text="@string/users"
             android:id="@+id/textView11" />
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Select"
+            android:text="@string/select"
             android:id="@+id/selectUsersBtn" />
 
     </LinearLayout>
@@ -95,7 +97,7 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Send Challenge"
+        android:text="@string/send_challenge"
         android:id="@+id/sendChallengeBtn"
         android:layout_below="@+id/picture"
         android:layout_centerHorizontal="true" />
@@ -114,7 +116,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Medium Text"
         android:id="@+id/usersTextView"
         android:layout_toRightOf="@+id/linearLayout3"
         android:layout_alignTop="@+id/linearLayout3"
@@ -129,8 +130,7 @@
         android:layout_toRightOf="@+id/linearLayout3"
         android:layout_alignTop="@+id/linearLayout3"
         android:background="#ffffffff"
-        android:layout_alignParentEnd="false"
-        android:layout_alignBottom="@+id/picture" />
+        android:layout_alignParentEnd="false" />
 
 </RelativeLayout>
 

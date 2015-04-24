@@ -16,6 +16,7 @@ import java.util.Date;
 public class ImageHelper {
 
     static private final String PICTURE_THIS_FOLDER = "/PictureThis";
+    static private final String TAG = "ImageHelper";
 
     static public File CreateImageFile() throws IOException {
         String storageDirPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).toString() + PICTURE_THIS_FOLDER ;
@@ -73,5 +74,4 @@ public class ImageHelper {
 
         return inSampleSize;
     }
-
 }
