@@ -16,4 +16,19 @@
     <string name="app_misconfigured">The application is incorrectly configured. Check that the package name and signing certificate match the client ID created in Developer Console. Also, if the application is not yet published, check that the account you are trying to sign in with is listed as a tester account. See logs for more information.</string>
     <string name="license_failed">License check failed.</string>
     <string name="unknown_error">Unknown error.</string>
+    <string name="sign_out">Sign Out</string>
+    <string name="title">Title</string>
+    <string name="location">Location</string>
+    <string name="view_map">View Map</string>
+    <string name="users">Users</string>
+    <string name="select">Select</string>
+    <string name="send_challenge">Send Challenge</string>
+    <string name="enable_network_location">Please enable network location services in order to create a new challenge.</string>
+    <string name="change_settings">Change Settings</string>
+    <string name="cancel">Cancel</string>
+    <string name="challenge_created">Challenge created</string>
+    <string name="picture_missing">Picture is missing</string>
+    <string name="challenged_missing">Challenged user(s) missing</string>
+    <string name="location_missing">Location is missing</string>
+    <string name="title_missing">Title is missing</string>
 </resources>

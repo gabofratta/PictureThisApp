@@ -59,6 +59,7 @@ public class MainActivity extends BaseGameActivity {
 //                startActivity(intent);
             }
         });
+        findViewById(R.id.sign_out_button).setOnClickListener(this);
     }
 
     @Override

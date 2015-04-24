@@ -75,6 +75,7 @@ public abstract class BaseGameActivity extends FragmentActivity implements
 
     private final static String TAG = "BaseGameActivity";
     protected boolean mDebugLog = false;
+    protected boolean mConnectOnStart = true;
 
     /**
      * Constructs a BaseGameActivity with default client (GamesClient).
@@ -112,7 +113,7 @@ public abstract class BaseGameActivity extends FragmentActivity implements
         if (mHelper == null) {
             mHelper = new GameHelper(this, mRequestedClients);
             mHelper.enableDebugLog(mDebugLog);
-            mHelper.setConnectOnStart(false);
+            mHelper.setConnectOnStart(mConnectOnStart);
         }
         return mHelper;
     }
@@ -240,6 +241,14 @@ public abstract class BaseGameActivity extends FragmentActivity implements
         switch (view.getId()) {
             case R.id.sign_in_button:
                 mHelper.beginUserInitiatedSignIn();
+                break;
+            case R.id.sign_out_button:
+                Log.d(TAG, "Signing out");
+                Intent loginIntent = new Intent(BaseGameActivity.this, LoginActivity.class);
+                loginIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(loginIntent);
+                break;
+
         }
     }
 
