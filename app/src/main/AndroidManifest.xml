@@ -33,12 +33,12 @@
             android:label="@string/app_name" >
         </activity>
         <activity
-            android:name=".Activities.ReceivedChallengeActivity"
+            android:name=".Activities.ViewResponseActivity"
             android:label="@string/title_activity_received"
             android:parentActivityName=".Activities.MainActivity">
         </activity>
         <activity
-            android:name=".Activities.SentChallengeActivity"
+            android:name=".Activities.ViewChallengeActivity"
             android:label="@string/title_activity_sent"
             android:parentActivityName=".Activities.MainActivity">
         </activity>
@@ -65,14 +65,6 @@
             android:name=".Activities.HistoryActivity"
             android:label="@string/title_activity_history"
             android:parentActivityName=".Activities.MainActivity" >
-        </activity>
-        <activity
-            android:name=".Activities.ViewChallengeActivity"
-            android:label="@string/title_activity_view_challenge"
-            android:parentActivityName=".Activities.CreateChallengeActivity" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.janrodriguez.picturethis.Activities.CreateChallengeActivity" />
         </activity>
         <!--android:theme="@style/AppThemeNoActionBar">-->
     </application>
