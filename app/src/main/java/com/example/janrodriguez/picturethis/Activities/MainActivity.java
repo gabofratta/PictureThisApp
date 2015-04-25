@@ -27,7 +27,6 @@ public class MainActivity extends BaseSidePanelActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
         //MAKE SURE TO SET UP SIDE PANEL IN ORDER FOR SIDE PANEL TO WORK
         setUpSidePanel();
 
