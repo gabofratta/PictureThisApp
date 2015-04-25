@@ -24,6 +24,7 @@
         <meta-data
             android:name="com.google.android.gms.games.APP_ID"
             android:value="@string/app_id" />
+
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyC1Hr2VmBjN2jrGz_SKlsYh8kID_FOxnto" />
@@ -50,6 +51,7 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
         </activity>
         <activity
             android:name=".Activities.CreateChallengeActivity"
@@ -74,6 +76,12 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.janrodriguez.picturethis.Activities.CreateChallengeActivity" />
         </activity>
+        <activity
+            android:name=".Activities.ChallengeFeedActivity"
+            android:label="@string/title_activity_challenge_feed" >
+
+        </activity>
+
         <!--android:theme="@style/AppThemeNoActionBar">-->
     </application>
 

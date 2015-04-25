@@ -106,4 +106,9 @@ public class MainActivity extends BaseSidePanelActivity {
         intent.putExtra(MapActivity.INTENT_LONGITUDE, -71.0937901);
         startActivity(intent);
     }
+
+    public void viewChallengeFeedActivity(View view) {
+        Intent intent = new Intent(this, ChallengeFeedActivity.class);
+        startActivity(intent);
+    }
 }
