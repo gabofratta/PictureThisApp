@@ -1,5 +1,6 @@
 package com.example.janrodriguez.picturethis.Activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -154,7 +155,6 @@ public class HistoryActivity extends AppCompatActivity implements ActionBar.TabL
             @Override
             public void run() {
                 populateChallengeListViews();
-                Toast.makeText(getApplicationContext(), "refreshing", Toast.LENGTH_SHORT).show();
                 refreshHandler.postDelayed(this, REFRESH_RATE);
             }
         };
@@ -265,9 +265,9 @@ public class HistoryActivity extends AppCompatActivity implements ActionBar.TabL
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view,
                                         int position, long id) {
-//                    Intent intent = new Intent(HistoryActivity.class, targetClass);
-//                    intent.putExtra(Challenge.INTENT_TAG, receivedChallenges.get(position));
-//                    startActivity(intent);
+                    Intent intent = new Intent(getActivity(), ViewChallengeActivity.class);
+                    intent.putExtra(Challenge.INTENT_TAG, receivedChallenges.get(position));
+                    startActivity(intent);
                 }
             });
 
@@ -306,9 +306,9 @@ public class HistoryActivity extends AppCompatActivity implements ActionBar.TabL
 
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                    Intent intent = new Intent(HistoryActivity.class, targetClass);
-//                    intent.putExtra(Challenge.INTENT_TAG, sentChallenges.get(position));
-//                    startActivity(intent);
+                    Intent intent = new Intent(getActivity(), ViewResponseActivity.class);
+                    intent.putExtra(Challenge.INTENT_TAG, sentChallenges.get(position));
+                    startActivity(intent);
                 }
             });
 

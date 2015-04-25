@@ -35,13 +35,11 @@
         </activity>
         <activity
             android:name=".Activities.ViewResponseActivity"
-            android:label="@string/title_activity_received"
-            android:parentActivityName=".Activities.MainActivity">
+            android:label="@string/title_activity_received">
         </activity>
         <activity
             android:name=".Activities.ViewChallengeActivity"
-            android:label="@string/title_activity_sent"
-            android:parentActivityName=".Activities.MainActivity">
+            android:label="@string/title_activity_sent">
         </activity>
         <activity
             android:name=".Activities.LoginActivity"
