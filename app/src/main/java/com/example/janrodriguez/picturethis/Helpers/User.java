@@ -72,6 +72,7 @@ public class User implements Parcelable {
         ParseObject userPO = new ParseObject(ParseTableConstants.USER_TABLE);
         userPO.put(ParseTableConstants.USER_NAME, getName());
         userPO.put(ParseTableConstants.USER_GOOGLE_ID, getGoogleId());
+        userPO.put(ParseTableConstants.USER_SCORE, getGoogleId());
 
         return userPO;
     }

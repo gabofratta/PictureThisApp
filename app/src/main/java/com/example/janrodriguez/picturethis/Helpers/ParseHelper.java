@@ -42,6 +42,17 @@ public class ParseHelper {
         userPO.saveInBackground(callback);
     }
 
+    static public void UpdateUserScore(User user, SaveCallback callback) {
+        if (user.getId() == null) {
+            Log.e(TAG, "Error: Cannot create a ParseObject from a User that does not have an id");
+            return;
+        }
+
+        ParseObject userPO = ParseObject.createWithoutData(ParseTableConstants.USER_TABLE, user.getId());
+        userPO.put(ParseTableConstants.USER_SCORE, user.getScore());
+        userPO.saveInBackground(callback);
+    }
+
     static private void UpdateResponseStatus(Response response, String status, SaveCallback callback) {
         if (response.getId() == null) {
             Log.e(TAG, "Error: Cannot create a ParseObject from a Response that does not have an id");
@@ -148,6 +159,27 @@ public class ParseHelper {
 
     static public void GetAcceptedResponseToChallenge(Challenge challenge, FindCallback<ParseObject> callback) {
         GetResponsesToChallenge(challenge, Response.STATUS_ACCEPTED, callback);
+    }
+
+    static public void GetUsersLatestResponseToChallenge(User user, Challenge challenge, FindCallback<ParseObject> callback) {
+        if (challenge.getId() == null) {
+            Log.e(TAG, "Error: Cannot create a ParseObject from a Challenge that does not have an id");
+            return;
+        } else if (user.getId() == null) {
+            Log.e(TAG, "Error: Cannot create a ParseObject from a User that does not have an id");
+            return;
+        }
+
+        ParseObject challengePO = ParseObject.createWithoutData(ParseTableConstants.CHALLENGE_TABLE, challenge.getId());
+        ParseObject responderPO = ParseObject.createWithoutData(ParseTableConstants.USER_TABLE, user.getId());
+        ParseQuery<ParseObject> query = ParseQuery.getQuery(ParseTableConstants.RESPONSE_TABLE);
+        query.include(ParseTableConstants.RESPONSE_CHALLENGE);
+        query.include(ParseTableConstants.RESPONSE_RESPONDER);
+        query.whereEqualTo(ParseTableConstants.RESPONSE_CHALLENGE, challengePO);
+        query.whereEqualTo(ParseTableConstants.RESPONSE_RESPONDER, responderPO);
+        query.orderByAscending(ParseTableConstants.RESPONSE_CREATED_AT);
+        query.setLimit(1);
+        query.findInBackground(callback);
     }
 
     static public void GetUserByGoogleId(User user, FindCallback<ParseObject> callback) {
