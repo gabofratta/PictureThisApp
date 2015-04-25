@@ -56,4 +56,5 @@
     <string name="title_activity_history">History</string>
     <string name="menu_add_item">Menu add item</string>
     <string name="title_activity_view_challenge">ViewChallengeActivity</string>
+    <string name="title_activity_test_feed">Test Challenges</string>
 </resources>

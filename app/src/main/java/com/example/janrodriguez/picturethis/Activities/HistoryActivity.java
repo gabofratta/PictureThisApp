@@ -17,10 +17,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.example.janrodriguez.picturethis.Helpers.Challenge;
+import com.example.janrodriguez.picturethis.Helpers.CustomListAdapter;
 import com.example.janrodriguez.picturethis.Helpers.ParseHelper;
+import com.example.janrodriguez.picturethis.Layouts.SlidingTabLayout;
 import com.example.janrodriguez.picturethis.R;
 import com.parse.FindCallback;
 import com.parse.ParseException;
@@ -50,6 +51,8 @@ public class HistoryActivity extends AppCompatActivity implements ActionBar.TabL
      */
     ViewPager mViewPager;
 
+    SlidingTabLayout mSlidingTabLayout;
+
     private static ArrayList<Challenge> sentChallenges = new ArrayList<Challenge>();
     private static CustomListAdapter sentChallengeAdapter;
 
@@ -75,8 +78,6 @@ public class HistoryActivity extends AppCompatActivity implements ActionBar.TabL
     private void initializeTabs() {
         // Set up the action bar.
         final ActionBar actionBar = getSupportActionBar();
-        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-        actionBar.setDisplayShowTitleEnabled(false);
 
 
         // Create the adapter that will return a fragment for each of the three
@@ -110,6 +111,10 @@ public class HistoryActivity extends AppCompatActivity implements ActionBar.TabL
                             .setText(mSectionsPagerAdapter.getPageTitle(i))
                             .setTabListener(this));
         }
+
+        mSlidingTabLayout = (SlidingTabLayout)findViewById(R.id.sliding_tabs);
+        mSlidingTabLayout.setDistributeEvenly(true);
+        mSlidingTabLayout.setViewPager(mViewPager);
     }
 
     private void populateChallengeListViews() {

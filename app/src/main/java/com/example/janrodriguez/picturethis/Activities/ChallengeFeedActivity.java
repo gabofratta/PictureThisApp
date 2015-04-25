@@ -8,7 +8,6 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,7 +17,9 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.example.janrodriguez.picturethis.Helpers.Challenge;
+import com.example.janrodriguez.picturethis.Helpers.CustomListAdapter;
 import com.example.janrodriguez.picturethis.Helpers.ParseHelper;
+import com.example.janrodriguez.picturethis.Layouts.SlidingTabLayout;
 import com.example.janrodriguez.picturethis.R;
 import com.parse.FindCallback;
 import com.parse.ParseException;
@@ -28,7 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class ChallengeFeedActivity extends AppCompatActivity implements ActionBar.TabListener {
+public class ChallengeFeedActivity extends BaseSidePanelActivity implements ActionBar.TabListener {
 
     static private final String TAG = "ChallengeFeedActivity";
 
@@ -48,6 +49,8 @@ public class ChallengeFeedActivity extends AppCompatActivity implements ActionBa
      */
     ViewPager mViewPager;
 
+    SlidingTabLayout mSlidingTabLayout;
+
     static ArrayList<Challenge> listOfReceivedChallenges = new ArrayList<>();
     static ArrayList<Challenge> listOfSentChallenges = new ArrayList<>();
     static CustomListAdapter adapter1;
@@ -60,10 +63,11 @@ public class ChallengeFeedActivity extends AppCompatActivity implements ActionBa
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_challenge_feed);
 
+        setUpSidePanel();
+
         // Set up the action bar.
         final ActionBar actionBar = getSupportActionBar();
-        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-        actionBar.setDisplayShowTitleEnabled(false);
+//        actionBar.setDisplayShowTitleEnabled(false);
 
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
@@ -94,6 +98,11 @@ public class ChallengeFeedActivity extends AppCompatActivity implements ActionBa
                             .setText(mSectionsPagerAdapter.getPageTitle(i))
                             .setTabListener(this));
         }
+
+        mSlidingTabLayout = (SlidingTabLayout)findViewById(R.id.sliding_tabs);
+        mSlidingTabLayout.setDistributeEvenly(true);
+        mSlidingTabLayout.setViewPager(mViewPager);
+
         fetchData();
     }
 
@@ -210,11 +219,7 @@ public class ChallengeFeedActivity extends AppCompatActivity implements ActionBa
     }
 
     public static class ReceivedChallengeFeedFragment extends Fragment {
-
-
         static ListView listView;
-
-
 
         public static ReceivedChallengeFeedFragment newInstance() {
             ReceivedChallengeFeedFragment fragment = new ReceivedChallengeFeedFragment();

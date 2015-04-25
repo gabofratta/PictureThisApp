@@ -66,7 +66,6 @@
         <activity
             android:name=".Activities.ChallengeFeedActivity"
             android:label="@string/title_activity_challenge_feed" >
-
         </activity>
 
         <!--android:theme="@style/AppThemeNoActionBar">-->
