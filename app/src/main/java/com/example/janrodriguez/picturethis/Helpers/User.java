@@ -2,8 +2,13 @@ package com.example.janrodriguez.picturethis.Helpers;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.games.Games;
+import com.parse.ParseException;
 import com.parse.ParseObject;
+import com.parse.SaveCallback;
 
 /**
  * Created by janrodriguez on 4/18/15.
@@ -11,6 +16,8 @@ import com.parse.ParseObject;
 public class User implements Parcelable {
 
     static public final String INTENT_TAG = "user";
+
+    static private final String TAG = "UserClass";
 
     private String id;
     private String googleId;
@@ -96,8 +103,20 @@ public class User implements Parcelable {
 
     /**\Getters**/
 
-    public void setScore(int score){
-        this.score = score;
+    public void incrementScore(int amount){
+        this.score += amount;
+    }
+
+    public void updateScore(final GoogleApiClient client) {
+        ParseHelper.UpdateUserScore(this, new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                if(e != null) {
+                    Log.e(TAG, "Error setting score: " + e.getMessage());
+                }
+                Games.Leaderboards.submitScore(client, Leaderboard.ID, getScore());
+            }
+        });
     }
     @Override
     public String toString() {
