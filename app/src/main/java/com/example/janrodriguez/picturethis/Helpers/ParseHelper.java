@@ -143,10 +143,22 @@ public class ParseHelper {
             return;
         }
 
+        String challengeDotChallenger = new StringBuilder(ParseTableConstants.RESPONSE_CHALLENGE)
+                .append(".")
+                .append(ParseTableConstants.CHALLENGE_CHALLENGER)
+                .toString();
+
+        String challengeDotChallenged = new StringBuilder(ParseTableConstants.RESPONSE_CHALLENGE)
+                .append(".")
+                .append(ParseTableConstants.CHALLENGE_CHALLENGED)
+                .toString();
+
         ParseObject challengePO = ParseObject.createWithoutData(ParseTableConstants.CHALLENGE_TABLE, challenge.getId());
         ParseQuery<ParseObject> query = ParseQuery.getQuery(ParseTableConstants.RESPONSE_TABLE);
         query.include(ParseTableConstants.RESPONSE_CHALLENGE);
         query.include(ParseTableConstants.RESPONSE_RESPONDER);
+        query.include(challengeDotChallenger);
+        query.include(challengeDotChallenged);
         query.whereEqualTo(ParseTableConstants.RESPONSE_CHALLENGE, challengePO);
         query.whereEqualTo(ParseTableConstants.RESPONSE_STATUS, status);
         query.orderByAscending(ParseTableConstants.RESPONSE_CREATED_AT);
@@ -170,11 +182,23 @@ public class ParseHelper {
             return;
         }
 
+        String challengeDotChallenger = new StringBuilder(ParseTableConstants.RESPONSE_CHALLENGE)
+                .append(".")
+                .append(ParseTableConstants.CHALLENGE_CHALLENGER)
+                .toString();
+
+        String challengeDotChallenged = new StringBuilder(ParseTableConstants.RESPONSE_CHALLENGE)
+                .append(".")
+                .append(ParseTableConstants.CHALLENGE_CHALLENGED)
+                .toString();
+
         ParseObject challengePO = ParseObject.createWithoutData(ParseTableConstants.CHALLENGE_TABLE, challenge.getId());
         ParseObject responderPO = ParseObject.createWithoutData(ParseTableConstants.USER_TABLE, user.getId());
         ParseQuery<ParseObject> query = ParseQuery.getQuery(ParseTableConstants.RESPONSE_TABLE);
         query.include(ParseTableConstants.RESPONSE_CHALLENGE);
         query.include(ParseTableConstants.RESPONSE_RESPONDER);
+        query.include(challengeDotChallenger);
+        query.include(challengeDotChallenged);
         query.whereEqualTo(ParseTableConstants.RESPONSE_CHALLENGE, challengePO);
         query.whereEqualTo(ParseTableConstants.RESPONSE_RESPONDER, responderPO);
         query.orderByAscending(ParseTableConstants.RESPONSE_CREATED_AT);
