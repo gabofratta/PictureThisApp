@@ -110,7 +110,6 @@
     <orderEntry type="library" exported="" name="play-services-games-7.0.0" level="project" />
     <orderEntry type="library" exported="" name="play-services-nearby-7.0.0" level="project" />
     <orderEntry type="library" exported="" name="support-v4-22.1.0" level="project" />
-    <orderEntry type="library" exported="" name="cardview-v7-22.1.0" level="project" />
     <orderEntry type="library" exported="" name="appcompat-v7-22.1.0" level="project" />
   </component>
 </module>
