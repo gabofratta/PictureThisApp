@@ -19,10 +19,11 @@ public class SettingsAdapter extends RecyclerView.Adapter <RecyclerView.ViewHold
     private static final int LOG_OUT_TYPE = 0;
     private static final int REGULAR_TYPE = 1;
 
-    private static final String[] mSettingsArray = {"History", "Achievements", "Log Out"};
+    private static final String[] mSettingsArray = {"History", "Achievements", "Leaderboard", "Log Out"};
     public static final int HISTORY_POSITION = 0;
     public static final int ACHIEVEMENTS_POSITION = 1;
-    public static final int LOG_OUT_POSITION = 2;
+    public static final int LEADERBOARD_POSITION = 2;
+    public static final int LOG_OUT_POSITION = 3;
 
     private OnItemClickListener mListener;
 
@@ -57,6 +58,7 @@ public class SettingsAdapter extends RecyclerView.Adapter <RecyclerView.ViewHold
             TextView tv = (TextView)v.findViewById(android.R.id.text1);
             ImageView iv = (ImageView)v.findViewById(R.id.drawerImage);
             return new ViewHolder(v, tv, iv);
+
         }
     }
 
@@ -83,7 +85,7 @@ public class SettingsAdapter extends RecyclerView.Adapter <RecyclerView.ViewHold
                 viewHolder = (ViewHolder) holder;
                 viewHolder.mImageView.setImageResource(R.drawable.games_achievements);
                 viewHolder.mTextView.setText(mSettingsArray[position]);
-                viewHolder.mTextView.setOnClickListener(new View.OnClickListener() {
+                viewHolder.mLayout.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         mListener.onClick(v, position);
@@ -93,7 +95,17 @@ public class SettingsAdapter extends RecyclerView.Adapter <RecyclerView.ViewHold
             case HISTORY_POSITION:
                 viewHolder.mImageView.setImageResource(R.drawable.ic_action_view_as_list);
                 viewHolder.mTextView.setText(mSettingsArray[position]);
-                viewHolder.mTextView.setOnClickListener(new View.OnClickListener() {
+                viewHolder.mLayout.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mListener.onClick(v, position);
+                    }
+                });
+                break;
+            case LEADERBOARD_POSITION:
+                viewHolder.mImageView.setImageResource(R.drawable.games_leaderboards);
+                viewHolder.mTextView.setText(mSettingsArray[position]);
+                viewHolder.mLayout.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         mListener.onClick(v, position);
@@ -120,6 +132,7 @@ public class SettingsAdapter extends RecyclerView.Adapter <RecyclerView.ViewHold
             mTextView = textView;
             mImageView = imageView;
         }
+
     }
 
     public static class LogOutViewHolder extends RecyclerView.ViewHolder {
