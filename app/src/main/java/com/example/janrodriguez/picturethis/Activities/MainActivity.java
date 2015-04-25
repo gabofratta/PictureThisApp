@@ -3,9 +3,7 @@ package com.example.janrodriguez.picturethis.Activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
 import android.view.View;
-import android.widget.Button;
 
 import com.example.janrodriguez.picturethis.Helpers.Achievement;
 import com.example.janrodriguez.picturethis.R;
@@ -95,6 +93,11 @@ public class MainActivity extends BaseSidePanelActivity {
         intent.putExtra(MapActivity.INTENT_SHOW_RADIUS, true);
         intent.putExtra(MapActivity.INTENT_LATITUDE, 42.3579452);
         intent.putExtra(MapActivity.INTENT_LONGITUDE, -71.0937901);
+        startActivity(intent);
+    }
+
+    public void viewChallengeFeedActivity(View view) {
+        Intent intent = new Intent(this, ChallengeFeedActivity.class);
         startActivity(intent);
     }
 }

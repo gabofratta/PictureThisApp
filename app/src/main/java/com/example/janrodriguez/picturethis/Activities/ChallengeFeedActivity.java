@@ -7,7 +7,8 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,11 +16,21 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.example.janrodriguez.picturethis.Helpers.Challenge;
+import com.example.janrodriguez.picturethis.Helpers.ParseHelper;
 import com.example.janrodriguez.picturethis.R;
+import com.parse.FindCallback;
+import com.parse.ParseException;
+import com.parse.ParseObject;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
-public class ChallengeFeedActivity extends ActionBarActivity implements ActionBar.TabListener {
+public class ChallengeFeedActivity extends AppCompatActivity implements ActionBar.TabListener {
+
+    static private final String TAG = "ChallengeFeedActivity";
+
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -35,6 +46,12 @@ public class ChallengeFeedActivity extends ActionBarActivity implements ActionBa
      * The {@link ViewPager} that will host the section contents.
      */
     ViewPager mViewPager;
+
+    static ArrayList<Challenge> listOfReceivedChallenges;
+    static ArrayList<Challenge> listOfSentChallenges;
+    static CustomListAdapter adapter1;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +92,36 @@ public class ChallengeFeedActivity extends ActionBarActivity implements ActionBa
                             .setText(mSectionsPagerAdapter.getPageTitle(i))
                             .setTabListener(this));
         }
+        fetchData();
+    }
+
+    private void fetchData(){
+        listOfReceivedChallenges = new ArrayList<>();
+        ParseHelper.GetAllChallengesTest(BaseGameActivity.currentUser, getFindCallback());
+    }
+
+    private FindCallback<ParseObject> getFindCallback() {
+        return new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> parseObjects, ParseException e) {
+                if (e == null) {
+                    listOfReceivedChallenges.clear();
+
+                    for (ParseObject parseObject : parseObjects) {
+
+                        Challenge challenge = new Challenge(parseObject);
+                        listOfReceivedChallenges.add(challenge);
+                    }
+
+                    adapter1.notifyDataSetChanged();
+                    Log.e(TAG, listOfReceivedChallenges.size()+"");
+
+
+                } else {
+                    Log.e(TAG, "Error: " + e.getMessage());
+                }
+            }
+        };
     }
 
     @Override
@@ -136,30 +183,9 @@ public class ChallengeFeedActivity extends ActionBarActivity implements ActionBa
     public static class ReceivedChallengeFeedFragment extends Fragment {
 
 
-        ListView listView;
-        CustomListAdapter adapter;
+        static ListView listView;
 
-        String[] itemname ={
-                "Safari",
-                "Camera",
-                "Chrome",
-                "FireFox",
-                "UC Browser",
-                "Android Folder",
-                "VLC Player",
-                "Cold War"
-        };
 
-        Integer[] imgid={
-                R.drawable.camera1,
-                R.drawable.gameroom2,
-                R.drawable.picturethis,
-                R.drawable.camera1,
-                R.drawable.gameroom2,
-                R.drawable.picturethis,
-                R.drawable.camera1,
-                R.drawable.gameroom2,
-        };
 
         public static ReceivedChallengeFeedFragment newInstance() {
             ReceivedChallengeFeedFragment fragment = new ReceivedChallengeFeedFragment();
@@ -180,8 +206,8 @@ public class ChallengeFeedActivity extends ActionBarActivity implements ActionBa
             View rootView = inflater.inflate(R.layout.fragment_received_challenge_feed, container, false);
 
             listView = (ListView)rootView.findViewById(R.id.listView2);
-            adapter = new CustomListAdapter(getActivity(), itemname, imgid);
-            listView.setAdapter(adapter);
+            adapter1 = new CustomListAdapter(getActivity(), listOfReceivedChallenges);
+            listView.setAdapter(adapter1);
 
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
@@ -189,7 +215,7 @@ public class ChallengeFeedActivity extends ActionBarActivity implements ActionBa
                 public void onItemClick(AdapterView<?> parent, View view,
                                         int position, long id) {
                     // TODO Auto-generated method stub
-                    String Slecteditem= itemname[+position];
+                    String Slecteditem= listOfReceivedChallenges.get(position).getTitle();
                     Toast.makeText(getActivity().getApplicationContext(), Slecteditem, Toast.LENGTH_SHORT).show();
 
                 }
