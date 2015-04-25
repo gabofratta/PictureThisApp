@@ -1,7 +1,6 @@
 package com.example.janrodriguez.picturethis.Activities;
 
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -11,7 +10,6 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -29,15 +27,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class HistoryActivity extends AppCompatActivity implements ActionBar.TabListener {
+public class ChallengeFeedActivity extends AppCompatActivity implements ActionBar.TabListener {
 
-    static private final String TAG = "HistoryActivity";
-    static private final int REFRESH_RATE = 5000;
+    static private final String TAG = "ChallengeFeedActivity";
+
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
      * fragments for each of the sections. We use a
-     * {@link android.support.v4.app.FragmentPagerAdapter} derivative, which will keep every
+     * {@link FragmentPagerAdapter} derivative, which will keep every
      * loaded fragment in memory. If this becomes too memory intensive, it
      * may be best to switch to a
      * {@link android.support.v4.app.FragmentStatePagerAdapter}.
@@ -45,48 +43,34 @@ public class HistoryActivity extends AppCompatActivity implements ActionBar.TabL
     SectionsPagerAdapter mSectionsPagerAdapter;
 
     /**
-     * The {@link android.support.v4.view.ViewPager} that will host the section contents.
+     * The {@link ViewPager} that will host the section contents.
      */
     ViewPager mViewPager;
 
-    private static ArrayList<Challenge> sentChallenges = new ArrayList<Challenge>();
-    private static CustomListAdapter sentChallengeAdapter;
+    static ArrayList<Challenge> listOfReceivedChallenges = new ArrayList<>();
+    static ArrayList<Challenge> listOfSentChallenges = new ArrayList<>();
+    static CustomListAdapter adapter1;
+    static CustomListAdapter adapter2;
 
-    private static ArrayList<Challenge> receivedChallenges = new ArrayList<Challenge>();
-    private static CustomListAdapter receivedChallengeAdapter;
 
-    private final Handler refreshHandler = new Handler();
-    private Runnable runnable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_history);
+        setContentView(R.layout.activity_challenge_feed);
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeButtonEnabled(true);
-
-        initializeTabs();
-        populateChallengeListViews();
-        startRefreshThread();
-    }
-
-    private void initializeTabs() {
         // Set up the action bar.
         final ActionBar actionBar = getSupportActionBar();
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
         actionBar.setDisplayShowTitleEnabled(false);
 
-
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
-
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.pager);
         mViewPager.setAdapter(mSectionsPagerAdapter);
-
 
         // When swiping between different sections, select the corresponding
         // tab. We can also use ActionBar.Tab#select() to do this if we have
@@ -109,95 +93,82 @@ public class HistoryActivity extends AppCompatActivity implements ActionBar.TabL
                             .setText(mSectionsPagerAdapter.getPageTitle(i))
                             .setTabListener(this));
         }
+        fetchData();
     }
 
-    private void populateChallengeListViews() {
-        ParseHelper.GetInactiveChallengesInitiatedByUser(BaseGameActivity.currentUser, new FindCallback<ParseObject>() {
+    private void fetchData(){
+        // TODO: change this function
+        ParseHelper.GetAllChallengesTest(BaseGameActivity.currentUser, getFindCallback1());
+
+        // TODO: change this function
+        ParseHelper.GetAllChallengesTest(BaseGameActivity.currentUser, getFindCallback2());
+    }
+
+    private FindCallback<ParseObject> getFindCallback1() {
+        return new FindCallback<ParseObject>() {
             @Override
             public void done(List<ParseObject> parseObjects, ParseException e) {
                 if (e == null) {
-                    sentChallenges.clear();
+                    listOfReceivedChallenges.clear();
 
                     for (ParseObject parseObject : parseObjects) {
+
                         Challenge challenge = new Challenge(parseObject);
-                        sentChallenges.add(challenge);
+                        listOfReceivedChallenges.add(challenge);
                     }
 
-                    sentChallengeAdapter.notifyDataSetChanged();
+                    adapter1.notifyDataSetChanged();
+                    Log.e(TAG, listOfReceivedChallenges.size()+"");
+
+
                 } else {
                     Log.e(TAG, "Error: " + e.getMessage());
                 }
-            }
-        });
-
-        ParseHelper.GetInactiveChallengesReceivedByUser(BaseGameActivity.currentUser, new FindCallback<ParseObject>() {
-            @Override
-            public void done(List<ParseObject> parseObjects, ParseException e) {
-                if (e == null) {
-                    receivedChallenges.clear();
-
-                    for (ParseObject parseObject : parseObjects) {
-                        Challenge challenge = new Challenge(parseObject);
-                        receivedChallenges.add(challenge);
-                    }
-
-                    receivedChallengeAdapter.notifyDataSetChanged();
-                } else {
-                    Log.e(TAG, "Error: " + e.getMessage());
-                }
-            }
-        });
-    }
-
-    private void startRefreshThread() {
-        runnable = new Runnable() {
-            @Override
-            public void run() {
-                populateChallengeListViews();
-                Toast.makeText(getApplicationContext(), "refreshing", Toast.LENGTH_SHORT).show();
-                refreshHandler.postDelayed(this, REFRESH_RATE);
             }
         };
-        refreshHandler.postDelayed(runnable, REFRESH_RATE);
+    }
+
+    private FindCallback<ParseObject> getFindCallback2() {
+        return new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> parseObjects, ParseException e) {
+                if (e == null) {
+                    listOfSentChallenges.clear();
+
+                    for (ParseObject parseObject : parseObjects) {
+
+                        Challenge challenge = new Challenge(parseObject);
+                        listOfSentChallenges.add(challenge);
+                    }
+
+                    adapter2.notifyDataSetChanged();
+                    Log.e(TAG, listOfSentChallenges.size()+"");
+
+
+                } else {
+                    Log.e(TAG, "Error: " + e.getMessage());
+                }
+            }
+        };
     }
 
     @Override
-    public void onStop () {
-        refreshHandler.removeCallbacks(runnable);
-        super.onStop();
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                refreshHandler.removeCallbacks(runnable);
-                finish();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
-
-    @Override
-    public void onTabSelected(ActionBar.Tab tab, FragmentTransaction ft) {
+    public void onTabSelected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
         // When the given tab is selected, switch to the corresponding page in
         // the ViewPager.
         mViewPager.setCurrentItem(tab.getPosition());
     }
 
     @Override
-    public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction ft) {}
+    public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
+    }
 
     @Override
-    public void onTabReselected(ActionBar.Tab tab, FragmentTransaction ft) {}
+    public void onTabReselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
+    }
 
     /**
-     * A {@link android.support.v4.app.FragmentPagerAdapter} that returns a fragment corresponding to
+     * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
      * one of the sections/tabs/pages.
      */
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
@@ -239,7 +210,10 @@ public class HistoryActivity extends AppCompatActivity implements ActionBar.TabL
 
     public static class ReceivedChallengeFeedFragment extends Fragment {
 
+
         static ListView listView;
+
+
 
         public static ReceivedChallengeFeedFragment newInstance() {
             ReceivedChallengeFeedFragment fragment = new ReceivedChallengeFeedFragment();
@@ -249,7 +223,10 @@ public class HistoryActivity extends AppCompatActivity implements ActionBar.TabL
             return fragment;
         }
 
-        public ReceivedChallengeFeedFragment() {}
+
+        public ReceivedChallengeFeedFragment() {
+
+        }
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -257,17 +234,18 @@ public class HistoryActivity extends AppCompatActivity implements ActionBar.TabL
             View rootView = inflater.inflate(R.layout.fragment_received_challenge_feed, container, false);
 
             listView = (ListView)rootView.findViewById(R.id.listView2);
-            receivedChallengeAdapter = new CustomListAdapter(getActivity(), receivedChallenges);
-            listView.setAdapter(receivedChallengeAdapter);
+            adapter1 = new CustomListAdapter(getActivity(), listOfReceivedChallenges);
+            listView.setAdapter(adapter1);
 
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view,
                                         int position, long id) {
-//                    Intent intent = new Intent(HistoryActivity.class, targetClass);
-//                    intent.putExtra(Challenge.INTENT_TAG, receivedChallenges.get(position));
-//                    startActivity(intent);
+                    // TODO Auto-generated method stub
+                    String Slecteditem= listOfReceivedChallenges.get(position).getTitle();
+                    Toast.makeText(getActivity().getApplicationContext(), Slecteditem, Toast.LENGTH_SHORT).show();
+
                 }
             });
 
@@ -278,6 +256,7 @@ public class HistoryActivity extends AppCompatActivity implements ActionBar.TabL
     public static class SentChallengeFeedFragment extends Fragment {
 
         static ListView listView;
+
 
         /**
          * Returns a new instance of this fragment for the given section
@@ -291,7 +270,8 @@ public class HistoryActivity extends AppCompatActivity implements ActionBar.TabL
             return fragment;
         }
 
-        public SentChallengeFeedFragment() {}
+        public SentChallengeFeedFragment() {
+        }
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -299,20 +279,22 @@ public class HistoryActivity extends AppCompatActivity implements ActionBar.TabL
             View rootView = inflater.inflate(R.layout.fragment_sent_challenge_feed, container, false);
 
             listView = (ListView)rootView.findViewById(R.id.listView3);
-            sentChallengeAdapter = new CustomListAdapter(getActivity(), sentChallenges);
-            listView.setAdapter(sentChallengeAdapter);
+            adapter2 = new CustomListAdapter(getActivity(), listOfSentChallenges);
+            listView.setAdapter(adapter2);
 
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
                 @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                    Intent intent = new Intent(HistoryActivity.class, targetClass);
-//                    intent.putExtra(Challenge.INTENT_TAG, sentChallenges.get(position));
-//                    startActivity(intent);
+                public void onItemClick(AdapterView<?> parent, View view,
+                                        int position, long id) {
+                    // TODO Auto-generated method stub
+                    String Slecteditem= listOfSentChallenges.get(position).getTitle();
+                    Toast.makeText(getActivity().getApplicationContext(), Slecteditem, Toast.LENGTH_SHORT).show();
                 }
             });
 
             return rootView;
         }
     }
+
 }

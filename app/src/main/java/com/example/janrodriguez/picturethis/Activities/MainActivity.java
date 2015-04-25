@@ -20,8 +20,6 @@ public class MainActivity extends BaseSidePanelActivity {
 
     private static String TAG = "MainActivity";
 
-    private static final int REQUEST_ACHIEVEMENTS = 1000;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -78,17 +76,13 @@ public class MainActivity extends BaseSidePanelActivity {
         startActivity(intent);
     }
 
-    public void viewLoginPage(View view){
-        Intent intent = new Intent(this, LoginActivity.class);
-        startActivity(intent);
-    }
-
     @Override
     public void onSignInSucceeded() {
         super.onSignInSucceeded();
-        Log.d(TAG, "Signed in successfully");
         if ((mRequestedClients & CLIENT_GAMES) != 0) {
             Games.Achievements.unlock(getApiClient(), Achievement.INSTALL_AND_SIGN_IN);
+            currentUser.incrementScore(5);
+            currentUser.updateScore(getApiClient());
         } else {
             Log.d(TAG, "Not signed into google games.");
         }
@@ -104,6 +98,11 @@ public class MainActivity extends BaseSidePanelActivity {
         intent.putExtra(MapActivity.INTENT_SHOW_RADIUS, true);
         intent.putExtra(MapActivity.INTENT_LATITUDE, 42.3579452);
         intent.putExtra(MapActivity.INTENT_LONGITUDE, -71.0937901);
+        startActivity(intent);
+    }
+
+    public void viewChallengeFeedActivity(View view) {
+        Intent intent = new Intent(this, ChallengeFeedActivity.class);
         startActivity(intent);
     }
 }
