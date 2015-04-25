@@ -67,15 +67,9 @@ public class MainActivity extends BaseSidePanelActivity {
         startActivity(intent);
     }
 
-    public void viewLoginPage(View view){
-        Intent intent = new Intent(this, LoginActivity.class);
-        startActivity(intent);
-    }
-
     @Override
     public void onSignInSucceeded() {
         super.onSignInSucceeded();
-        Log.d(TAG, "Signed in successfully");
         if ((mRequestedClients & CLIENT_GAMES) != 0) {
             Games.Achievements.unlock(getApiClient(), Achievement.INSTALL_AND_SIGN_IN);
             currentUser.setScore(currentUser.getScore() + 5);
