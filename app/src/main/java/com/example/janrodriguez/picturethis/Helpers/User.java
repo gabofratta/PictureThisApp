@@ -10,14 +10,18 @@ import com.parse.ParseObject;
  */
 public class User implements Parcelable {
 
+    static public final String INTENT_TAG = "user";
+
     private String id;
     private String googleId;
     private String name;
+    private int score;
 
     public User (ParseObject po) {
         this.id = po.getObjectId();
         this.googleId = po.getString(ParseTableConstants.USER_GOOGLE_ID);
         this.name = po.getString(ParseTableConstants.USER_NAME);
+        this.score = po.getInt(ParseTableConstants.USER_SCORE);
     }
 
     public User (String googleId, String name) {
@@ -25,15 +29,17 @@ public class User implements Parcelable {
         this.name = name;
     }
 
-    public User (String id, String googleId, String name) {
+    public User (String id, String googleId, String name, int score) {
         this(googleId, name);
         this.id = id;
+        this.score = score;
     }
 
     public User (Parcel source) {
         this.id = source.readString();
         this.googleId = source.readString();
         this.name = source.readString();
+        this.score = source.readInt();
     }
 
     //Must have this for parcelable objects
@@ -59,6 +65,7 @@ public class User implements Parcelable {
         dest.writeString(id);
         dest.writeString(googleId);
         dest.writeString(name);
+        dest.writeInt(score);
     }
 
     public ParseObject createParseObject() {
@@ -80,6 +87,10 @@ public class User implements Parcelable {
 
     public String getName() {
         return name;
+    }
+
+    public int getScore() {
+        return score;
     }
     /**\Getters**/
 

@@ -14,7 +14,6 @@ import android.provider.MediaStore;
 import android.provider.Settings;
 import android.util.Log;
 import android.util.SparseBooleanArray;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -80,14 +79,20 @@ public class CreateChallengeActivity extends BaseGameActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_challenge);
 
-        initializeUsersList();
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+
         initializeUiComponents();
         initializeLocationServices();
     }
 
-    private void initializeUsersList() {
-        listViewOpen = false;
+    @Override
+    public void onSignInSucceeded() {
+        super.onSignInSucceeded();
+        initializeUsersList();
+    }
 
+    private void initializeUsersList() {
         resultCallback = new ResultCallback<People.LoadPeopleResult>() {
             @Override
             public void onResult(People.LoadPeopleResult peopleData) {
@@ -127,6 +132,10 @@ public class CreateChallengeActivity extends BaseGameActivity {
         };
 
         Plus.PeopleApi.loadVisible(getApiClient(), null).setResultCallback(resultCallback);
+    }
+
+    private void initializeUiComponents() {
+        listViewOpen = false;
 
         challengedList = new ArrayList<User>();
         usersList = new ArrayList<User>();
@@ -135,9 +144,7 @@ public class CreateChallengeActivity extends BaseGameActivity {
         usersListView = (ListView) findViewById(R.id.usersListView);
         usersListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
         usersListView.setAdapter(usersAdapter);
-    }
 
-    private void initializeUiComponents() {
         RelativeLayout relativeLayout = (RelativeLayout) findViewById(R.id.root);
         relativeLayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -195,14 +202,10 @@ public class CreateChallengeActivity extends BaseGameActivity {
                 }
 
                 if (currentLocation != null) {
-                    StringBuilder query = new StringBuilder("geo:0,0?q=")
-                                                .append(currentLocation.getLatitude())
-                                                .append(",")
-                                                .append(currentLocation.getLongitude())
-                                                .append("(Your Location)");
-                    Uri geoLocation = Uri.parse(query.toString());
-                    Intent intent = new Intent(Intent.ACTION_VIEW);
-                    intent.setData(geoLocation);
+                    Intent intent = new Intent(CreateChallengeActivity.this, MapActivity.class);
+                    intent.putExtra(MapActivity.INTENT_SHOW_RADIUS, false);
+                    intent.putExtra(MapActivity.INTENT_LATITUDE, currentLocation.getLatitude());
+                    intent.putExtra(MapActivity.INTENT_LONGITUDE, currentLocation.getLongitude());
                     startActivity(intent);
                 } else {
                     Toast.makeText(getApplicationContext(), getString(R.string.location_missing), Toast.LENGTH_SHORT).show();
@@ -271,6 +274,7 @@ public class CreateChallengeActivity extends BaseGameActivity {
         if (!locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
             AlertDialog.Builder dialog = new AlertDialog.Builder(CreateChallengeActivity.this);
             dialog.setMessage(getString(R.string.enable_network_location));
+
             dialog.setPositiveButton(getString(R.string.change_settings), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface paramDialogInterface, int paramInt) {
@@ -278,10 +282,12 @@ public class CreateChallengeActivity extends BaseGameActivity {
                     startActivity(intent);
                 }
             });
+
             dialog.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface paramDialogInterface, int paramInt) {}
             });
+
             dialog.show();
         }
 
@@ -354,24 +360,18 @@ public class CreateChallengeActivity extends BaseGameActivity {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_create_challenge, menu);
-        return true;
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        switch (item.getItemId()) {
+            case R.id.home:
+                finish();
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
         }
-
-        return super.onOptionsItemSelected(item);
     }
 }

@@ -14,6 +14,8 @@ import java.util.Date;
  */
 public class Response implements Parcelable {
 
+    public static final String INTENT_TAG = "response";
+
     public static final String STATUS_ACCEPTED = "accepted";
     public static final String STATUS_DECLINED = "declined";
     public static final String STATUS_PENDING = "pending";

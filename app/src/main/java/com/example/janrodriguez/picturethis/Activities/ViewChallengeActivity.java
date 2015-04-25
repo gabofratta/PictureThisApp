@@ -6,12 +6,12 @@ import android.view.MenuItem;
 
 import com.example.janrodriguez.picturethis.R;
 
-public class ReceivedChallengeActivity extends AppCompatActivity {
+public class ViewChallengeActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_received_challenge);
+        setContentView(R.layout.activity_view_challenge);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);

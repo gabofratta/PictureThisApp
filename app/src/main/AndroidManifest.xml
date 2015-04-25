@@ -8,6 +8,10 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
+    <uses-feature
+        android:glEsVersion="0x00020000"
+        android:required="true" />
+
     <application
         android:name=".PictureThisApp"
         android:allowBackup="true"
@@ -21,21 +25,23 @@
             android:name="com.google.android.gms.games.APP_ID"
             android:value="@string/app_id" />
 
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyC1Hr2VmBjN2jrGz_SKlsYh8kID_FOxnto" />
+
         <activity
             android:name=".Activities.MainActivity"
             android:label="@string/app_name" >
         </activity>
         <activity
             android:name=".Activities.ReceivedChallengeActivity"
-            android:label="@string/title_activity_received" >
+            android:label="@string/title_activity_received"
+            android:parentActivityName=".Activities.MainActivity">
         </activity>
         <activity
             android:name=".Activities.SentChallengeActivity"
-            android:label="@string/title_activity_sent" >
-        </activity>
-        <activity
-            android:name=".Activities.TestParcel"
-            android:label="@string/title_activity_test_parcel" >
+            android:label="@string/title_activity_sent"
+            android:parentActivityName=".Activities.MainActivity">
         </activity>
         <activity
             android:name=".Activities.LoginActivity"
@@ -44,7 +50,26 @@
         </activity>
         <activity
             android:name=".Activities.CreateChallengeActivity"
-            android:label="@string/title_activity_create_challenge" >
+            android:label="@string/title_activity_create_challenge"
+            android:parentActivityName=".Activities.MainActivity" >
+        </activity>
+        <activity
+            android:name=".Activities.MapActivity"
+            android:label="@string/title_activity_map"
+            android:parentActivityName=".Activities.MainActivity" >
+        </activity>
+        <activity
+            android:name=".Activities.HistoryActivity"
+            android:label="@string/title_activity_history"
+            android:parentActivityName=".Activities.MainActivity" >
+        </activity>
+        <activity
+            android:name=".Activities.ViewChallengeActivity"
+            android:label="@string/title_activity_view_challenge"
+            android:parentActivityName=".Activities.CreateChallengeActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.janrodriguez.picturethis.Activities.CreateChallengeActivity" />
         </activity>
         <activity
             android:name=".Activities.ChallengeFeedActivity"
@@ -55,6 +80,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!--android:theme="@style/AppThemeNoActionBar">-->
     </application>
 
 </manifest>

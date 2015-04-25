@@ -4,11 +4,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
+import com.example.janrodriguez.picturethis.Helpers.Achievement;
 import com.example.janrodriguez.picturethis.R;
+import com.google.android.gms.games.Games;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -16,12 +17,21 @@ import com.parse.SaveCallback;
 
 import java.util.List;
 
-public class MainActivity extends BaseGameActivity {
+public class MainActivity extends BaseSidePanelActivity {
+
+    private static String TAG = "MainActivity";
+
+    private static final int REQUEST_ACHIEVEMENTS = 1000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
+        //MAKE SURE TO SET UP SIDE PANEL IN ORDER FOR SIDE PANEL TO WORK
+        setUpSidePanel();
 
         final SaveCallback saveCallback = new SaveCallback() {
             public void done(ParseException e) {
@@ -42,48 +52,7 @@ public class MainActivity extends BaseGameActivity {
                 }
             }
         };
-
-        Button openNewActBtn = (Button)findViewById(R.id.open_pacel_act_btn);
-        openNewActBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-//                User newUser = new User("test", "mcTesterson");
-//                ArrayList<User> userList = new ArrayList<User>();
-//                userList.add(newUser);
-//                Challenge newChall = new Challenge("Test title", newUser, new MyGeoPoint(), userList);
-//                Response challResp = new Response(newChall, newUser, Response.STATUS_ACCEPTED);
-//                Intent intent = new Intent(MainActivity.this, TestParcel.class);
-//                intent.putExtra("user", newUser);
-//                intent.putExtra("chall", newChall);
-//                intent.putExtra("resp", challResp);
-//                startActivity(intent);
-            }
-        });
-        findViewById(R.id.sign_out_button).setOnClickListener(this);
     }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
 
     public void viewReceivedChallenge(View view) {
         Intent intent = new Intent(this, ReceivedChallengeActivity.class);
@@ -102,6 +71,30 @@ public class MainActivity extends BaseGameActivity {
 
     public void viewLoginPage(View view){
         Intent intent = new Intent(this, LoginActivity.class);
+        startActivity(intent);
+    }
+
+    @Override
+    public void onSignInSucceeded() {
+        super.onSignInSucceeded();
+        Log.d(TAG, "Signed in successfully");
+        if ((mRequestedClients & CLIENT_GAMES) != 0) {
+            Games.Achievements.unlock(getApiClient(), Achievement.INSTALL_AND_SIGN_IN);
+        } else {
+            Log.d(TAG, "Not signed into google games.");
+        }
+    }
+
+    public void viewHistory(View view) {
+        Intent intent = new Intent(this, HistoryActivity.class);
+        startActivity(intent);
+    }
+
+    public void viewMapPage(View view){
+        Intent intent = new Intent(this, MapActivity.class);
+        intent.putExtra(MapActivity.INTENT_SHOW_RADIUS, true);
+        intent.putExtra(MapActivity.INTENT_LATITUDE, 42.3579452);
+        intent.putExtra(MapActivity.INTENT_LONGITUDE, -71.0937901);
         startActivity(intent);
     }
 }
