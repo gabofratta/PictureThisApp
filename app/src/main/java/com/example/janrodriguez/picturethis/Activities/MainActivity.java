@@ -9,6 +9,7 @@ import com.example.janrodriguez.picturethis.Helpers.Achievement;
 import com.example.janrodriguez.picturethis.R;
 import com.google.android.gms.games.Games;
 import com.parse.FindCallback;
+import com.parse.GetDataCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.SaveCallback;
@@ -45,6 +46,17 @@ public class MainActivity extends BaseSidePanelActivity {
             public void done(List<ParseObject> objects, ParseException e) {
                 if (e == null) {
 
+                } else {
+                    Log.e("Tag", "Error: " + e.getMessage());
+                }
+            }
+        };
+
+        GetDataCallback dataCallback = new GetDataCallback() {
+            @Override
+            public void done(byte[] data, ParseException e) {
+                if (e == null) {
+//                    Bitmap bmp = BitmapFactory.decodeByteArray(data, 0, data.length);
                 } else {
                     Log.e("Tag", "Error: " + e.getMessage());
                 }
