@@ -55,7 +55,7 @@ public class HistoryActivity extends BaseGameActivity {
 
         sentChallengeListView = (ListView) findViewById(R.id.sentListView);
         sentChallengeListView.setAdapter(sentChallengeAdapter);
-        sentChallengeListView.setOnItemClickListener(getOnClickListener(sentChallenges, ViewChallengeActivity.class));
+        sentChallengeListView.setOnItemClickListener(getOnClickListener(sentChallenges, ViewResponseActivity.class));
 
         // Received Challenges
         receivedChallenges = new ArrayList<Challenge>();
@@ -63,7 +63,7 @@ public class HistoryActivity extends BaseGameActivity {
 
         receivedChallengeListView = (ListView) findViewById(R.id.receivedListView);
         receivedChallengeListView.setAdapter(receivedChallengeAdapter);
-        receivedChallengeListView.setOnItemClickListener(getOnClickListener(receivedChallenges, ViewResponseActivity.class));
+        receivedChallengeListView.setOnItemClickListener(getOnClickListener(receivedChallenges, ViewChallengeActivity.class));
     }
 
     private AdapterView.OnItemClickListener getOnClickListener(final ArrayList<Challenge> challenges, final Class targetClass) {
