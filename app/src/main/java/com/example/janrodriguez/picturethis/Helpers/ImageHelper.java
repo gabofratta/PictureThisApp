@@ -4,8 +4,10 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Environment;
+import android.util.Log;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -73,5 +75,22 @@ public class ImageHelper {
         }
 
         return inSampleSize;
+    }
+
+    static public void SaveImage(Bitmap bitmap, Uri imageUri) {
+        File file = new File (imageUri.getPath());
+
+        if (file.exists()) {
+            file.delete();
+        }
+
+        try {
+            FileOutputStream out = new FileOutputStream(file);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 90, out);
+            out.flush();
+            out.close();
+        } catch (Exception e) {
+            Log.e(TAG, "Error: " + e.getMessage());
+        }
     }
 }

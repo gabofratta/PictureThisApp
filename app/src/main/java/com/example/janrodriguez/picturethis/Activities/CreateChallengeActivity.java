@@ -52,8 +52,8 @@ public class CreateChallengeActivity extends BaseGameActivity {
 
     private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
     private static final String TAG = "CreateChallengeActivity";
-    private static final int HEIGHT = 200;
-    private static final int WIDTH = 200;
+    private static final int HEIGHT = 500;
+    private static final int WIDTH = 500;
 
     private ArrayList<User> usersList;
     private ArrayList<User> challengedList;
@@ -354,8 +354,9 @@ public class CreateChallengeActivity extends BaseGameActivity {
                 Log.e(TAG, "Error: " + e.getMessage());
             }
 
-            if(bitmap != null) {
+            if (bitmap != null) {
                 Bitmap decodedBitmap = ImageHelper.DecodeSampledBitmapFromResource(currentPictureUri.getPath(), WIDTH, HEIGHT);
+                ImageHelper.SaveImage(decodedBitmap, currentPictureUri);
                 imageButton.setImageBitmap(decodedBitmap);
             }
         } else if (resultCode == RESULT_CANCELED && requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
