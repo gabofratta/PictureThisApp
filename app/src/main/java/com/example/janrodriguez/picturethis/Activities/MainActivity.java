@@ -30,7 +30,7 @@ public class MainActivity extends BaseSidePanelActivity {
         //MAKE SURE TO SET UP SIDE PANEL IN ORDER FOR SIDE PANEL TO WORK
         setUpSidePanel();
 
-        final SaveCallback saveCallback = new SaveCallback() {
+        SaveCallback saveCallback = new SaveCallback() {
             public void done(ParseException e) {
                 if (e == null) {
 
