@@ -62,12 +62,12 @@ public class MainActivity extends BaseSidePanelActivity {
     }
 
     public void viewReceivedChallenge(View view) {
-        Intent intent = new Intent(this, ReceivedChallengeActivity.class);
+        Intent intent = new Intent(this, ViewResponseActivity.class);
         startActivity(intent);
     }
 
     public void viewSentChallenge(View view) {
-        Intent intent = new Intent(this, SentChallengeActivity.class);
+        Intent intent = new Intent(this, ViewChallengeActivity.class);
         startActivity(intent);
     }
 

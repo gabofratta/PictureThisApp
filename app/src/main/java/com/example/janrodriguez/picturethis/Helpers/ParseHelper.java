@@ -5,6 +5,7 @@ import android.graphics.BitmapFactory;
 import android.util.Log;
 
 import com.parse.FindCallback;
+import com.parse.GetCallback;
 import com.parse.GetDataCallback;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
@@ -111,13 +112,13 @@ public class ParseHelper {
         query.findInBackground(callback);
     }
 
+    //TODO remove
     static public void GetAllChallengesTest(User user, FindCallback<ParseObject> callback) {
         GetAllChallengesTest(user, true, callback);
     }
 
+    //TODO remove
     static private void GetAllChallengesTest(User user, boolean active, FindCallback<ParseObject> callback) {
-
-
         ParseQuery<ParseObject> query = ParseQuery.getQuery(ParseTableConstants.CHALLENGE_TABLE);
         query.include(ParseTableConstants.CHALLENGE_CHALLENGER);
         query.include(ParseTableConstants.CHALLENGE_CHALLENGED);
@@ -129,8 +130,6 @@ public class ParseHelper {
     static public void GetActiveChallengesReceivedByUser(User user, FindCallback<ParseObject> callback) {
         GetChallengesReceivedByUser(user, true, callback);
     }
-
-
 
     static public void GetInactiveChallengesReceivedByUser(User user, FindCallback<ParseObject> callback) {
         GetChallengesReceivedByUser(user, false, callback);
@@ -209,23 +208,14 @@ public class ParseHelper {
         query.findInBackground(callback);
     }
 
-    static public void GetChallengeImage(Challenge challenge, GetDataCallback callback) {
-        ParseObject challengePO;
-        try {
-            challengePO = challenge.createParseObject();
-        } catch (JSONException e) {
-            Log.e(TAG, "Error: " + e.getMessage());
-            return;
-        }
-
-        ParseFile image = (ParseFile) challengePO.get(ParseTableConstants.CHALLENGE_PICTURE);
-        image.getDataInBackground(callback);
+    static public void GetChallengeImage(Challenge challenge, GetCallback callback) {
+        ParseObject challengePO = ParseObject.createWithoutData(ParseTableConstants.CHALLENGE_TABLE, challenge.getId());
+        challengePO.fetchInBackground(callback);
     }
 
-    static public void GetResponseImage(Response response, GetDataCallback callback) {
-        ParseObject responsePO = response.createParseObject();
-        ParseFile image = (ParseFile) responsePO.get(ParseTableConstants.CHALLENGE_PICTURE);
-        image.getDataInBackground(callback);
+    static public void GetResponseImage(Response response, GetCallback callback) {
+        ParseObject responsePO = ParseObject.createWithoutData(ParseTableConstants.RESPONSE_TABLE, response.getId());
+        responsePO.fetchInBackground(callback);
     }
 
     static public byte[] GetImageBytes(String filePath) {

@@ -70,9 +70,9 @@ public abstract class BaseGameActivity extends AppCompatActivity implements
     public static final int CLIENT_PLUS = GameHelper.CLIENT_PLUS;
     public static final int CLIENT_ALL = GameHelper.CLIENT_ALL;
 
-    // Requested clients. By default, that's just the games client.
-    protected int mRequestedClients = CLIENT_GAMES | CLIENT_PLUS;
-//    protected int mRequestedClients = CLIENT_PLUS;
+     //Requested clients. By default, that's just the games client.
+    //protected int mRequestedClients = CLIENT_GAMES | CLIENT_PLUS;
+    protected int mRequestedClients = CLIENT_PLUS;
 
     private final static String TAG = "BaseGameActivity";
     protected boolean mDebugLog = false;

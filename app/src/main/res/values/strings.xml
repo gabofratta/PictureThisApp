@@ -3,8 +3,8 @@
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
-    <string name="title_activity_received">Received Challenge</string>
-    <string name="title_activity_sent">Sent Challenge</string>
+    <string name="title_activity_received">Sent Challenge</string>
+    <string name="title_activity_sent">Received Challenge</string>
     <string name="title_activity_test_parcel">TestParcel</string>
     <string name="title_activity_google_plus_base">GooglePlusBaseActivity</string>
     <string name="title_activity_login">Login</string>
@@ -43,6 +43,7 @@
     <string name="change_settings">Change Settings</string>
     <string name="cancel">Cancel</string>
     <string name="challenge_created">Challenge created</string>
+    <string name="response_created">Response created</string>
     <string name="picture_missing">Picture is missing</string>
     <string name="challenged_missing">Challenged user(s) missing</string>
     <string name="location_missing">Location is missing</string>

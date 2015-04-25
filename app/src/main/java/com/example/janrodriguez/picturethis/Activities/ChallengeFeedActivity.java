@@ -1,5 +1,6 @@
 package com.example.janrodriguez.picturethis.Activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -107,10 +108,10 @@ public class ChallengeFeedActivity extends BaseSidePanelActivity implements Acti
 
     private void fetchData(){
         // TODO: change this function
-        ParseHelper.GetAllChallengesTest(BaseGameActivity.currentUser, getFindCallback1());
+        ParseHelper.GetActiveChallengesReceivedByUser(BaseGameActivity.currentUser, getFindCallback1());
 
         // TODO: change this function
-        ParseHelper.GetAllChallengesTest(BaseGameActivity.currentUser, getFindCallback2());
+        ParseHelper.GetActiveChallengesInitiatedByUser(BaseGameActivity.currentUser, getFindCallback2());
     }
 
     private FindCallback<ParseObject> getFindCallback1() {
@@ -248,8 +249,11 @@ public class ChallengeFeedActivity extends BaseSidePanelActivity implements Acti
                 public void onItemClick(AdapterView<?> parent, View view,
                                         int position, long id) {
                     // TODO Auto-generated method stub
-                    String Slecteditem= listOfReceivedChallenges.get(position).getTitle();
-                    Toast.makeText(getActivity().getApplicationContext(), Slecteditem, Toast.LENGTH_SHORT).show();
+
+                    Intent intent = new Intent(getActivity(), ViewChallengeActivity.class);
+                    intent.putExtra(Challenge.INTENT_TAG, listOfReceivedChallenges.get(position));
+                    startActivity(intent);
+
 
                 }
             });
@@ -293,8 +297,11 @@ public class ChallengeFeedActivity extends BaseSidePanelActivity implements Acti
                 public void onItemClick(AdapterView<?> parent, View view,
                                         int position, long id) {
                     // TODO Auto-generated method stub
-                    String Slecteditem= listOfSentChallenges.get(position).getTitle();
-                    Toast.makeText(getActivity().getApplicationContext(), Slecteditem, Toast.LENGTH_SHORT).show();
+
+                    Intent intent = new Intent(getActivity(), ViewResponseActivity.class);
+                    intent.putExtra(Challenge.INTENT_TAG, listOfSentChallenges.get(position));
+                    startActivity(intent);
+
                 }
             });
 
