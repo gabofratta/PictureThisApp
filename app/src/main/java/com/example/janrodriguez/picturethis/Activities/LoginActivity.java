@@ -33,7 +33,7 @@ public class LoginActivity extends BaseGameActivity {
 
         super.onSignInSucceeded();
 
-        Intent intent = new Intent(this, MainActivity.class);
+        Intent intent = new Intent(this, ChallengeFeedActivity.class);
         finish();
         startActivity(intent);
     }
