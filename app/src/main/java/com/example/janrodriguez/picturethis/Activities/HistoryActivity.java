@@ -146,10 +146,6 @@ public class HistoryActivity extends BaseGameActivity {
                 setRefreshActionButtonState(true);
                 populateChallengeListViews();
                 return true;
-
-            case R.id.action_settings:
-                return true;
-
             case R.id.home:
                 finish();
                 return true;
