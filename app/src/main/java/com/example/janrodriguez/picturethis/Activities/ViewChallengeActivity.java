@@ -3,7 +3,6 @@ package com.example.janrodriguez.picturethis.Activities;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Camera;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -12,7 +11,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
+import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -22,11 +21,9 @@ import com.example.janrodriguez.picturethis.Helpers.ImageHelper;
 import com.example.janrodriguez.picturethis.Helpers.ParseHelper;
 import com.example.janrodriguez.picturethis.Helpers.ParseTableConstants;
 import com.example.janrodriguez.picturethis.Helpers.Response;
-import com.example.janrodriguez.picturethis.Helpers.User;
 import com.example.janrodriguez.picturethis.R;
 import com.parse.FindCallback;
 import com.parse.GetCallback;
-import com.parse.GetDataCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.SaveCallback;
@@ -106,6 +103,9 @@ public class ViewChallengeActivity extends AppCompatActivity {
 
         response_pic = (ImageButton) findViewById(R.id.response_picture);
         sendResponseButton = (Button) findViewById(R.id.sendResponse_button);
+
+        CheckBox checkMultiPlayer = (CheckBox) findViewById(R.id.multiplayer_checkbox);
+        checkMultiPlayer.setChecked(currentChallenge.isMultiplayer());
 
         // Setting the Challenge Picture
         challenge_pic = (ImageButton) findViewById(R.id.challenge_picture);
