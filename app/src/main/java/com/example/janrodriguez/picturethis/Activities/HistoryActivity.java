@@ -32,6 +32,7 @@ import java.util.Locale;
 public class HistoryActivity extends AppCompatActivity implements ActionBar.TabListener {
 
     static private final String TAG = "HistoryActivity";
+    static private final int REFRESH_RATE = 5000;
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -151,10 +152,10 @@ public class HistoryActivity extends AppCompatActivity implements ActionBar.TabL
             public void run() {
                 populateChallengeListViews();
                 Toast.makeText(getApplicationContext(), "refreshing", Toast.LENGTH_SHORT).show();
-                refreshHandler.postDelayed(this, 5000);
+                refreshHandler.postDelayed(this, REFRESH_RATE);
             }
         };
-        refreshHandler.postDelayed(runnable, 5000);
+        refreshHandler.postDelayed(runnable, REFRESH_RATE);
     }
 
     @Override
