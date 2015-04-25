@@ -111,13 +111,13 @@ public class ParseHelper {
         query.findInBackground(callback);
     }
 
+    //TODO remove
     static public void GetAllChallengesTest(User user, FindCallback<ParseObject> callback) {
         GetAllChallengesTest(user, true, callback);
     }
 
+    //TODO remove
     static private void GetAllChallengesTest(User user, boolean active, FindCallback<ParseObject> callback) {
-
-
         ParseQuery<ParseObject> query = ParseQuery.getQuery(ParseTableConstants.CHALLENGE_TABLE);
         query.include(ParseTableConstants.CHALLENGE_CHALLENGER);
         query.include(ParseTableConstants.CHALLENGE_CHALLENGED);
@@ -129,8 +129,6 @@ public class ParseHelper {
     static public void GetActiveChallengesReceivedByUser(User user, FindCallback<ParseObject> callback) {
         GetChallengesReceivedByUser(user, true, callback);
     }
-
-
 
     static public void GetInactiveChallengesReceivedByUser(User user, FindCallback<ParseObject> callback) {
         GetChallengesReceivedByUser(user, false, callback);
