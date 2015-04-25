@@ -1,7 +1,7 @@
 package com.example.janrodriguez.picturethis.Activities;
 
-import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -11,12 +11,10 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -50,16 +48,14 @@ public class HistoryActivity extends AppCompatActivity implements ActionBar.TabL
      */
     ViewPager mViewPager;
 
-    private ArrayList<Challenge> sentChallenges;
-    private ArrayAdapter<Challenge> sentChallengeAdapter;
-    private ListView sentChallengeListView;
+    private static ArrayList<Challenge> sentChallenges = new ArrayList<Challenge>();
+    private static CustomListAdapter sentChallengeAdapter;
 
-    private ArrayList<Challenge> receivedChallenges;
-    private ArrayAdapter<Challenge> receivedChallengeAdapter;
-    private ListView receivedChallengeListView;
+    private static ArrayList<Challenge> receivedChallenges = new ArrayList<Challenge>();
+    private static CustomListAdapter receivedChallengeAdapter;
 
-    private Menu optionsMenu;
-    private int refreshing;
+    private final Handler refreshHandler = new Handler();
+    private Runnable runnable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,10 +65,9 @@ public class HistoryActivity extends AppCompatActivity implements ActionBar.TabL
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
 
-        refreshing = 0;
         initializeTabs();
-        initializeUiComponents();
         populateChallengeListViews();
+        startRefreshThread();
     }
 
     private void initializeTabs() {
@@ -112,90 +107,60 @@ public class HistoryActivity extends AppCompatActivity implements ActionBar.TabL
         }
     }
 
-    private void initializeUiComponents() {
-        // Sent Challenges
-        sentChallenges = new ArrayList<Challenge>();
-        sentChallengeAdapter = new ArrayAdapter<Challenge>(this, android.R.layout.simple_list_item_1, sentChallenges);
-
-        sentChallengeListView = (ListView) findViewById(R.id.sentListView);
-        sentChallengeListView.setAdapter(sentChallengeAdapter);
-        sentChallengeListView.setOnItemClickListener(getOnClickListener(sentChallenges, SentChallengeActivity.class));
-
-        // Received Challenges
-        receivedChallenges = new ArrayList<Challenge>();
-        receivedChallengeAdapter = new ArrayAdapter<Challenge>(this, android.R.layout.simple_list_item_1, receivedChallenges);
-
-        receivedChallengeListView = (ListView) findViewById(R.id.receivedListView);
-        receivedChallengeListView.setAdapter(receivedChallengeAdapter);
-        receivedChallengeListView.setOnItemClickListener(getOnClickListener(receivedChallenges, ReceivedChallengeActivity.class));
-    }
-
-    private AdapterView.OnItemClickListener getOnClickListener(final ArrayList<Challenge> challenges, final Class targetClass) {
-        return new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapter, View view, int position, long arg) {
-                Intent intent = new Intent(HistoryActivity.this, targetClass);
-                intent.putExtra(Challenge.INTENT_TAG, challenges.get(position));
-                startActivity(intent);
-            }
-        };
-    }
-
     private void populateChallengeListViews() {
-        ParseHelper.GetInactiveChallengesInitiatedByUser(BaseGameActivity.currentUser, getFindCallback(sentChallenges, sentChallengeAdapter));
-        ParseHelper.GetInactiveChallengesReceivedByUser(BaseGameActivity.currentUser, getFindCallback(receivedChallenges, receivedChallengeAdapter));
-    }
-
-    private FindCallback<ParseObject> getFindCallback(final ArrayList<Challenge> challengeList, final ArrayAdapter<Challenge> challengeAdapter) {
-        return new FindCallback<ParseObject>() {
+        ParseHelper.GetInactiveChallengesInitiatedByUser(BaseGameActivity.currentUser, new FindCallback<ParseObject>() {
             @Override
             public void done(List<ParseObject> parseObjects, ParseException e) {
                 if (e == null) {
-                    challengeList.clear();
+                    sentChallenges.clear();
 
                     for (ParseObject parseObject : parseObjects) {
                         Challenge challenge = new Challenge(parseObject);
-                        challengeList.add(challenge);
+                        sentChallenges.add(challenge);
                     }
 
-                    challengeAdapter.notifyDataSetChanged();
-
-                    if (--refreshing == 0) {
-                        setRefreshActionButtonState(false);
-                    }
+                    sentChallengeAdapter.notifyDataSetChanged();
                 } else {
                     Log.e(TAG, "Error: " + e.getMessage());
                 }
             }
-        };
+        });
+
+        ParseHelper.GetInactiveChallengesReceivedByUser(BaseGameActivity.currentUser, new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> parseObjects, ParseException e) {
+                if (e == null) {
+                    receivedChallenges.clear();
+
+                    for (ParseObject parseObject : parseObjects) {
+                        Challenge challenge = new Challenge(parseObject);
+                        receivedChallenges.add(challenge);
+                    }
+
+                    receivedChallengeAdapter.notifyDataSetChanged();
+                } else {
+                    Log.e(TAG, "Error: " + e.getMessage());
+                }
+            }
+        });
     }
 
-    private void setRefreshActionButtonState(boolean refreshing) {
-        if (optionsMenu != null) {
-            MenuItem refreshItem = optionsMenu.findItem(R.id.history_menu_refresh);
-
-            if (refreshItem != null) {
-                if (refreshing) {
-                    refreshItem.setActionView(R.layout.actionbar_indeterminate_progress);
-                } else {
-                    refreshItem.setActionView(null);
-                }
-            } else {
-                Log.e(TAG, "Could not find refresh item in menu");
+    private void startRefreshThread() {
+        runnable = new Runnable() {
+            @Override
+            public void run() {
+                populateChallengeListViews();
+                Toast.makeText(getApplicationContext(), "refreshing", Toast.LENGTH_SHORT).show();
+                refreshHandler.postDelayed(this, 5000);
             }
-        } else {
-            Log.e(TAG, "Could not find menu");
-        }
+        };
+        refreshHandler.postDelayed(runnable, 5000);
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        optionsMenu = menu;
-
-        getMenuInflater().inflate(R.menu.menu_history, menu);
-
-        return super.onCreateOptionsMenu(menu);
+    public void onStop () {
+        refreshHandler.removeCallbacks(runnable);
+        super.onStop();
     }
 
     @Override
@@ -205,12 +170,8 @@ public class HistoryActivity extends AppCompatActivity implements ActionBar.TabL
         // as you specify a parent activity in AndroidManifest.xml.
 
         switch (item.getItemId()) {
-            case R.id.history_menu_refresh:
-                refreshing = 2;
-                setRefreshActionButtonState(true);
-                populateChallengeListViews();
-                return true;
             case android.R.id.home:
+                refreshHandler.removeCallbacks(runnable);
                 finish();
                 return true;
             default:
@@ -274,10 +235,7 @@ public class HistoryActivity extends AppCompatActivity implements ActionBar.TabL
 
     public static class ReceivedChallengeFeedFragment extends Fragment {
 
-
         static ListView listView;
-
-
 
         public static ReceivedChallengeFeedFragment newInstance() {
             ReceivedChallengeFeedFragment fragment = new ReceivedChallengeFeedFragment();
@@ -287,10 +245,7 @@ public class HistoryActivity extends AppCompatActivity implements ActionBar.TabL
             return fragment;
         }
 
-
-        public ReceivedChallengeFeedFragment() {
-
-        }
+        public ReceivedChallengeFeedFragment() {}
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -298,18 +253,17 @@ public class HistoryActivity extends AppCompatActivity implements ActionBar.TabL
             View rootView = inflater.inflate(R.layout.fragment_received_challenge_feed, container, false);
 
             listView = (ListView)rootView.findViewById(R.id.listView2);
-            adapter1 = new CustomListAdapter(getActivity(), listOfReceivedChallenges);
-            listView.setAdapter(adapter1);
+            receivedChallengeAdapter = new CustomListAdapter(getActivity(), receivedChallenges);
+            listView.setAdapter(receivedChallengeAdapter);
 
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view,
                                         int position, long id) {
-                    // TODO Auto-generated method stub
-                    String Slecteditem= listOfReceivedChallenges.get(position).getTitle();
-                    Toast.makeText(getActivity().getApplicationContext(), Slecteditem, Toast.LENGTH_SHORT).show();
-
+//                    Intent intent = new Intent(HistoryActivity.class, targetClass);
+//                    intent.putExtra(Challenge.INTENT_TAG, receivedChallenges.get(position));
+//                    startActivity(intent);
                 }
             });
 
@@ -320,7 +274,6 @@ public class HistoryActivity extends AppCompatActivity implements ActionBar.TabL
     public static class SentChallengeFeedFragment extends Fragment {
 
         static ListView listView;
-
 
         /**
          * Returns a new instance of this fragment for the given section
@@ -334,8 +287,7 @@ public class HistoryActivity extends AppCompatActivity implements ActionBar.TabL
             return fragment;
         }
 
-        public SentChallengeFeedFragment() {
-        }
+        public SentChallengeFeedFragment() {}
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -343,17 +295,16 @@ public class HistoryActivity extends AppCompatActivity implements ActionBar.TabL
             View rootView = inflater.inflate(R.layout.fragment_sent_challenge_feed, container, false);
 
             listView = (ListView)rootView.findViewById(R.id.listView3);
-            adapter2 = new CustomListAdapter(getActivity(), listOfSentChallenges);
-            listView.setAdapter(adapter2);
+            sentChallengeAdapter = new CustomListAdapter(getActivity(), sentChallenges);
+            listView.setAdapter(sentChallengeAdapter);
 
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
                 @Override
-                public void onItemClick(AdapterView<?> parent, View view,
-                                        int position, long id) {
-                    // TODO Auto-generated method stub
-                    String Slecteditem= listOfSentChallenges.get(position).getTitle();
-                    Toast.makeText(getActivity().getApplicationContext(), Slecteditem, Toast.LENGTH_SHORT).show();
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//                    Intent intent = new Intent(HistoryActivity.class, targetClass);
+//                    intent.putExtra(Challenge.INTENT_TAG, sentChallenges.get(position));
+//                    startActivity(intent);
                 }
             });
 
