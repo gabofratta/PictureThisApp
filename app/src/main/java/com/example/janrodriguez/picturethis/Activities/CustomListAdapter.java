@@ -1,6 +1,8 @@
 package com.example.janrodriguez.picturethis.Activities;
 
 import android.app.Activity;
+import android.graphics.Bitmap;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -59,7 +61,7 @@ public class CustomListAdapter extends ArrayAdapter<Challenge> {
 
     public CustomListAdapter(Activity context, ArrayList<Challenge> challenges) {
         super(context, R.layout.my_list, challenges);
-
+        Log.e("CustomListAdapter:", "Constructor");
         this.context = context;
         this.challenges = challenges;
     }
@@ -69,7 +71,7 @@ public class CustomListAdapter extends ArrayAdapter<Challenge> {
         View rowView=inflater.inflate(R.layout.my_list, null,true);
 
         TextView txtTitle = (TextView) rowView.findViewById(R.id.item);
-        ImageView imageView = (ImageView) rowView.findViewById(R.id.icon);
+        final ImageView imageView = (ImageView) rowView.findViewById(R.id.icon);
         TextView extratxt = (TextView) rowView.findViewById(R.id.textView1);
 
 //        txtTitle.setText(itemname[position]);
@@ -77,8 +79,39 @@ public class CustomListAdapter extends ArrayAdapter<Challenge> {
 //        extratxt.setText("Description "+itemname[position]);
 
         txtTitle.setText(challenges.get(position).getTitle());
-        imageView.setImageResource(R.drawable.picturethis);
+//        imageView.setImageResource(R.drawable.picturethis);
         extratxt.setText("Challenger: " + challenges.get(position).getChallenger().toString());
+        Bitmap bitmap = challenges.get(position).getPictureBitmap();
+        if (bitmap!=null){
+            imageView.setImageBitmap(bitmap);
+        }
+
+
+//        if (position >=1){
+//            return rowView;
+//        }else{
+//            Log.i("CustomListAdapter Position:", position+"");
+//        }
+//
+//        ParseHelper.GetChallengeImage(challenges.get(position), new GetCallback<ParseObject>() {
+//            @Override
+//            public void done(ParseObject parseObject, ParseException e) {
+//                if (e == null){
+//
+//                    ParseFile parseFile = parseObject.getParseFile(ParseTableConstants.CHALLENGE_PICTURE);
+//                    try {
+//                        Bitmap bitmap = null;
+//                        byte[] bytes = parseFile.getData();
+//                        Log.i("CustomListAdapter", bytes.length+"");
+//                        bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+//                        imageView.setImageBitmap(bitmap);
+//                    } catch (ParseException e1) {
+//                        e1.printStackTrace();
+//                    }
+//                }
+//            }
+//        });
+
         return rowView;
 
     };

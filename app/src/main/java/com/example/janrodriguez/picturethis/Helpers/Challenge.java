@@ -1,5 +1,6 @@
 package com.example.janrodriguez.picturethis.Helpers;
 
+import android.graphics.Bitmap;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -194,5 +195,14 @@ public class Challenge implements Parcelable {
                 .append(": ")
                 .append(new SimpleDateFormat("yyyy-MM-dd").format(createdAt))
                 .toString();
+    }
+
+    private Bitmap picture;
+    public void setBitmap(Bitmap bitmap){
+        this.picture = bitmap;
+    }
+
+    public Bitmap getPictureBitmap(){
+        return this.picture;
     }
 }

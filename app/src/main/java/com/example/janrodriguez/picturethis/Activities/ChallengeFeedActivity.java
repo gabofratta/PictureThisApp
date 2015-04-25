@@ -1,9 +1,13 @@
 package com.example.janrodriguez.picturethis.Activities;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
@@ -18,9 +22,12 @@ import android.widget.Toast;
 
 import com.example.janrodriguez.picturethis.Helpers.Challenge;
 import com.example.janrodriguez.picturethis.Helpers.ParseHelper;
+import com.example.janrodriguez.picturethis.Helpers.ParseTableConstants;
 import com.example.janrodriguez.picturethis.R;
 import com.parse.FindCallback;
+import com.parse.GetCallback;
 import com.parse.ParseException;
+import com.parse.ParseFile;
 import com.parse.ParseObject;
 
 import java.util.ArrayList;
@@ -113,13 +120,32 @@ public class ChallengeFeedActivity extends AppCompatActivity implements ActionBa
 
                     for (ParseObject parseObject : parseObjects) {
 
-                        Challenge challenge = new Challenge(parseObject);
+                        final Challenge challenge = new Challenge(parseObject);
                         listOfReceivedChallenges.add(challenge);
+
+
+                        ParseHelper.GetChallengeImage(challenge, new GetCallback<ParseObject>() {
+                            @Override
+                            public void done(ParseObject parseObject, ParseException e) {
+                                if (e == null) {
+
+                                    ParseFile parseFile = parseObject.getParseFile(ParseTableConstants.CHALLENGE_PICTURE);
+                                    try {
+                                        byte[] bytes = parseFile.getData();
+                                        ImageProcess process = new ImageProcess(challenge, adapter1);
+                                        process.execute(bytes);
+
+
+                                    } catch (ParseException e1) {
+                                        e1.printStackTrace();
+                                    }
+                                }
+                            }
+                        });
                     }
 
                     adapter1.notifyDataSetChanged();
-                    Log.e(TAG, listOfReceivedChallenges.size()+"");
-
+//                    Log.e(TAG, listOfReceivedChallenges.size()+"");
 
                 } else {
                     Log.e(TAG, "Error: " + e.getMessage());
@@ -137,13 +163,32 @@ public class ChallengeFeedActivity extends AppCompatActivity implements ActionBa
 
                     for (ParseObject parseObject : parseObjects) {
 
-                        Challenge challenge = new Challenge(parseObject);
+                        final Challenge challenge = new Challenge(parseObject);
                         listOfSentChallenges.add(challenge);
+
+
+                        ParseHelper.GetChallengeImage(challenge, new GetCallback<ParseObject>() {
+                            @Override
+                            public void done(ParseObject parseObject, ParseException e) {
+                                if (e == null) {
+
+                                    ParseFile parseFile = parseObject.getParseFile(ParseTableConstants.CHALLENGE_PICTURE);
+                                    try {
+                                        byte[] bytes = parseFile.getData();
+                                        ImageProcess process = new ImageProcess(challenge, adapter2);
+                                        process.execute(bytes);
+
+
+                                    } catch (ParseException e1) {
+                                        e1.printStackTrace();
+                                    }
+                                }
+                            }
+                        });
                     }
 
                     adapter2.notifyDataSetChanged();
-                    Log.e(TAG, listOfSentChallenges.size()+"");
-
+//                    Log.e(TAG, listOfSentChallenges.size()+"");
 
                 } else {
                     Log.e(TAG, "Error: " + e.getMessage());
@@ -171,7 +216,7 @@ public class ChallengeFeedActivity extends AppCompatActivity implements ActionBa
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
      * one of the sections/tabs/pages.
      */
-    public class SectionsPagerAdapter extends FragmentPagerAdapter {
+    public class SectionsPagerAdapter extends FragmentStatePagerAdapter {
 
         public SectionsPagerAdapter(FragmentManager fm) {
             super(fm);
@@ -211,7 +256,7 @@ public class ChallengeFeedActivity extends AppCompatActivity implements ActionBa
     public static class ReceivedChallengeFeedFragment extends Fragment {
 
 
-        static ListView listView;
+        static ListView listView = null;
 
 
 
@@ -233,6 +278,7 @@ public class ChallengeFeedActivity extends AppCompatActivity implements ActionBa
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_received_challenge_feed, container, false);
 
+
             listView = (ListView)rootView.findViewById(R.id.listView2);
             adapter1 = new CustomListAdapter(getActivity(), listOfReceivedChallenges);
             listView.setAdapter(adapter1);
@@ -249,13 +295,14 @@ public class ChallengeFeedActivity extends AppCompatActivity implements ActionBa
                 }
             });
 
+
             return rootView;
         }
     }
 
     public static class SentChallengeFeedFragment extends Fragment {
 
-        static ListView listView;
+        static ListView listView = null;
 
 
         /**
@@ -293,7 +340,37 @@ public class ChallengeFeedActivity extends AppCompatActivity implements ActionBa
                 }
             });
 
+
+
             return rootView;
+        }
+    }
+    class ImageProcess extends AsyncTask<byte[], Void, Void> {
+        Challenge challenge;
+        CustomListAdapter adapter;
+
+        public ImageProcess(Challenge challenge, CustomListAdapter adapter){
+            this.challenge = challenge;
+            this.adapter = adapter;
+        }
+
+        @Override
+        protected Void doInBackground(byte[]... params) {
+            Bitmap largeBitmap = BitmapFactory.decodeByteArray(params[0], 0, params[0].length);
+            if (largeBitmap!=null){
+                Bitmap scaled_bitmap = Bitmap.createScaledBitmap(largeBitmap, 48, 48, true);
+                challenge.setBitmap(scaled_bitmap);
+            }else{
+                Log.e("LargeBitmap, size:", params[0].length+"");
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            if (challenge.getPictureBitmap()!=null){
+                adapter.notifyDataSetChanged();
+            }
         }
     }
 
