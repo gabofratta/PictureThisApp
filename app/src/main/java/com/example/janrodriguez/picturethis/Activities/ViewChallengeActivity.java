@@ -226,7 +226,7 @@ public class ViewChallengeActivity extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
 
         switch (item.getItemId()) {
-            case R.id.home:
+            case android.R.id.home:
                 finish();
                 return true;
 
