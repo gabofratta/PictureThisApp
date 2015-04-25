@@ -47,9 +47,10 @@ public class ChallengeFeedActivity extends AppCompatActivity implements ActionBa
      */
     ViewPager mViewPager;
 
-    static ArrayList<Challenge> listOfReceivedChallenges;
-    static ArrayList<Challenge> listOfSentChallenges;
+    static ArrayList<Challenge> listOfReceivedChallenges = new ArrayList<>();
+    static ArrayList<Challenge> listOfSentChallenges = new ArrayList<>();
     static CustomListAdapter adapter1;
+    static CustomListAdapter adapter2;
 
 
 
@@ -96,11 +97,14 @@ public class ChallengeFeedActivity extends AppCompatActivity implements ActionBa
     }
 
     private void fetchData(){
-        listOfReceivedChallenges = new ArrayList<>();
-        ParseHelper.GetAllChallengesTest(BaseGameActivity.currentUser, getFindCallback());
+        // TODO: change this function
+        ParseHelper.GetAllChallengesTest(BaseGameActivity.currentUser, getFindCallback1());
+
+        // TODO: change this function
+        ParseHelper.GetAllChallengesTest(BaseGameActivity.currentUser, getFindCallback2());
     }
 
-    private FindCallback<ParseObject> getFindCallback() {
+    private FindCallback<ParseObject> getFindCallback1() {
         return new FindCallback<ParseObject>() {
             @Override
             public void done(List<ParseObject> parseObjects, ParseException e) {
@@ -115,6 +119,30 @@ public class ChallengeFeedActivity extends AppCompatActivity implements ActionBa
 
                     adapter1.notifyDataSetChanged();
                     Log.e(TAG, listOfReceivedChallenges.size()+"");
+
+
+                } else {
+                    Log.e(TAG, "Error: " + e.getMessage());
+                }
+            }
+        };
+    }
+
+    private FindCallback<ParseObject> getFindCallback2() {
+        return new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> parseObjects, ParseException e) {
+                if (e == null) {
+                    listOfSentChallenges.clear();
+
+                    for (ParseObject parseObject : parseObjects) {
+
+                        Challenge challenge = new Challenge(parseObject);
+                        listOfSentChallenges.add(challenge);
+                    }
+
+                    adapter2.notifyDataSetChanged();
+                    Log.e(TAG, listOfSentChallenges.size()+"");
 
 
                 } else {
@@ -227,6 +255,9 @@ public class ChallengeFeedActivity extends AppCompatActivity implements ActionBa
 
     public static class SentChallengeFeedFragment extends Fragment {
 
+        static ListView listView;
+
+
         /**
          * Returns a new instance of this fragment for the given section
          * number.
@@ -246,6 +277,22 @@ public class ChallengeFeedActivity extends AppCompatActivity implements ActionBa
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_sent_challenge_feed, container, false);
+
+            listView = (ListView)rootView.findViewById(R.id.listView3);
+            adapter2 = new CustomListAdapter(getActivity(), listOfSentChallenges);
+            listView.setAdapter(adapter2);
+
+            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view,
+                                        int position, long id) {
+                    // TODO Auto-generated method stub
+                    String Slecteditem= listOfSentChallenges.get(position).getTitle();
+                    Toast.makeText(getActivity().getApplicationContext(), Slecteditem, Toast.LENGTH_SHORT).show();
+                }
+            });
+
             return rootView;
         }
     }
