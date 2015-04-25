@@ -38,8 +38,8 @@ import java.util.List;
 public class ViewChallengeActivity extends AppCompatActivity {
 
     private static final String TAG = "ViewChallengeActivity" ;
-    private static final int HEIGHT = 200;
-    private static final int WIDTH = 200;
+    private static final int HEIGHT = 500;
+    private static final int WIDTH = 500;
 
 
     private Challenge currentChallenge;
@@ -212,6 +212,7 @@ public class ViewChallengeActivity extends AppCompatActivity {
 
             if(bitmap != null) {
                 Bitmap decodedBitmap = ImageHelper.DecodeSampledBitmapFromResource(currentPictureUri.getPath(), WIDTH, HEIGHT);
+                ImageHelper.SaveImage(decodedBitmap, currentPictureUri);
                 response_pic.setImageBitmap(decodedBitmap);
             }
         } else if (resultCode == RESULT_CANCELED && requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
