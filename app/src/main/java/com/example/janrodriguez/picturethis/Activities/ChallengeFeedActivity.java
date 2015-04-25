@@ -14,13 +14,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.example.janrodriguez.picturethis.Helpers.Challenge;
 import com.example.janrodriguez.picturethis.Helpers.CustomListAdapter;
 import com.example.janrodriguez.picturethis.Helpers.ParseHelper;
 import com.example.janrodriguez.picturethis.Layouts.SlidingTabLayout;
 import com.example.janrodriguez.picturethis.R;
+import com.gc.materialdesign.views.ButtonFloat;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -64,6 +64,15 @@ public class ChallengeFeedActivity extends BaseSidePanelActivity implements Acti
         setContentView(R.layout.activity_challenge_feed);
 
         setUpSidePanel();
+
+        ButtonFloat buttonFloat = (ButtonFloat)findViewById(R.id.buttonFloat);
+        buttonFloat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ChallengeFeedActivity.this, CreateChallengeActivity.class);
+                startActivity(intent);
+            }
+        });
 
         // Set up the action bar.
         final ActionBar actionBar = getSupportActionBar();
