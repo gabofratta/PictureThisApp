@@ -5,6 +5,6 @@
     android:layout_height="wrap_content"
     android:text="@string/logout"
     android:layout_margin="30dp"
-    android:background="#F44336">
+    android:background="#E57373">
 
 </Button>
