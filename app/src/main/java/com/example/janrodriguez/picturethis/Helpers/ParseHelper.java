@@ -5,6 +5,8 @@ import android.graphics.BitmapFactory;
 import android.util.Log;
 
 import com.parse.FindCallback;
+import com.parse.GetDataCallback;
+import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.SaveCallback;
@@ -42,23 +44,19 @@ public class ParseHelper {
         userPO.saveInBackground(callback);
     }
 
-    static private void UpdateResponseStatus(Response response, String status, SaveCallback callback) {
-        if (response.getId() == null) {
-            Log.e(TAG, "Error: Cannot create a ParseObject from a Response that does not have an id");
-            return;
-        }
+    static public void UpdateUserScore(User user, SaveCallback callback) {
+        ParseObject userPO = ParseObject.createWithoutData(ParseTableConstants.USER_TABLE, user.getId());
+        userPO.put(ParseTableConstants.USER_SCORE, user.getScore());
+        userPO.saveInBackground(callback);
+    }
 
+    static private void UpdateResponseStatus(Response response, String status, SaveCallback callback) {
         ParseObject responsePO = ParseObject.createWithoutData(ParseTableConstants.RESPONSE_TABLE, response.getId());
         responsePO.put(ParseTableConstants.RESPONSE_STATUS, status);
         responsePO.saveInBackground(callback);
     }
 
     static private void SetChallengeInactive(Challenge challenge, SaveCallback callback) {
-        if (challenge.getId() == null) {
-            Log.e(TAG, "Error: Cannot create a ParseObject from a Challenge that does not have an id");
-            return;
-        }
-
         ParseObject challengePO = ParseObject.createWithoutData(ParseTableConstants.CHALLENGE_TABLE, challenge.getId());
         challengePO.put(ParseTableConstants.CHALLENGE_ACTIVE, false);
         challengePO.saveInBackground(callback);
@@ -74,11 +72,6 @@ public class ParseHelper {
     }
 
     static private void GetChallengesInitiatedByUser(User user, boolean active, FindCallback<ParseObject> callback) {
-        if (user.getId() == null) {
-            Log.e(TAG, "Error: Cannot create a ParseObject from a User that does not have an id");
-            return;
-        }
-
         ParseObject challengerPO = ParseObject.createWithoutData(ParseTableConstants.USER_TABLE, user.getId());
         ParseQuery<ParseObject> query = ParseQuery.getQuery(ParseTableConstants.CHALLENGE_TABLE);
         query.include(ParseTableConstants.CHALLENGE_CHALLENGER);
@@ -144,15 +137,22 @@ public class ParseHelper {
     }
 
     static private void GetResponsesToChallenge(Challenge challenge, String status, FindCallback<ParseObject> callback) {
-        if (challenge.getId() == null) {
-            Log.e(TAG, "Error: Cannot create a ParseObject from a Challenge that does not have an id");
-            return;
-        }
+        String challengeDotChallenger = new StringBuilder(ParseTableConstants.RESPONSE_CHALLENGE)
+                .append(".")
+                .append(ParseTableConstants.CHALLENGE_CHALLENGER)
+                .toString();
+
+        String challengeDotChallenged = new StringBuilder(ParseTableConstants.RESPONSE_CHALLENGE)
+                .append(".")
+                .append(ParseTableConstants.CHALLENGE_CHALLENGED)
+                .toString();
 
         ParseObject challengePO = ParseObject.createWithoutData(ParseTableConstants.CHALLENGE_TABLE, challenge.getId());
         ParseQuery<ParseObject> query = ParseQuery.getQuery(ParseTableConstants.RESPONSE_TABLE);
         query.include(ParseTableConstants.RESPONSE_CHALLENGE);
         query.include(ParseTableConstants.RESPONSE_RESPONDER);
+        query.include(challengeDotChallenger);
+        query.include(challengeDotChallenged);
         query.whereEqualTo(ParseTableConstants.RESPONSE_CHALLENGE, challengePO);
         query.whereEqualTo(ParseTableConstants.RESPONSE_STATUS, status);
         query.orderByAscending(ParseTableConstants.RESPONSE_CREATED_AT);
@@ -165,6 +165,31 @@ public class ParseHelper {
 
     static public void GetAcceptedResponseToChallenge(Challenge challenge, FindCallback<ParseObject> callback) {
         GetResponsesToChallenge(challenge, Response.STATUS_ACCEPTED, callback);
+    }
+
+    static public void GetUsersLatestResponseToChallenge(User user, Challenge challenge, FindCallback<ParseObject> callback) {
+        String challengeDotChallenger = new StringBuilder(ParseTableConstants.RESPONSE_CHALLENGE)
+                .append(".")
+                .append(ParseTableConstants.CHALLENGE_CHALLENGER)
+                .toString();
+
+        String challengeDotChallenged = new StringBuilder(ParseTableConstants.RESPONSE_CHALLENGE)
+                .append(".")
+                .append(ParseTableConstants.CHALLENGE_CHALLENGED)
+                .toString();
+
+        ParseObject challengePO = ParseObject.createWithoutData(ParseTableConstants.CHALLENGE_TABLE, challenge.getId());
+        ParseObject responderPO = ParseObject.createWithoutData(ParseTableConstants.USER_TABLE, user.getId());
+        ParseQuery<ParseObject> query = ParseQuery.getQuery(ParseTableConstants.RESPONSE_TABLE);
+        query.include(ParseTableConstants.RESPONSE_CHALLENGE);
+        query.include(ParseTableConstants.RESPONSE_RESPONDER);
+        query.include(challengeDotChallenger);
+        query.include(challengeDotChallenged);
+        query.whereEqualTo(ParseTableConstants.RESPONSE_CHALLENGE, challengePO);
+        query.whereEqualTo(ParseTableConstants.RESPONSE_RESPONDER, responderPO);
+        query.orderByAscending(ParseTableConstants.RESPONSE_CREATED_AT);
+        query.setLimit(1);
+        query.findInBackground(callback);
     }
 
     static public void GetUserByGoogleId(User user, FindCallback<ParseObject> callback) {
@@ -184,6 +209,25 @@ public class ParseHelper {
         query.findInBackground(callback);
     }
 
+    static public void GetChallengeImage(Challenge challenge, GetDataCallback callback) {
+        ParseObject challengePO;
+        try {
+            challengePO = challenge.createParseObject();
+        } catch (JSONException e) {
+            Log.e(TAG, "Error: " + e.getMessage());
+            return;
+        }
+
+        ParseFile image = (ParseFile) challengePO.get(ParseTableConstants.CHALLENGE_PICTURE);
+        image.getDataInBackground(callback);
+    }
+
+    static public void GetResponseImage(Response response, GetDataCallback callback) {
+        ParseObject responsePO = response.createParseObject();
+        ParseFile image = (ParseFile) responsePO.get(ParseTableConstants.CHALLENGE_PICTURE);
+        image.getDataInBackground(callback);
+    }
+
     static public byte[] GetImageBytes(String filePath) {
         Bitmap bitmap = BitmapFactory.decodeFile(filePath);
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
@@ -192,4 +236,5 @@ public class ParseHelper {
     }
 
 }
+
 

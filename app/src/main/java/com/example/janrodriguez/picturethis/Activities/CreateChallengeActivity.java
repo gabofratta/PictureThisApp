@@ -102,7 +102,11 @@ public class CreateChallengeActivity extends BaseGameActivity {
                     try {
                         int count = personBuffer.getCount();
                         for (int i = 0; i < count; i++) {
-                            usersList.add(new User(personBuffer.get(i).getId(), personBuffer.get(i).getDisplayName()));
+                            String googleId = personBuffer.get(i).getId();
+                            
+                            if (!googleId.equals(currentUser.getGoogleId())) {
+                                usersList.add(new User(googleId, personBuffer.get(i).getDisplayName()));
+                            }
                         }
                     } finally {
                         personBuffer.close();
