@@ -55,18 +55,15 @@
         </activity>
         <activity
             android:name=".Activities.CreateChallengeActivity"
-            android:label="@string/title_activity_create_challenge"
-            android:parentActivityName=".Activities.MainActivity" >
+            android:label="@string/title_activity_create_challenge" >
         </activity>
         <activity
             android:name=".Activities.MapActivity"
-            android:label="@string/title_activity_map"
-            android:parentActivityName=".Activities.MainActivity" >
+            android:label="@string/title_activity_map" >
         </activity>
         <activity
             android:name=".Activities.HistoryActivity"
-            android:label="@string/title_activity_history"
-            android:parentActivityName=".Activities.MainActivity" >
+            android:label="@string/title_activity_history" >
         </activity>
         <activity
             android:name=".Activities.ViewChallengeActivity"

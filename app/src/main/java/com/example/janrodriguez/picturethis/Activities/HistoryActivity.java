@@ -146,10 +146,9 @@ public class HistoryActivity extends BaseGameActivity {
                 setRefreshActionButtonState(true);
                 populateChallengeListViews();
                 return true;
-            case R.id.home:
+            case android.R.id.home:
                 finish();
                 return true;
-
             default:
                 return super.onOptionsItemSelected(item);
         }
