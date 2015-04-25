@@ -7,6 +7,7 @@ import android.view.View;
 
 import com.example.janrodriguez.picturethis.Helpers.Achievement;
 import com.example.janrodriguez.picturethis.Helpers.Leaderboard;
+import com.example.janrodriguez.picturethis.Helpers.ParseHelper;
 import com.example.janrodriguez.picturethis.R;
 import com.google.android.gms.games.Games;
 import com.parse.FindCallback;
@@ -77,8 +78,16 @@ public class MainActivity extends BaseSidePanelActivity {
         Log.d(TAG, "Signed in successfully");
         if ((mRequestedClients & CLIENT_GAMES) != 0) {
             Games.Achievements.unlock(getApiClient(), Achievement.INSTALL_AND_SIGN_IN);
-            long newScore = currentUser.getScore() + 5;
-            Games.Leaderboards.submitScore(getApiClient(), Leaderboard.ID, newScore);
+            currentUser.setScore(currentUser.getScore() + 5);
+            ParseHelper.UpdateUserScore(currentUser, new SaveCallback() {
+                @Override
+                public void done(ParseException e) {
+                    if(e != null) {
+                        Log.e(TAG, "Error setting score: "+e.getMessage());
+                    }
+                    Games.Leaderboards.submitScore(getApiClient(), Leaderboard.ID, currentUser.getScore());
+                }
+            });
         } else {
             Log.d(TAG, "Not signed into google games.");
         }

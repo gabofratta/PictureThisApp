@@ -93,8 +93,12 @@ public class User implements Parcelable {
     public int getScore() {
         return score;
     }
+
     /**\Getters**/
 
+    public void setScore(int score){
+        this.score = score;
+    }
     @Override
     public String toString() {
         return name;
