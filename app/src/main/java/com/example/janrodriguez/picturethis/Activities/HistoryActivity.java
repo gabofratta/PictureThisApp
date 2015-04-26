@@ -153,7 +153,7 @@ public class HistoryActivity extends BaseGameActivity implements ActionBar.TabLi
     }
 
     @Override
-    public void onStart () {
+    public void onSignInSucceeded () {
         populateChallengeListViews();
 
         runnable = new Runnable() {

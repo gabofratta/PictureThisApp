@@ -116,7 +116,7 @@ public class ChallengeFeedActivity extends BaseSidePanelActivity implements Acti
     }
 
     @Override
-    public void onStart () {
+    public void onSignInSucceeded () {
         fetchData();
 
         runnable = new Runnable() {
