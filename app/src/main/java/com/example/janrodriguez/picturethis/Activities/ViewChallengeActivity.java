@@ -38,7 +38,6 @@ public class ViewChallengeActivity extends AppCompatActivity {
     private static final int HEIGHT = 500;
     private static final int WIDTH = 500;
 
-
     private Challenge currentChallenge;
 
     private TextView challengeTitle;
@@ -52,10 +51,6 @@ public class ViewChallengeActivity extends AppCompatActivity {
     private Uri currentPictureUri;
     private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
 
-
-
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,8 +62,10 @@ public class ViewChallengeActivity extends AppCompatActivity {
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             currentChallenge = (Challenge) extras.getParcelable(Challenge.INTENT_TAG);
+
             displayChallenge();
-            final Button button = (Button) findViewById(R.id.view_map_button);
+
+            Button button = (Button) findViewById(R.id.view_map_button);
             button.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
                     Intent intent = new Intent(ViewChallengeActivity.this, MapActivity.class);
@@ -78,16 +75,10 @@ public class ViewChallengeActivity extends AppCompatActivity {
                     startActivity(intent);
                 }
             });
+
         } else {
             Log.e(TAG, "Called activity without a Challenge");
         }
-
-        //GetUsersLatestResponseToChallenge(User user, Challenge challenge, FindCallback < ParseObject > callback
-        // if challenge has repsonse
-            // show response
-        // else
-            // make it a button
-
     }
 
 
@@ -117,7 +108,7 @@ public class ViewChallengeActivity extends AppCompatActivity {
                     try {
                         bmp = BitmapFactory.decodeByteArray(data.getParseFile(ParseTableConstants.CHALLENGE_PICTURE).getData(), 0, data.getParseFile(ParseTableConstants.CHALLENGE_PICTURE).getData().length);
                     } catch (ParseException e1) {
-                        e1.printStackTrace();
+                        Log.e(TAG, "Error: " + e1.getMessage());
                     }
                     challenge_pic.setImageBitmap(bmp);
                 } else {
@@ -131,60 +122,31 @@ public class ViewChallengeActivity extends AppCompatActivity {
             @Override
             public void done(List<ParseObject> parseObjects, ParseException e) {
                 if (e == null) {
-                    Log.e(TAG, "GOT TO LEVEL 0");
-                    if ( parseObjects.size() != 0 ){
-                        Log.e(TAG, "GOT TO LEVEL 1");
-                        Bitmap bmp = null;
-                        try {
-                            Response response = new Response(parseObjects.get(0));
-                            bmp = BitmapFactory.decodeByteArray(parseObjects.get(0).getParseFile(ParseTableConstants.RESPONSE_PICTURE).getData(),0,parseObjects.get(0).getParseFile(ParseTableConstants.RESPONSE_PICTURE).getData().length);
-                            response_pic.setImageBitmap(bmp);
-                            sendResponseButton.setVisibility(View.GONE);
-                        }  catch (ParseException e1) {
-                            e1.printStackTrace();
+                    TextView statusTextView = (TextView) findViewById(R.id.status_text);
+
+                    if (parseObjects.size() != 0) {
+                        Response response = new Response(parseObjects.get(0));
+                        statusTextView.setText(response.getStatus());
+
+                        if (response.getStatus().equals(Response.STATUS_DECLINED)) {
+                            sendResponseButton.setVisibility(View.VISIBLE);
+                            setClickListeners();
+                        } else {
+                            Bitmap bmp = null;
+                            try {
+                                byte[] data = parseObjects.get(0).getParseFile(ParseTableConstants.RESPONSE_PICTURE).getData();
+                                bmp = BitmapFactory.decodeByteArray(data, 0, data.length);
+                                response_pic.setImageBitmap(bmp);
+                            } catch (ParseException e1) {
+                                Log.e(TAG, "Error: " + e1.getMessage());
+                            }
                         }
                     }
                     else
                     {
-                        response_pic.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                File imageFile = null;
-                                try {
-                                    imageFile = ImageHelper.CreateImageFile();
-                                } catch (IOException e) {
-                                    Log.e(TAG, "Error: " + e.getMessage());
-                                }
-
-                                tempPictureUri = Uri.fromFile(imageFile);
-                                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                                if (intent.resolveActivity(getPackageManager()) != null && imageFile != null) {
-                                    intent.putExtra(MediaStore.EXTRA_OUTPUT, tempPictureUri);
-                                    startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
-                                }
-                            }
-                        });
-
-
-                            sendResponseButton.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                Response response = new Response(currentChallenge, BaseGameActivity.currentUser, currentPictureUri.getPath());
-                                //Challenge challenge = new Challenge(title, currentUser, currentLocation, challengedList, currentPictureUri.getPath());
-                                ParseHelper.CreateResponse(response, new SaveCallback() {
-                                    public void done(ParseException e) {
-                                        if (e == null) {
-                                            Toast.makeText(getApplicationContext(), getString(R.string.response_created), Toast.LENGTH_SHORT).show();
-                                        } else {
-                                            Log.e(TAG, "Error: " + e.getMessage());
-                                        }
-                                    }
-                                });
-
-                                finish();
-                            }
-                        });
-
+                        statusTextView.setText(Response.STATUS_OPEN);
+                        sendResponseButton.setVisibility(View.VISIBLE);
+                        setClickListeners();
                     }
                 }
                 else
@@ -193,10 +155,51 @@ public class ViewChallengeActivity extends AppCompatActivity {
                 }
             }
         });
-
-
     }
 
+    private void setClickListeners() {
+        response_pic.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                File imageFile = null;
+                try {
+                    imageFile = ImageHelper.CreateImageFile();
+                } catch (IOException e) {
+                    Log.e(TAG, "Error: " + e.getMessage());
+                }
+
+                tempPictureUri = Uri.fromFile(imageFile);
+                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                if (intent.resolveActivity(getPackageManager()) != null && imageFile != null) {
+                    intent.putExtra(MediaStore.EXTRA_OUTPUT, tempPictureUri);
+                    startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
+                }
+            }
+        });
+
+        sendResponseButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (currentPictureUri == null) {
+                    Toast.makeText(getApplicationContext(), getString(R.string.picture_missing), Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                Response response = new Response(currentChallenge, BaseGameActivity.currentUser, currentPictureUri.getPath());
+                ParseHelper.CreateResponse(response, new SaveCallback() {
+                    public void done(ParseException e) {
+                        if (e == null) {
+                            Toast.makeText(getApplicationContext(), getString(R.string.response_created), Toast.LENGTH_SHORT).show();
+                        } else {
+                            Log.e(TAG, "Error: " + e.getMessage());
+                        }
+                    }
+                });
+
+                finish();
+            }
+        });
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -235,7 +238,5 @@ public class ViewChallengeActivity extends AppCompatActivity {
                 return super.onOptionsItemSelected(item);
         }
     }
-
-
 
 }

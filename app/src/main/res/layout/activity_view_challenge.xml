@@ -152,7 +152,7 @@
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceSmall"
                     android:text="Open"
-                    android:id="@+id/textView8"
+                    android:id="@+id/status_text"
                     android:layout_column="1" />
             </TableRow>
 
@@ -209,6 +209,7 @@
             android:text="Send Response"
             android:id="@+id/sendResponse_button"
             android:layout_below="@+id/table2"
-            android:layout_centerHorizontal="true" />
+            android:layout_centerHorizontal="true"
+            android:visibility="gone" />
     </RelativeLayout>
 </ScrollView>
