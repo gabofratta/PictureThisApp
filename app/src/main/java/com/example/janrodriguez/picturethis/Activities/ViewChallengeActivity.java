@@ -6,7 +6,6 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,12 +15,15 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.janrodriguez.picturethis.Helpers.Achievement;
 import com.example.janrodriguez.picturethis.Helpers.Challenge;
 import com.example.janrodriguez.picturethis.Helpers.ImageHelper;
 import com.example.janrodriguez.picturethis.Helpers.ParseHelper;
 import com.example.janrodriguez.picturethis.Helpers.ParseTableConstants;
 import com.example.janrodriguez.picturethis.Helpers.Response;
+import com.example.janrodriguez.picturethis.Helpers.Score;
 import com.example.janrodriguez.picturethis.R;
+import com.google.android.gms.games.Games;
 import com.parse.FindCallback;
 import com.parse.GetCallback;
 import com.parse.ParseException;
@@ -32,7 +34,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-public class ViewChallengeActivity extends AppCompatActivity {
+public class ViewChallengeActivity extends BaseGameActivity {
 
     private static final String TAG = "ViewChallengeActivity" ;
     private static final int HEIGHT = 500;
@@ -195,7 +197,12 @@ public class ViewChallengeActivity extends AppCompatActivity {
                         }
                     }
                 });
-
+                //Update user's score
+                if(loggedIntoGoogleGames()){
+                    currentUser.incrementScore(Score.SEND_RESPONSE);
+                    currentUser.updateScore(getApiClient());
+                    Games.Achievements.unlock(getApiClient(), Achievement.SEND_RESPONSE);
+                }
                 finish();
             }
         });

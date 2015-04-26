@@ -71,8 +71,8 @@ public abstract class BaseGameActivity extends AppCompatActivity implements
     public static final int CLIENT_ALL = GameHelper.CLIENT_ALL;
 
      //Requested clients. By default, that's just the games client.
-    //protected int mRequestedClients = CLIENT_GAMES | CLIENT_PLUS;
-    protected int mRequestedClients = CLIENT_PLUS;
+    protected int mRequestedClients = CLIENT_GAMES | CLIENT_PLUS;
+//    protected int mRequestedClients = CLIENT_PLUS;
 
     private final static String TAG = "BaseGameActivity";
     protected boolean mDebugLog = false;
@@ -245,6 +245,10 @@ public abstract class BaseGameActivity extends AppCompatActivity implements
                 mHelper.beginUserInitiatedSignIn();
                 break;
         }
+    }
+
+    protected boolean loggedIntoGoogleGames() {
+        return (mRequestedClients & CLIENT_GAMES )!= 0 && getApiClient().isConnected();
     }
 
 }
