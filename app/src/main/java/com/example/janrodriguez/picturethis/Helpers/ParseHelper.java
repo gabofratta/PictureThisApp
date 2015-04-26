@@ -186,7 +186,7 @@ public class ParseHelper {
         query.include(challengeDotChallenged);
         query.whereEqualTo(ParseTableConstants.RESPONSE_CHALLENGE, challengePO);
         query.whereEqualTo(ParseTableConstants.RESPONSE_RESPONDER, responderPO);
-        query.orderByAscending(ParseTableConstants.RESPONSE_CREATED_AT);
+        query.orderByDescending(ParseTableConstants.RESPONSE_CREATED_AT);
         query.setLimit(1);
         query.findInBackground(callback);
     }
