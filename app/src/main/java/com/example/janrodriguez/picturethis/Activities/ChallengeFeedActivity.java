@@ -2,12 +2,12 @@ package com.example.janrodriguez.picturethis.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -52,13 +52,13 @@ public class ChallengeFeedActivity extends BaseSidePanelActivity implements Acti
 
     SlidingTabLayout mSlidingTabLayout;
 
+    private static SwipeRefreshLayout receivedRefreshLayout;
+    private static SwipeRefreshLayout sentRefreshLayout;
+
     static ArrayList<Challenge> listOfReceivedChallenges = new ArrayList<>();
     static ArrayList<Challenge> listOfSentChallenges = new ArrayList<>();
     static CustomListAdapter adapter1;
     static CustomListAdapter adapter2;
-
-    private final Handler refreshHandler = new Handler();
-    private Runnable runnable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,31 +118,20 @@ public class ChallengeFeedActivity extends BaseSidePanelActivity implements Acti
     @Override
     public void onSignInSucceeded () {
         fetchData();
-
-        runnable = new Runnable() {
-            @Override
-            public void run() {
-                fetchData();
-                refreshHandler.postDelayed(this, REFRESH_RATE);
-            }
-        };
-
-        refreshHandler.postDelayed(runnable, REFRESH_RATE);
-        super.onStart();
     }
 
     @Override
     public void onStop () {
-        refreshHandler.removeCallbacks(runnable);
+//        refreshHandler.removeCallbacks(runnable);
         super.onStop();
     }
 
-    private void fetchData(){
+    protected static void fetchData(){
         ParseHelper.GetActiveChallengesReceivedByUser(BaseGameActivity.currentUser, getFindCallbackReceived());
         ParseHelper.GetActiveChallengesInitiatedByUser(BaseGameActivity.currentUser, getFindCallbackSent());
     }
 
-    private FindCallback<ParseObject> getFindCallbackReceived() {
+    private static FindCallback<ParseObject> getFindCallbackReceived() {
         return new FindCallback<ParseObject>() {
             @Override
             public void done(List<ParseObject> parseObjects, ParseException e) {
@@ -156,7 +145,7 @@ public class ChallengeFeedActivity extends BaseSidePanelActivity implements Acti
                     }
 
                     adapter1.notifyDataSetChanged();
-                    Log.d(TAG, listOfReceivedChallenges.size() + "");
+                    receivedRefreshLayout.setRefreshing(false);
 
                 } else {
                     Log.e(TAG, "Error: " + e.getMessage());
@@ -165,7 +154,7 @@ public class ChallengeFeedActivity extends BaseSidePanelActivity implements Acti
         };
     }
 
-    private FindCallback<ParseObject> getFindCallbackSent() {
+    private static FindCallback<ParseObject> getFindCallbackSent() {
         return new FindCallback<ParseObject>() {
             @Override
             public void done(List<ParseObject> parseObjects, ParseException e) {
@@ -179,7 +168,7 @@ public class ChallengeFeedActivity extends BaseSidePanelActivity implements Acti
                     }
 
                     adapter2.notifyDataSetChanged();
-                    Log.d(TAG, listOfSentChallenges.size() + "");
+                    sentRefreshLayout.setRefreshing(false);
 
                 } else {
                     Log.e(TAG, "Error: " + e.getMessage());
@@ -266,6 +255,13 @@ public class ChallengeFeedActivity extends BaseSidePanelActivity implements Acti
             View rootView = inflater.inflate(R.layout.fragment_received_challenge_feed, container, false);
 
             listView = (ListView)rootView.findViewById(R.id.listView2);
+            receivedRefreshLayout = (SwipeRefreshLayout)rootView.findViewById(R.id.refresh_received);
+            receivedRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                @Override
+                public void onRefresh() {
+                    fetchData();
+                }
+            });
             adapter1 = new CustomListAdapter(getActivity(), listOfReceivedChallenges);
             listView.setAdapter(adapter1);
 
@@ -314,6 +310,14 @@ public class ChallengeFeedActivity extends BaseSidePanelActivity implements Acti
             View rootView = inflater.inflate(R.layout.fragment_sent_challenge_feed, container, false);
 
             listView = (ListView)rootView.findViewById(R.id.listView3);
+
+            sentRefreshLayout = (SwipeRefreshLayout)rootView.findViewById(R.id.refresh_sent);
+            sentRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                @Override
+                public void onRefresh() {
+                    fetchData();
+                }
+            });
             adapter2 = new CustomListAdapter(getActivity(), listOfSentChallenges);
             listView.setAdapter(adapter2);
 
