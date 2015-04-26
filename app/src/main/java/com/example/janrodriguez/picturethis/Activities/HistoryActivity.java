@@ -34,7 +34,7 @@ import java.util.Locale;
 public class HistoryActivity extends AppCompatActivity implements ActionBar.TabListener {
 
     static private final String TAG = "HistoryActivity";
-    static private final int REFRESH_RATE = 5000;
+    static private final int REFRESH_RATE = 30000;
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -71,8 +71,6 @@ public class HistoryActivity extends AppCompatActivity implements ActionBar.TabL
         getSupportActionBar().setHomeButtonEnabled(true);
 
         initializeTabs();
-        populateChallengeListViews();
-        startRefreshThread();
     }
 
     private void initializeTabs() {
@@ -155,7 +153,10 @@ public class HistoryActivity extends AppCompatActivity implements ActionBar.TabL
         });
     }
 
-    private void startRefreshThread() {
+    @Override
+    public void onStart () {
+        populateChallengeListViews();
+
         runnable = new Runnable() {
             @Override
             public void run() {
@@ -163,7 +164,9 @@ public class HistoryActivity extends AppCompatActivity implements ActionBar.TabL
                 refreshHandler.postDelayed(this, REFRESH_RATE);
             }
         };
+
         refreshHandler.postDelayed(runnable, REFRESH_RATE);
+        super.onStart();
     }
 
     @Override

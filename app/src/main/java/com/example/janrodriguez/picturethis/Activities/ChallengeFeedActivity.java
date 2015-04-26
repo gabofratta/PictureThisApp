@@ -2,6 +2,7 @@ package com.example.janrodriguez.picturethis.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -32,7 +33,7 @@ import java.util.Locale;
 public class ChallengeFeedActivity extends BaseSidePanelActivity implements ActionBar.TabListener {
 
     static private final String TAG = "ChallengeFeedActivity";
-
+    static private final int REFRESH_RATE = 30000;
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -56,7 +57,8 @@ public class ChallengeFeedActivity extends BaseSidePanelActivity implements Acti
     static CustomListAdapter adapter1;
     static CustomListAdapter adapter2;
 
-
+    private final Handler refreshHandler = new Handler();
+    private Runnable runnable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,19 +113,36 @@ public class ChallengeFeedActivity extends BaseSidePanelActivity implements Acti
         mSlidingTabLayout = (SlidingTabLayout)findViewById(R.id.sliding_tabs);
         mSlidingTabLayout.setDistributeEvenly(true);
         mSlidingTabLayout.setViewPager(mViewPager);
+    }
 
+    @Override
+    public void onStart () {
         fetchData();
+
+        runnable = new Runnable() {
+            @Override
+            public void run() {
+                fetchData();
+                refreshHandler.postDelayed(this, REFRESH_RATE);
+            }
+        };
+
+        refreshHandler.postDelayed(runnable, REFRESH_RATE);
+        super.onStart();
+    }
+
+    @Override
+    public void onStop () {
+        refreshHandler.removeCallbacks(runnable);
+        super.onStop();
     }
 
     private void fetchData(){
-        // TODO: change this function
-        ParseHelper.GetActiveChallengesReceivedByUser(BaseGameActivity.currentUser, getFindCallback1());
-
-        // TODO: change this function
-        ParseHelper.GetActiveChallengesInitiatedByUser(BaseGameActivity.currentUser, getFindCallback2());
+        ParseHelper.GetActiveChallengesReceivedByUser(BaseGameActivity.currentUser, getFindCallbackReceived());
+        ParseHelper.GetActiveChallengesInitiatedByUser(BaseGameActivity.currentUser, getFindCallbackSent());
     }
 
-    private FindCallback<ParseObject> getFindCallback1() {
+    private FindCallback<ParseObject> getFindCallbackReceived() {
         return new FindCallback<ParseObject>() {
             @Override
             public void done(List<ParseObject> parseObjects, ParseException e) {
@@ -137,8 +156,7 @@ public class ChallengeFeedActivity extends BaseSidePanelActivity implements Acti
                     }
 
                     adapter1.notifyDataSetChanged();
-                    Log.e(TAG, listOfReceivedChallenges.size()+"");
-
+                    Log.d(TAG, listOfReceivedChallenges.size() + "");
 
                 } else {
                     Log.e(TAG, "Error: " + e.getMessage());
@@ -147,7 +165,7 @@ public class ChallengeFeedActivity extends BaseSidePanelActivity implements Acti
         };
     }
 
-    private FindCallback<ParseObject> getFindCallback2() {
+    private FindCallback<ParseObject> getFindCallbackSent() {
         return new FindCallback<ParseObject>() {
             @Override
             public void done(List<ParseObject> parseObjects, ParseException e) {
@@ -161,8 +179,7 @@ public class ChallengeFeedActivity extends BaseSidePanelActivity implements Acti
                     }
 
                     adapter2.notifyDataSetChanged();
-                    Log.e(TAG, listOfSentChallenges.size()+"");
-
+                    Log.d(TAG, listOfSentChallenges.size() + "");
 
                 } else {
                     Log.e(TAG, "Error: " + e.getMessage());
