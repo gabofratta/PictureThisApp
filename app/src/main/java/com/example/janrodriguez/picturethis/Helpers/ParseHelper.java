@@ -6,8 +6,6 @@ import android.util.Log;
 
 import com.parse.FindCallback;
 import com.parse.GetCallback;
-import com.parse.GetDataCallback;
-import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.SaveCallback;
@@ -112,21 +110,6 @@ public class ParseHelper {
         query.findInBackground(callback);
     }
 
-    //TODO remove
-    static public void GetAllChallengesTest(User user, FindCallback<ParseObject> callback) {
-        GetAllChallengesTest(user, true, callback);
-    }
-
-    //TODO remove
-    static private void GetAllChallengesTest(User user, boolean active, FindCallback<ParseObject> callback) {
-        ParseQuery<ParseObject> query = ParseQuery.getQuery(ParseTableConstants.CHALLENGE_TABLE);
-        query.include(ParseTableConstants.CHALLENGE_CHALLENGER);
-        query.include(ParseTableConstants.CHALLENGE_CHALLENGED);
-
-        query.orderByDescending(ParseTableConstants.CHALLENGE_CREATED_AT);
-        query.findInBackground(callback);
-    }
-
     static public void GetActiveChallengesReceivedByUser(User user, FindCallback<ParseObject> callback) {
         GetChallengesReceivedByUser(user, true, callback);
     }
@@ -164,6 +147,29 @@ public class ParseHelper {
 
     static public void GetAcceptedResponseToChallenge(Challenge challenge, FindCallback<ParseObject> callback) {
         GetResponsesToChallenge(challenge, Response.STATUS_ACCEPTED, callback);
+    }
+
+    static public void GetPendingOrAcceptedResponsesToChallenge(Challenge challenge, FindCallback<ParseObject> callback) {
+        String challengeDotChallenger = new StringBuilder(ParseTableConstants.RESPONSE_CHALLENGE)
+                .append(".")
+                .append(ParseTableConstants.CHALLENGE_CHALLENGER)
+                .toString();
+
+        String challengeDotChallenged = new StringBuilder(ParseTableConstants.RESPONSE_CHALLENGE)
+                .append(".")
+                .append(ParseTableConstants.CHALLENGE_CHALLENGED)
+                .toString();
+
+        ParseObject challengePO = ParseObject.createWithoutData(ParseTableConstants.CHALLENGE_TABLE, challenge.getId());
+        ParseQuery<ParseObject> query = ParseQuery.getQuery(ParseTableConstants.RESPONSE_TABLE);
+        query.include(ParseTableConstants.RESPONSE_CHALLENGE);
+        query.include(ParseTableConstants.RESPONSE_RESPONDER);
+        query.include(challengeDotChallenger);
+        query.include(challengeDotChallenged);
+        query.whereEqualTo(ParseTableConstants.RESPONSE_CHALLENGE, challengePO);
+        query.whereNotEqualTo(ParseTableConstants.RESPONSE_STATUS, Response.STATUS_DECLINED);
+        query.orderByAscending(ParseTableConstants.RESPONSE_CREATED_AT);
+        query.findInBackground(callback);
     }
 
     static public void GetUsersLatestResponseToChallenge(User user, Challenge challenge, FindCallback<ParseObject> callback) {

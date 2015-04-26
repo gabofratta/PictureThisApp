@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.janrodriguez.picturethis.Helpers.Challenge;
 import com.example.janrodriguez.picturethis.Helpers.ParseHelper;
@@ -22,6 +23,7 @@ import com.parse.FindCallback;
 import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
+import com.parse.SaveCallback;
 
 import java.util.List;
 
@@ -31,9 +33,7 @@ public class ViewResponseActivity extends AppCompatActivity {
 
     private Challenge currentChallenge;
 
-
     private TextView challengeTitle;
-    private TextView challengerName;
     private TextView challengeDate;
     private ImageButton challenge_pic;
     private ImageButton response_pic;
@@ -53,8 +53,10 @@ public class ViewResponseActivity extends AppCompatActivity {
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             currentChallenge = (Challenge) extras.getParcelable(Challenge.INTENT_TAG);
-            displayResponse(currentChallenge);
-            final Button button = (Button) findViewById(R.id.view_map_button);
+
+            displayResponse();
+
+            Button button = (Button) findViewById(R.id.view_map_button);
             button.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
                     Intent intent = new Intent(ViewResponseActivity.this, MapActivity.class);
@@ -64,32 +66,31 @@ public class ViewResponseActivity extends AppCompatActivity {
                     startActivity(intent);
                 }
             });
+
         } else {
             Log.e(TAG, "Called activity without a Challenge");
         }
     }
 
-    private void displayResponse(Challenge c) {
+    private void displayResponse() {
         challengeTitle = (TextView) findViewById(R.id.challenge_title);
-        challengeTitle.setText(c.getTitle());
-
-        challengerName = (TextView) findViewById(R.id.challenger_name);
-        challengerName.setText(c.getChallenger().getName());
+        challengeTitle.setText(currentChallenge.getTitle());
 
         challengeDate = (TextView) findViewById(R.id.challenge_date);
-        challengeDate.setText(c.getCreatedAt().toString());
+        challengeDate.setText(currentChallenge.getCreatedAt().toString());
 
         acceptButton = (Button) findViewById(R.id.accept_button);
         declineButton = (Button) findViewById(R.id.decline_button);
 
         CheckBox checkMultiPlayer = (CheckBox) findViewById(R.id.multiplayer_checkbox);
-        checkMultiPlayer.setChecked(currentChallenge.isMultiplayer());
+        checkMultiPlayer.setChecked(this.currentChallenge.isMultiplayer());
 
         challenge_pic = (ImageButton) findViewById(R.id.challenge_picture);
+        response_pic = (ImageButton) findViewById(R.id.response_picture);
 
         // Setting the Challenge Picture
         challenge_pic = (ImageButton) findViewById(R.id.challenge_picture);
-        ParseHelper.GetChallengeImage(currentChallenge, new GetCallback<ParseObject>() {
+        ParseHelper.GetChallengeImage(this.currentChallenge, new GetCallback<ParseObject>() {
             @Override
             public void done(ParseObject data, ParseException e) {
                 if (e == null) {
@@ -97,49 +98,80 @@ public class ViewResponseActivity extends AppCompatActivity {
                     try {
                         bmp = BitmapFactory.decodeByteArray(data.getParseFile(ParseTableConstants.CHALLENGE_PICTURE).getData(), 0, data.getParseFile(ParseTableConstants.CHALLENGE_PICTURE).getData().length);
                     } catch (ParseException e1) {
-                        e1.printStackTrace();
+                        Log.e(TAG, "Error: " + e1.getMessage());
                     }
                     challenge_pic.setImageBitmap(bmp);
                 } else {
-                    Log.e("Tag", "Error: " + e.getMessage());
-                }
-            }
-        });
-
-        // Fetching the responses
-        ParseHelper.GetUsersLatestResponseToChallenge(BaseGameActivity.currentUser, currentChallenge, new FindCallback<ParseObject>() {
-            @Override
-            public void done(List<ParseObject> parseObjects, ParseException e) {
-                if (e == null) {
-                    Log.e(TAG, "GOT TO LEVEL 0");
-                    if ( parseObjects.size() != 0 ){
-                        Log.e(TAG, "GOT TO LEVEL 1");
-                        Bitmap bmp = null;
-                        try {
-                            Response response = new Response(parseObjects.get(0));
-                            bmp = BitmapFactory.decodeByteArray(parseObjects.get(0).getParseFile(ParseTableConstants.RESPONSE_PICTURE).getData(),0,parseObjects.get(0).getParseFile(ParseTableConstants.RESPONSE_PICTURE).getData().length);
-                            response_pic.setImageBitmap(bmp);
-
-                        }  catch (ParseException e1) {
-                            e1.printStackTrace();
-                        }
-                    }
-                    else
-                    {
-                       // no response submitted
-                        acceptButton.setVisibility(View.GONE);
-                        declineButton.setVisibility(View.GONE);
-                    }
-                }
-                else
-                {
                     Log.e(TAG, "Error: " + e.getMessage());
                 }
             }
         });
 
+        // Fetching the responses
+        ParseHelper.GetPendingOrAcceptedResponsesToChallenge(currentChallenge, new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> parseObjects, ParseException e) {
+                if (e == null) {
+                    if (parseObjects.size() != 0) {
+                        Response response = new Response(parseObjects.get(0));
 
+                        if (response.getStatus().equals(Response.STATUS_PENDING)) {
+                            acceptButton.setVisibility(View.VISIBLE);
+                            declineButton.setVisibility(View.VISIBLE);
+                            setOnClickListeners(response);
+                        }
 
+                        TextView responderTextView = (TextView) findViewById(R.id.responder_name);
+                        responderTextView.setText(response.getResponder().getName());
+
+                        Bitmap bmp = null;
+                        try {
+                            byte[] data = parseObjects.get(0).getParseFile(ParseTableConstants.RESPONSE_PICTURE).getData();
+                            bmp = BitmapFactory.decodeByteArray(data, 0, data.length);
+                            response_pic.setImageBitmap(bmp);
+                        } catch (ParseException e1) {
+                            Log.e(TAG, "Error: " + e1.getMessage());
+                        }
+                    }
+                } else {
+                    Log.e(TAG, "Error: " + e.getMessage());
+                }
+            }
+        });
+    }
+
+    private void setOnClickListeners(final Response response) {
+        acceptButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ParseHelper.SetResponseStatusAccepted(response,
+                        getSaveCallback(getString(R.string.response_accepted)),
+                        getSaveCallback(getString(R.string.challenge_closed)));
+                finish();
+            }
+        });
+
+        declineButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ParseHelper.SetResponseStatusDeclined(response,
+                        getSaveCallback(getString(R.string.response_declined)));
+                finish();
+            }
+        });
+    }
+
+    private SaveCallback getSaveCallback(final String message) {
+        return new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                if (e == null) {
+                    Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+                } else {
+                    Log.e(TAG, "Error: " + e.getMessage());
+                }
+            }
+        };
     }
 
     @Override
@@ -147,12 +179,10 @@ public class ViewResponseActivity extends AppCompatActivity {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-
         switch (item.getItemId()) {
             case android.R.id.home:
                 finish();
                 return true;
-
             default:
                 return super.onOptionsItemSelected(item);
         }
