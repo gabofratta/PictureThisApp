@@ -2,12 +2,12 @@ package com.example.janrodriguez.picturethis.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -52,14 +52,14 @@ public class HistoryActivity extends BaseGameActivity implements ActionBar.TabLi
 
     SlidingTabLayout mSlidingTabLayout;
 
+    private static SwipeRefreshLayout receivedRefreshLayout;
+    private static SwipeRefreshLayout sentRefreshLayout;
+
     private static ArrayList<Challenge> sentChallenges = new ArrayList<Challenge>();
     private static CustomListAdapter sentChallengeAdapter;
 
     private static ArrayList<Challenge> receivedChallenges = new ArrayList<Challenge>();
     private static CustomListAdapter receivedChallengeAdapter;
-
-    private final Handler refreshHandler = new Handler();
-    private Runnable runnable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,7 +114,7 @@ public class HistoryActivity extends BaseGameActivity implements ActionBar.TabLi
         mSlidingTabLayout.setViewPager(mViewPager);
     }
 
-    private void populateChallengeListViews() {
+    private static void populateChallengeListViews() {
         ParseHelper.GetInactiveChallengesInitiatedByUser(BaseGameActivity.currentUser, new FindCallback<ParseObject>() {
             @Override
             public void done(List<ParseObject> parseObjects, ParseException e) {
@@ -127,6 +127,7 @@ public class HistoryActivity extends BaseGameActivity implements ActionBar.TabLi
                     }
 
                     sentChallengeAdapter.notifyDataSetChanged();
+                    sentRefreshLayout.setRefreshing(false);
                 } else {
                     Log.e(TAG, "Error: " + e.getMessage());
                 }
@@ -145,6 +146,7 @@ public class HistoryActivity extends BaseGameActivity implements ActionBar.TabLi
                     }
 
                     receivedChallengeAdapter.notifyDataSetChanged();
+                    receivedRefreshLayout.setRefreshing(false);
                 } else {
                     Log.e(TAG, "Error: " + e.getMessage());
                 }
@@ -155,22 +157,10 @@ public class HistoryActivity extends BaseGameActivity implements ActionBar.TabLi
     @Override
     public void onSignInSucceeded () {
         populateChallengeListViews();
-
-        runnable = new Runnable() {
-            @Override
-            public void run() {
-                populateChallengeListViews();
-                refreshHandler.postDelayed(this, REFRESH_RATE);
-            }
-        };
-
-        refreshHandler.postDelayed(runnable, REFRESH_RATE);
-        super.onStart();
     }
 
     @Override
     public void onStop () {
-        refreshHandler.removeCallbacks(runnable);
         super.onStop();
     }
 
@@ -182,7 +172,6 @@ public class HistoryActivity extends BaseGameActivity implements ActionBar.TabLi
 
         switch (item.getItemId()) {
             case android.R.id.home:
-                refreshHandler.removeCallbacks(runnable);
                 finish();
                 return true;
             default:
@@ -264,6 +253,14 @@ public class HistoryActivity extends BaseGameActivity implements ActionBar.TabLi
             View rootView = inflater.inflate(R.layout.fragment_received_challenge_feed, container, false);
 
             listView = (ListView)rootView.findViewById(R.id.listView2);
+
+            receivedRefreshLayout = (SwipeRefreshLayout)rootView.findViewById(R.id.refresh_received);
+            receivedRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                @Override
+                public void onRefresh() {
+                    populateChallengeListViews();
+                }
+            });
             receivedChallengeAdapter = new CustomListAdapter(getActivity(), receivedChallenges);
             listView.setAdapter(receivedChallengeAdapter);
 
@@ -306,6 +303,13 @@ public class HistoryActivity extends BaseGameActivity implements ActionBar.TabLi
             View rootView = inflater.inflate(R.layout.fragment_sent_challenge_feed, container, false);
 
             listView = (ListView)rootView.findViewById(R.id.listView3);
+            sentRefreshLayout = (SwipeRefreshLayout)rootView.findViewById(R.id.refresh_sent);
+            sentRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                @Override
+                public void onRefresh() {
+                    populateChallengeListViews();
+                }
+            });
             sentChallengeAdapter = new CustomListAdapter(getActivity(), sentChallenges);
             listView.setAdapter(sentChallengeAdapter);
 
