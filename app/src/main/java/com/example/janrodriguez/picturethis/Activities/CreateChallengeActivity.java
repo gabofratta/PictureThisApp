@@ -27,14 +27,17 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.janrodriguez.picturethis.Helpers.Achievement;
 import com.example.janrodriguez.picturethis.Helpers.Challenge;
 import com.example.janrodriguez.picturethis.Helpers.ImageHelper;
 import com.example.janrodriguez.picturethis.Helpers.MyGeoPoint;
 import com.example.janrodriguez.picturethis.Helpers.ParseHelper;
+import com.example.janrodriguez.picturethis.Helpers.Score;
 import com.example.janrodriguez.picturethis.Helpers.User;
 import com.example.janrodriguez.picturethis.R;
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.games.Games;
 import com.google.android.gms.plus.People;
 import com.google.android.gms.plus.Plus;
 import com.google.android.gms.plus.model.people.PersonBuffer;
@@ -256,7 +259,7 @@ public class CreateChallengeActivity extends BaseGameActivity {
                     return;
                 }
 
-                Challenge challenge = new Challenge(title, currentUser, currentLocation, challengedList, currentPictureUri.getPath());
+                final Challenge challenge = new Challenge(title, currentUser, currentLocation, challengedList, currentPictureUri.getPath());
                 ParseHelper.CreateChallenge(challenge, new SaveCallback() {
                     public void done(ParseException e) {
                         if (e == null) {
@@ -266,7 +269,15 @@ public class CreateChallengeActivity extends BaseGameActivity {
                         }
                     }
                 });
-
+                if(loggedIntoGoogleGames()){
+                    if(challenge.isMultiplayer()){
+                        currentUser.incrementScore(Score.MULTIPLAYER_CHALLENGE);
+                        Games.Achievements.unlock(getApiClient(), Achievement.CREATE_MULTIPLAYER_CHALL);
+                    }
+                    currentUser.incrementScore(Score.SEND_CHALLENGE);
+                    currentUser.updateScore(getApiClient());
+                    Games.Achievements.unlock(getApiClient(), Achievement.CREATE_CHALL);
+                }
                 finish();
             }
         });

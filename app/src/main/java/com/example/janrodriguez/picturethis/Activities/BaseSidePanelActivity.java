@@ -64,7 +64,7 @@ public class BaseSidePanelActivity extends BaseGameActivity implements
                 break;
 
             case SettingsAdapter.LEADERBOARD_POSITION:
-                if((mRequestedClients & CLIENT_GAMES )!= 0){
+                if(loggedIntoGoogleGames()){
                     startActivityForResult(Games.Leaderboards.getLeaderboardIntent(getApiClient(), Leaderboard.ID), REQUEST_LEADERBOARD);
                 }else {
                     Toast.makeText(this, "Not logged in to google games.", Toast.LENGTH_LONG).show();

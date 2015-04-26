@@ -9,7 +9,6 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -31,7 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class HistoryActivity extends AppCompatActivity implements ActionBar.TabListener {
+public class HistoryActivity extends BaseGameActivity implements ActionBar.TabListener {
 
     static private final String TAG = "HistoryActivity";
     static private final int REFRESH_RATE = 5000;

@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -14,11 +13,14 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.janrodriguez.picturethis.Helpers.Achievement;
 import com.example.janrodriguez.picturethis.Helpers.Challenge;
 import com.example.janrodriguez.picturethis.Helpers.ParseHelper;
 import com.example.janrodriguez.picturethis.Helpers.ParseTableConstants;
 import com.example.janrodriguez.picturethis.Helpers.Response;
+import com.example.janrodriguez.picturethis.Helpers.Score;
 import com.example.janrodriguez.picturethis.R;
+import com.google.android.gms.games.Games;
 import com.parse.FindCallback;
 import com.parse.GetCallback;
 import com.parse.ParseException;
@@ -27,7 +29,7 @@ import com.parse.SaveCallback;
 
 import java.util.List;
 
-public class ViewResponseActivity extends AppCompatActivity {
+public class ViewResponseActivity extends BaseGameActivity {
 
     private static final String TAG = "ViewResponseActivity" ;
 
@@ -147,6 +149,11 @@ public class ViewResponseActivity extends AppCompatActivity {
                 ParseHelper.SetResponseStatusAccepted(response,
                         getSaveCallback(getString(R.string.response_accepted)),
                         getSaveCallback(getString(R.string.challenge_closed)));
+                if(loggedIntoGoogleGames()){
+                    currentUser.incrementScore(Score.REPLY_RESPONSE);
+                    currentUser.updateScore(getApiClient());
+                    Games.Achievements.unlock(getApiClient(), Achievement.ACCEPT_RESPONSE);
+                }
                 finish();
             }
         });
@@ -156,6 +163,11 @@ public class ViewResponseActivity extends AppCompatActivity {
             public void onClick(View v) {
                 ParseHelper.SetResponseStatusDeclined(response,
                         getSaveCallback(getString(R.string.response_declined)));
+                if(loggedIntoGoogleGames()){
+                    currentUser.incrementScore(Score.REPLY_RESPONSE);
+                    currentUser.updateScore(getApiClient());
+                    Games.Achievements.unlock(getApiClient(), Achievement.DECLINE_RESPONSE);
+                }
                 finish();
             }
         });
