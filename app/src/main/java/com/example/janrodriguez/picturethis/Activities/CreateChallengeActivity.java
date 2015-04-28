@@ -16,6 +16,7 @@ import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -125,7 +126,24 @@ public class CreateChallengeActivity extends BaseGameActivity {
                                     usersList.add(user);
                                 }
 
-                                usersAdapter.notifyDataSetChanged();
+                                if (usersList.size() == 0) {
+                                    ArrayList<String> dummyList = new ArrayList<String>();
+                                    dummyList.add(getString(R.string.user_list_empty));
+
+                                    ArrayAdapter<String> dummyAdapter = new ArrayAdapter<String>(
+                                            CreateChallengeActivity.this, android.R.layout.simple_list_item_1, dummyList);
+
+                                    usersListView.setAdapter(dummyAdapter);
+                                    usersListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                        public void onItemClick(AdapterView<?> list, View view, int pos, long id) {
+                                            Uri googlePlusPage = Uri.parse("https://plus.google.com/" + currentUser.getGoogleId());
+                                            Intent intent = new Intent(Intent.ACTION_VIEW, googlePlusPage);
+                                            startActivity(intent);
+                                        }
+                                    });
+                                } else {
+                                    usersAdapter.notifyDataSetChanged();
+                                }
                             } else {
                                 Log.e(TAG, "Error: " + e.getMessage());
                             }
@@ -331,6 +349,12 @@ public class CreateChallengeActivity extends BaseGameActivity {
     }
 
     private void closeListViewAndSaveSelection() {
+        if (usersList.size() == 0) {
+            usersListView.setVisibility(View.INVISIBLE);
+            listViewOpen = false;
+            return;
+        }
+
         StringBuilder usersDisplayText = new StringBuilder();
         SparseBooleanArray checked = usersListView.getCheckedItemPositions();
         challengedList.clear();
