@@ -149,9 +149,8 @@ public class ViewResponseActivity extends BaseGameActivity {
         acceptButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ParseHelper.SetResponseStatusAccepted(response,
-                        getSaveCallback(getString(R.string.response_accepted)),
-                        getSaveCallback(getString(R.string.challenge_closed)));
+                ParseHelper.SetResponseStatusAccepted(response, getSaveCallback(getString(R.string.response_accepted)));
+                ParseHelper.SetChallengeInactive(currentChallenge, getSaveCallback(getString(R.string.challenge_closed)));
                 if(loggedIntoGoogleGames()){
                     currentUser.incrementScore(Score.REPLY_RESPONSE);
                     currentUser.updateScore(getApiClient());
@@ -164,8 +163,7 @@ public class ViewResponseActivity extends BaseGameActivity {
         declineButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ParseHelper.SetResponseStatusDeclined(response,
-                        getSaveCallback(getString(R.string.response_declined)));
+                ParseHelper.SetResponseStatusDeclined(response, getSaveCallback(getString(R.string.response_declined)));
                 if(loggedIntoGoogleGames()){
                     currentUser.incrementScore(Score.REPLY_RESPONSE);
                     currentUser.updateScore(getApiClient());

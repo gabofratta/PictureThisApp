@@ -3,7 +3,10 @@ package com.example.janrodriguez.picturethis.Helpers;
 import android.graphics.Bitmap;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
+import com.example.janrodriguez.picturethis.Activities.BaseGameActivity;
+import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
 
@@ -21,18 +24,26 @@ import java.util.Date;
  */
 public class Challenge implements Parcelable {
 
+    static public final String TAG = "Challenge";
     static public final String INTENT_TAG = "challenge";
+
+    static public enum Status {WAITING, NEED_ACTION};
 
     private String id = "";
     private String title;
     private User challenger;
     private ArrayList<User> challengedList = new ArrayList<User>();
+//    private ArrayList<Response> responseList = new ArrayList<Response>();
     private MyGeoPoint location;
     private String localFilePath;
     private String remoteFilePath;
     private boolean active;
     private boolean multiplayer;
     private Date createdAt = new Date();
+
+    private Status challengerStatus;
+    private Status challengedStatus;
+    private byte[] icon;
 
     public Challenge(ParseObject po) {
         this.id = po.getObjectId();
@@ -46,11 +57,37 @@ public class Challenge implements Parcelable {
             challengedList.add(new User(challengedPO));
         }
 
+        this.challengedStatus = Status.NEED_ACTION;
+        this.challengerStatus = Status.WAITING;
+
+        ArrayList<ParseObject> responses = (ArrayList<ParseObject>)po.get(ParseTableConstants.CHALLENGE_RESPONSES);
+        if (responses != null) {
+            for (ParseObject responsePO : responses) {
+                Response response = new Response(responsePO);
+//                this.responseList.add(response);
+
+                if (response.getStatus().equals(Response.STATUS_PENDING)) {
+                    this.challengerStatus = Status.NEED_ACTION;
+                    if (response.getResponder().getId().equals(BaseGameActivity.currentUser.getId())) {
+                        this.challengedStatus = Status.WAITING;
+                    }
+                }
+            }
+        }
+
         this.remoteFilePath = po.getParseFile(ParseTableConstants.CHALLENGE_PICTURE).getUrl();
         this.active = po.getBoolean(ParseTableConstants.CHALLENGE_ACTIVE);
         this.multiplayer = po.getBoolean(ParseTableConstants.CHALLENGE_MULTIPLAYER);
         this.createdAt = po.getCreatedAt();
 
+        ParseFile iconFile = po.getParseFile(ParseTableConstants.CHALLENGE_ICON);
+        try {
+            if (iconFile != null) {
+                this.icon = iconFile.getData();
+            }
+        } catch (ParseException e) {
+            Log.e(TAG, "Error: " + e.getMessage());
+        }
     }
 
     public  Challenge (String title, User challenger, MyGeoPoint location, ArrayList<User> challengedList, String localFilePath) {
@@ -76,6 +113,7 @@ public class Challenge implements Parcelable {
         this.title = source.readString();
         this.challenger = (User)source.readValue(User.class.getClassLoader());
         source.readList(challengedList, User.class.getClassLoader());
+//        source.readList(responseList, Response.class.getClassLoader());
         this.localFilePath = source.readString();
         this.remoteFilePath = source.readString();
         this.location = (MyGeoPoint)source.readValue(MyGeoPoint.class.getClassLoader());
@@ -109,6 +147,7 @@ public class Challenge implements Parcelable {
         dest.writeString(title);
         dest.writeValue(challenger);
         dest.writeList(challengedList);
+//        dest.writeList(responseList);
         dest.writeString(localFilePath);
         dest.writeString(remoteFilePath);
         dest.writeValue(location);
@@ -120,8 +159,11 @@ public class Challenge implements Parcelable {
 
     public ParseObject createParseObject () throws JSONException {
         String fileName = new File(localFilePath).getName();
-        byte[] fileBytes = ParseHelper.GetImageBytes(localFilePath);
+        byte[] fileBytes = ImageHelper.GetImageBytes(localFilePath, ParseTableConstants.IMAGE_WIDTH, ParseTableConstants.IMAGE_HEIGHT);
         ParseFile file = new ParseFile(fileName, fileBytes);
+
+        byte[] iconBytes = ImageHelper.GetImageBytes(localFilePath, ParseTableConstants.ICON_WIDTH, ParseTableConstants.ICON_HEIGHT);
+        ParseFile icon = new ParseFile("icon_" + fileName, iconBytes);
 
         ParseObject challengerPO = ParseObject.createWithoutData(ParseTableConstants.USER_TABLE, challenger.getId());
 
@@ -141,7 +183,7 @@ public class Challenge implements Parcelable {
         challengePO.put(ParseTableConstants.CHALLENGE_PICTURE, file);
         challengePO.put(ParseTableConstants.CHALLENGE_ACTIVE, true);
         challengePO.put(ParseTableConstants.CHALLENGE_MULTIPLAYER, multiplayer);
-
+        challengePO.put(ParseTableConstants.CHALLENGE_ICON, icon);
         return challengePO;
     }
 
@@ -181,6 +223,23 @@ public class Challenge implements Parcelable {
     public ArrayList<User> getChallengedList() {
         return challengedList;
     }
+
+//    public ArrayList<Response> getResponseList() {
+//        return responseList;
+//    }
+
+    public Status getChallengerStatus() {
+        return challengerStatus;
+    }
+
+    public Status getChallengedStatus() {
+        return challengedStatus;
+    }
+
+    public byte[] getIcon() {
+        return icon;
+    }
+
     /**\Getters**/
 
     /**Setters**/
