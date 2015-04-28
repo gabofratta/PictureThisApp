@@ -98,15 +98,15 @@ public class ViewResponseActivity extends BaseGameActivity {
         challenge_pic = (ImageButton) findViewById(R.id.challenge_picture);
         ParseHelper.GetChallengeImage(this.currentChallenge, new GetCallback<ParseObject>() {
             @Override
-            public void done(ParseObject data, ParseException e) {
+            public void done(ParseObject parseObject, ParseException e) {
                 if (e == null) {
-                    Bitmap bmp = null;
                     try {
-                        bmp = BitmapFactory.decodeByteArray(data.getParseFile(ParseTableConstants.CHALLENGE_PICTURE).getData(), 0, data.getParseFile(ParseTableConstants.CHALLENGE_PICTURE).getData().length);
+                        byte[] data = parseObject.getParseFile(ParseTableConstants.CHALLENGE_PICTURE).getData();
+                        Bitmap bmp = BitmapFactory.decodeByteArray(data, 0, data.length);
+                        challenge_pic.setImageBitmap(bmp);
                     } catch (ParseException e1) {
                         Log.e(TAG, "Error: " + e1.getMessage());
                     }
-                    challenge_pic.setImageBitmap(bmp);
                 } else {
                     Log.e(TAG, "Error: " + e.getMessage());
                 }
@@ -130,10 +130,9 @@ public class ViewResponseActivity extends BaseGameActivity {
                         TextView responderTextView = (TextView) findViewById(R.id.responder_name);
                         responderTextView.setText(response.getResponder().getName());
 
-                        Bitmap bmp = null;
                         try {
                             byte[] data = parseObjects.get(0).getParseFile(ParseTableConstants.RESPONSE_PICTURE).getData();
-                            bmp = BitmapFactory.decodeByteArray(data, 0, data.length);
+                            Bitmap bmp = BitmapFactory.decodeByteArray(data, 0, data.length);
                             response_pic.setImageBitmap(bmp);
                         } catch (ParseException e1) {
                             Log.e(TAG, "Error: " + e1.getMessage());

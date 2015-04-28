@@ -381,18 +381,9 @@ public class CreateChallengeActivity extends BaseGameActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK && requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
             currentPictureUri = tempPictureUri;
-            Bitmap bitmap = null;
-            try {
-                bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), currentPictureUri);
-            } catch (IOException e) {
-                Log.e(TAG, "Error: " + e.getMessage());
-            }
-
-            if (bitmap != null) {
-                Bitmap decodedBitmap = ImageHelper.DecodeSampledBitmapFromResource(currentPictureUri.getPath(), WIDTH, HEIGHT);
-                ImageHelper.SaveImage(decodedBitmap, currentPictureUri);
-                imageButton.setImageBitmap(decodedBitmap);
-            }
+            Bitmap decodedBitmap = ImageHelper.DecodeSampledBitmapFromResource(currentPictureUri.getPath(), WIDTH, HEIGHT);
+            ImageHelper.SaveImage(decodedBitmap, currentPictureUri);
+            imageButton.setImageBitmap(decodedBitmap);
         } else if (resultCode == RESULT_CANCELED && requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
             ImageHelper.DeleteImageFile(tempPictureUri);
         }

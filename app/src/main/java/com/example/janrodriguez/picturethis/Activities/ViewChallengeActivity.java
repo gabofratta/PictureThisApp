@@ -108,15 +108,15 @@ public class ViewChallengeActivity extends BaseGameActivity {
         challenge_pic = (ImageButton) findViewById(R.id.challenge_picture);
         ParseHelper.GetChallengeImage(currentChallenge, new GetCallback<ParseObject>() {
             @Override
-            public void done(ParseObject data, ParseException e) {
+            public void done(ParseObject parseObject, ParseException e) {
                 if (e == null) {
-                    Bitmap bmp = null;
                     try {
-                        bmp = BitmapFactory.decodeByteArray(data.getParseFile(ParseTableConstants.CHALLENGE_PICTURE).getData(), 0, data.getParseFile(ParseTableConstants.CHALLENGE_PICTURE).getData().length);
+                        byte[] data = parseObject.getParseFile(ParseTableConstants.CHALLENGE_PICTURE).getData();
+                        Bitmap bmp = BitmapFactory.decodeByteArray(data, 0, data.length);
+                        challenge_pic.setImageBitmap(bmp);
                     } catch (ParseException e1) {
                         Log.e(TAG, "Error: " + e1.getMessage());
                     }
-                    challenge_pic.setImageBitmap(bmp);
                 } else {
                     Log.e("Tag", "Error: " + e.getMessage());
                 }
@@ -138,10 +138,9 @@ public class ViewChallengeActivity extends BaseGameActivity {
                             sendResponseButton.setVisibility(View.VISIBLE);
                             setClickListeners();
                         } else {
-                            Bitmap bmp = null;
                             try {
                                 byte[] data = parseObjects.get(0).getParseFile(ParseTableConstants.RESPONSE_PICTURE).getData();
-                                bmp = BitmapFactory.decodeByteArray(data, 0, data.length);
+                                Bitmap bmp = BitmapFactory.decodeByteArray(data, 0, data.length);
                                 response_pic.setImageBitmap(bmp);
                             } catch (ParseException e1) {
                                 Log.e(TAG, "Error: " + e1.getMessage());
@@ -215,20 +214,10 @@ public class ViewChallengeActivity extends BaseGameActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK && requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
-
             currentPictureUri = tempPictureUri;
-            Bitmap bitmap = null;
-            try {
-                bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), currentPictureUri);
-            } catch (IOException e) {
-                Log.e(TAG, "Error: " + e.getMessage());
-            }
-
-            if(bitmap != null) {
-                Bitmap decodedBitmap = ImageHelper.DecodeSampledBitmapFromResource(currentPictureUri.getPath(), WIDTH, HEIGHT);
-                ImageHelper.SaveImage(decodedBitmap, currentPictureUri);
-                response_pic.setImageBitmap(decodedBitmap);
-            }
+            Bitmap decodedBitmap = ImageHelper.DecodeSampledBitmapFromResource(currentPictureUri.getPath(), WIDTH, HEIGHT);
+            ImageHelper.SaveImage(decodedBitmap, currentPictureUri);
+            response_pic.setImageBitmap(decodedBitmap);
         } else if (resultCode == RESULT_CANCELED && requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
             ImageHelper.DeleteImageFile(tempPictureUri);
         }
