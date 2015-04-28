@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">Picture This</string>
-
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_received">Sent Challenge</string>
@@ -20,13 +19,10 @@
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
     <string name="title_activity_ihate_this">IHateThisActivity</string>
-
     <string name="title_section1">Received</string>
     <string name="title_section2">Sent</string>
-
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-
     <string name="action_example">Example action</string>
     <string name="title_activity_test_material_drawer">TestMaterialDrawer</string>
     <string name="title_activity_test_material">TestMaterialActivity</string>
@@ -49,8 +45,6 @@
     <string name="location_missing">Location is missing</string>
     <string name="title_missing">Title is missing</string>
     <string name="title_activity_challenge_feed">ChallengeFeedActivity</string>
-
-
     <string name="title_activity_map">Map</string>
     <string name="marker">Marker</string>
     <string name="title_activity_history">History</string>
@@ -61,5 +55,5 @@
     <string name="response_declined">Response declined</string>
     <string name="challenge_closed">Challenge closed</string>
     <string name="user_list_empty">Invite your Google+ friends to play Picture This.</string>
-    <string name="users_list_empty">Tell your friends on Google+ to use Picture This!</string>
+    <string name="tagline">Find the spot and take a shot.</string>
 </resources>

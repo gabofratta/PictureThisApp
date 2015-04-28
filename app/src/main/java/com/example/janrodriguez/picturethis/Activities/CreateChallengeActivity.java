@@ -128,7 +128,7 @@ public class CreateChallengeActivity extends BaseGameActivity {
 
                                 if (usersList.size() == 0) {
                                     ArrayList<String> dummyList = new ArrayList<String>();
-                                    dummyList.add(getString(R.string.users_list_empty));
+                                    dummyList.add(getString(R.string.user_list_empty));
 
                                     ArrayAdapter<String> dummyAdapter = new ArrayAdapter<String>(
                                             CreateChallengeActivity.this, android.R.layout.simple_list_item_1, dummyList);
