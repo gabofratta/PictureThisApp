@@ -126,11 +126,9 @@ public class MapActivity extends BaseGameActivity implements OnMapReadyCallback 
         // as you specify a parent activity in AndroidManifest.xml.
 
         switch (item.getItemId()) {
-
-            case R.id.home:
+            case android.R.id.home:
                 finish();
                 return true;
-
             default:
                 return super.onOptionsItemSelected(item);
         }

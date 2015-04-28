@@ -1,5 +1,6 @@
 package com.example.janrodriguez.picturethis.Activities;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
@@ -10,20 +11,22 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.example.janrodriguez.picturethis.Helpers.Challenge;
+import com.example.janrodriguez.picturethis.Helpers.CustomListAdapter;
 import com.example.janrodriguez.picturethis.Helpers.ParseHelper;
 import com.example.janrodriguez.picturethis.Helpers.ParseTableConstants;
+import com.example.janrodriguez.picturethis.Layouts.SlidingTabLayout;
 import com.example.janrodriguez.picturethis.R;
+import com.gc.materialdesign.views.ButtonFloat;
 import com.parse.FindCallback;
 import com.parse.GetCallback;
 import com.parse.ParseException;
@@ -34,10 +37,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class ChallengeFeedActivity extends AppCompatActivity implements ActionBar.TabListener {
+public class ChallengeFeedActivity extends BaseSidePanelActivity implements ActionBar.TabListener {
 
     static private final String TAG = "ChallengeFeedActivity";
-
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -54,22 +56,35 @@ public class ChallengeFeedActivity extends AppCompatActivity implements ActionBa
      */
     ViewPager mViewPager;
 
+    SlidingTabLayout mSlidingTabLayout;
+
+    private static SwipeRefreshLayout receivedRefreshLayout;
+    private static SwipeRefreshLayout sentRefreshLayout;
+
     static ArrayList<Challenge> listOfReceivedChallenges = new ArrayList<>();
     static ArrayList<Challenge> listOfSentChallenges = new ArrayList<>();
     static CustomListAdapter adapter1;
     static CustomListAdapter adapter2;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_challenge_feed);
 
+        setUpSidePanel();
+
+        ButtonFloat buttonFloat = (ButtonFloat)findViewById(R.id.buttonFloat);
+        buttonFloat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ChallengeFeedActivity.this, CreateChallengeActivity.class);
+                startActivity(intent);
+            }
+        });
+
         // Set up the action bar.
         final ActionBar actionBar = getSupportActionBar();
-        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-        actionBar.setDisplayShowTitleEnabled(false);
+//        actionBar.setDisplayShowTitleEnabled(false);
 
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
@@ -100,18 +115,29 @@ public class ChallengeFeedActivity extends AppCompatActivity implements ActionBa
                             .setText(mSectionsPagerAdapter.getPageTitle(i))
                             .setTabListener(this));
         }
+
+        mSlidingTabLayout = (SlidingTabLayout)findViewById(R.id.sliding_tabs);
+        mSlidingTabLayout.setDistributeEvenly(true);
+        mSlidingTabLayout.setViewPager(mViewPager);
+    }
+
+    @Override
+    public void onSignInSucceeded () {
         fetchData();
     }
 
-    private void fetchData(){
-        // TODO: change this function
-        ParseHelper.GetAllChallengesTest(BaseGameActivity.currentUser, getFindCallback1());
-
-        // TODO: change this function
-        ParseHelper.GetAllChallengesTest(BaseGameActivity.currentUser, getFindCallback2());
+    @Override
+    public void onStop () {
+//        refreshHandler.removeCallbacks(runnable);
+        super.onStop();
     }
 
-    private FindCallback<ParseObject> getFindCallback1() {
+    protected static void fetchData(){
+        ParseHelper.GetActiveChallengesReceivedByUser(BaseGameActivity.currentUser, getFindCallbackReceived());
+        ParseHelper.GetActiveChallengesInitiatedByUser(BaseGameActivity.currentUser, getFindCallbackSent());
+    }
+
+    private static FindCallback<ParseObject> getFindCallbackReceived() {
         return new FindCallback<ParseObject>() {
             @Override
             public void done(List<ParseObject> parseObjects, ParseException e) {
@@ -146,6 +172,7 @@ public class ChallengeFeedActivity extends AppCompatActivity implements ActionBa
 
                     adapter1.notifyDataSetChanged();
 //                    Log.e(TAG, listOfReceivedChallenges.size()+"");
+                    receivedRefreshLayout.setRefreshing(false);
 
                 } else {
                     Log.e(TAG, "Error: " + e.getMessage());
@@ -154,7 +181,7 @@ public class ChallengeFeedActivity extends AppCompatActivity implements ActionBa
         };
     }
 
-    private FindCallback<ParseObject> getFindCallback2() {
+    private static FindCallback<ParseObject> getFindCallbackSent() {
         return new FindCallback<ParseObject>() {
             @Override
             public void done(List<ParseObject> parseObjects, ParseException e) {
@@ -189,6 +216,7 @@ public class ChallengeFeedActivity extends AppCompatActivity implements ActionBa
 
                     adapter2.notifyDataSetChanged();
 //                    Log.e(TAG, listOfSentChallenges.size()+"");
+                    sentRefreshLayout.setRefreshing(false);
 
                 } else {
                     Log.e(TAG, "Error: " + e.getMessage());
@@ -255,9 +283,7 @@ public class ChallengeFeedActivity extends AppCompatActivity implements ActionBa
 
     public static class ReceivedChallengeFeedFragment extends Fragment {
 
-
         static ListView listView = null;
-
 
 
         public static ReceivedChallengeFeedFragment newInstance() {
@@ -280,7 +306,15 @@ public class ChallengeFeedActivity extends AppCompatActivity implements ActionBa
 
 
             listView = (ListView)rootView.findViewById(R.id.listView2);
-            adapter1 = new CustomListAdapter(getActivity(), listOfReceivedChallenges);
+            receivedRefreshLayout = (SwipeRefreshLayout)rootView.findViewById(R.id.refresh_received);
+            receivedRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                @Override
+                public void onRefresh() {
+                    fetchData();
+                }
+            });
+            adapter1 = new CustomListAdapter(CustomListAdapter.TYPE_RECEIVED_CHALLENGE,
+                    getActivity(), listOfReceivedChallenges, BaseGameActivity.currentUser);
             listView.setAdapter(adapter1);
 
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -289,8 +323,11 @@ public class ChallengeFeedActivity extends AppCompatActivity implements ActionBa
                 public void onItemClick(AdapterView<?> parent, View view,
                                         int position, long id) {
                     // TODO Auto-generated method stub
-                    String Slecteditem= listOfReceivedChallenges.get(position).getTitle();
-                    Toast.makeText(getActivity().getApplicationContext(), Slecteditem, Toast.LENGTH_SHORT).show();
+
+                    Intent intent = new Intent(getActivity(), ViewChallengeActivity.class);
+                    intent.putExtra(Challenge.INTENT_TAG, listOfReceivedChallenges.get(position));
+                    startActivity(intent);
+
 
                 }
             });
@@ -326,7 +363,16 @@ public class ChallengeFeedActivity extends AppCompatActivity implements ActionBa
             View rootView = inflater.inflate(R.layout.fragment_sent_challenge_feed, container, false);
 
             listView = (ListView)rootView.findViewById(R.id.listView3);
-            adapter2 = new CustomListAdapter(getActivity(), listOfSentChallenges);
+
+            sentRefreshLayout = (SwipeRefreshLayout)rootView.findViewById(R.id.refresh_sent);
+            sentRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                @Override
+                public void onRefresh() {
+                    fetchData();
+                }
+            });
+            adapter2 = new CustomListAdapter(CustomListAdapter.TYPE_SENT_CHALLENGE,
+                    getActivity(), listOfSentChallenges, BaseGameActivity.currentUser);
             listView.setAdapter(adapter2);
 
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -335,8 +381,11 @@ public class ChallengeFeedActivity extends AppCompatActivity implements ActionBa
                 public void onItemClick(AdapterView<?> parent, View view,
                                         int position, long id) {
                     // TODO Auto-generated method stub
-                    String Slecteditem= listOfSentChallenges.get(position).getTitle();
-                    Toast.makeText(getActivity().getApplicationContext(), Slecteditem, Toast.LENGTH_SHORT).show();
+
+                    Intent intent = new Intent(getActivity(), ViewResponseActivity.class);
+                    intent.putExtra(Challenge.INTENT_TAG, listOfSentChallenges.get(position));
+                    startActivity(intent);
+
                 }
             });
 
@@ -345,33 +394,33 @@ public class ChallengeFeedActivity extends AppCompatActivity implements ActionBa
             return rootView;
         }
     }
-    class ImageProcess extends AsyncTask<byte[], Void, Void> {
-        Challenge challenge;
-        CustomListAdapter adapter;
+}
 
-        public ImageProcess(Challenge challenge, CustomListAdapter adapter){
-            this.challenge = challenge;
-            this.adapter = adapter;
-        }
+class ImageProcess extends AsyncTask<byte[], Void, Void> {
+    Challenge challenge;
+    CustomListAdapter adapter;
 
-        @Override
-        protected Void doInBackground(byte[]... params) {
-            Bitmap largeBitmap = BitmapFactory.decodeByteArray(params[0], 0, params[0].length);
-            if (largeBitmap!=null){
-                Bitmap scaled_bitmap = Bitmap.createScaledBitmap(largeBitmap, 48, 48, true);
-                challenge.setBitmap(scaled_bitmap);
-            }else{
-                Log.e("LargeBitmap, size:", params[0].length+"");
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            if (challenge.getPictureBitmap()!=null){
-                adapter.notifyDataSetChanged();
-            }
-        }
+    public ImageProcess(Challenge challenge, CustomListAdapter adapter){
+        this.challenge = challenge;
+        this.adapter = adapter;
     }
 
+    @Override
+    protected Void doInBackground(byte[]... params) {
+        Bitmap largeBitmap = BitmapFactory.decodeByteArray(params[0], 0, params[0].length);
+        if (largeBitmap!=null){
+            Bitmap scaled_bitmap = Bitmap.createScaledBitmap(largeBitmap, 48, 48, true);
+            challenge.setBitmap(scaled_bitmap);
+        }else{
+            Log.e("LargeBitmap, size:", params[0].length+"");
+        }
+        return null;
+    }
+
+    @Override
+    protected void onPostExecute(Void aVoid) {
+        if (challenge.getPictureBitmap()!=null){
+            adapter.notifyDataSetChanged();
+        }
+    }
 }

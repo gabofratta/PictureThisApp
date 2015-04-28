@@ -11,6 +11,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.example.janrodriguez.picturethis.Helpers.Leaderboard;
 import com.example.janrodriguez.picturethis.Helpers.SettingsAdapter;
 import com.example.janrodriguez.picturethis.R;
 import com.google.android.gms.games.Games;
@@ -20,6 +21,10 @@ public class BaseSidePanelActivity extends BaseGameActivity implements
         SettingsAdapter.OnItemClickListener{
 
     private static String TAG = "BaseSidePanelActvity";
+
+    private static final int REQUEST_ACHIEVEMENTS = 100;
+    private static final int REQUEST_LEADERBOARD = 101;
+
 
     private DrawerLayout mDrawerLayout;
     private RecyclerView mDrawerList;
@@ -46,16 +51,25 @@ public class BaseSidePanelActivity extends BaseGameActivity implements
                 startActivity(loginIntent);
                 break;
             case SettingsAdapter.ACHIEVEMENTS_POSITION:
-                if((mRequestedClients & CLIENT_GAMES )== 0){
+                if((mRequestedClients & CLIENT_GAMES )!= 0){
                     startActivityForResult(Games.Achievements.getAchievementsIntent(getApiClient()), REQUEST_ACHIEVEMENTS);
                 }else {
                     Toast.makeText(this, "Not logged in to google games.", Toast.LENGTH_LONG).show();
+                    Log.d(TAG, "Not connected to google games.");
                 }
                 break;
             case SettingsAdapter.HISTORY_POSITION:
                 Intent intent = new Intent(this, HistoryActivity.class);
                 startActivity(intent);
                 break;
+
+            case SettingsAdapter.LEADERBOARD_POSITION:
+                if(loggedIntoGoogleGames()){
+                    startActivityForResult(Games.Leaderboards.getLeaderboardIntent(getApiClient(), Leaderboard.ID), REQUEST_LEADERBOARD);
+                }else {
+                    Toast.makeText(this, "Not logged in to google games.", Toast.LENGTH_LONG).show();
+                    Log.d(TAG, "Not connected to google games.");
+                }
         }
     }
 

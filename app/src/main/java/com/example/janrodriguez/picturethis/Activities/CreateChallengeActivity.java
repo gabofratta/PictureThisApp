@@ -18,7 +18,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -27,14 +26,17 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.janrodriguez.picturethis.Helpers.Achievement;
 import com.example.janrodriguez.picturethis.Helpers.Challenge;
 import com.example.janrodriguez.picturethis.Helpers.ImageHelper;
 import com.example.janrodriguez.picturethis.Helpers.MyGeoPoint;
 import com.example.janrodriguez.picturethis.Helpers.ParseHelper;
+import com.example.janrodriguez.picturethis.Helpers.Score;
 import com.example.janrodriguez.picturethis.Helpers.User;
 import com.example.janrodriguez.picturethis.R;
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.games.Games;
 import com.google.android.gms.plus.People;
 import com.google.android.gms.plus.Plus;
 import com.google.android.gms.plus.model.people.PersonBuffer;
@@ -52,8 +54,8 @@ public class CreateChallengeActivity extends BaseGameActivity {
 
     private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
     private static final String TAG = "CreateChallengeActivity";
-    private static final int HEIGHT = 200;
-    private static final int WIDTH = 200;
+    private static final int HEIGHT = 500;
+    private static final int WIDTH = 500;
 
     private ArrayList<User> usersList;
     private ArrayList<User> challengedList;
@@ -256,7 +258,7 @@ public class CreateChallengeActivity extends BaseGameActivity {
                     return;
                 }
 
-                Challenge challenge = new Challenge(title, currentUser, currentLocation, challengedList, currentPictureUri.getPath());
+                final Challenge challenge = new Challenge(title, currentUser, currentLocation, challengedList, currentPictureUri.getPath());
                 ParseHelper.CreateChallenge(challenge, new SaveCallback() {
                     public void done(ParseException e) {
                         if (e == null) {
@@ -266,7 +268,15 @@ public class CreateChallengeActivity extends BaseGameActivity {
                         }
                     }
                 });
-
+                if(loggedIntoGoogleGames()){
+                    if(challenge.isMultiplayer()){
+                        currentUser.incrementScore(Score.MULTIPLAYER_CHALLENGE);
+                        Games.Achievements.unlock(getApiClient(), Achievement.CREATE_MULTIPLAYER_CHALL);
+                    }
+                    currentUser.incrementScore(Score.SEND_CHALLENGE);
+                    currentUser.updateScore(getApiClient());
+                    Games.Achievements.unlock(getApiClient(), Achievement.CREATE_CHALL);
+                }
                 finish();
             }
         });
@@ -300,8 +310,8 @@ public class CreateChallengeActivity extends BaseGameActivity {
             public void onLocationChanged(Location location) {
                 if (currentLocation == null) {
                     currentLocation = new MyGeoPoint();
-                    CheckBox checkLocation = (CheckBox) findViewById(R.id.checkLocation);
-                    checkLocation.setChecked(true);
+                    ImageView locationIcon = (ImageView) findViewById(R.id.location_icon);
+                    locationIcon.setImageResource(R.drawable.ic_action_location_found);
                 }
                 currentLocation.setLatitude(location.getLatitude());
                 currentLocation.setLongitude(location.getLongitude());
@@ -354,8 +364,9 @@ public class CreateChallengeActivity extends BaseGameActivity {
                 Log.e(TAG, "Error: " + e.getMessage());
             }
 
-            if(bitmap != null) {
+            if (bitmap != null) {
                 Bitmap decodedBitmap = ImageHelper.DecodeSampledBitmapFromResource(currentPictureUri.getPath(), WIDTH, HEIGHT);
+                ImageHelper.SaveImage(decodedBitmap, currentPictureUri);
                 imageButton.setImageBitmap(decodedBitmap);
             }
         } else if (resultCode == RESULT_CANCELED && requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
@@ -370,10 +381,9 @@ public class CreateChallengeActivity extends BaseGameActivity {
         // as you specify a parent activity in AndroidManifest.xml.
 
         switch (item.getItemId()) {
-            case R.id.home:
+            case android.R.id.home:
                 finish();
                 return true;
-
             default:
                 return super.onOptionsItemSelected(item);
         }

@@ -6,8 +6,6 @@ import android.util.Log;
 
 import com.parse.FindCallback;
 import com.parse.GetCallback;
-import com.parse.GetDataCallback;
-import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.SaveCallback;
@@ -112,26 +110,9 @@ public class ParseHelper {
         query.findInBackground(callback);
     }
 
-    static public void GetAllChallengesTest(User user, FindCallback<ParseObject> callback) {
-        GetAllChallengesTest(user, true, callback);
-    }
-
-    static private void GetAllChallengesTest(User user, boolean active, FindCallback<ParseObject> callback) {
-
-
-        ParseQuery<ParseObject> query = ParseQuery.getQuery(ParseTableConstants.CHALLENGE_TABLE);
-        query.include(ParseTableConstants.CHALLENGE_CHALLENGER);
-        query.include(ParseTableConstants.CHALLENGE_CHALLENGED);
-
-        query.orderByDescending(ParseTableConstants.CHALLENGE_CREATED_AT);
-        query.findInBackground(callback);
-    }
-
     static public void GetActiveChallengesReceivedByUser(User user, FindCallback<ParseObject> callback) {
         GetChallengesReceivedByUser(user, true, callback);
     }
-
-
 
     static public void GetInactiveChallengesReceivedByUser(User user, FindCallback<ParseObject> callback) {
         GetChallengesReceivedByUser(user, false, callback);
@@ -168,6 +149,29 @@ public class ParseHelper {
         GetResponsesToChallenge(challenge, Response.STATUS_ACCEPTED, callback);
     }
 
+    static public void GetPendingOrAcceptedResponsesToChallenge(Challenge challenge, FindCallback<ParseObject> callback) {
+        String challengeDotChallenger = new StringBuilder(ParseTableConstants.RESPONSE_CHALLENGE)
+                .append(".")
+                .append(ParseTableConstants.CHALLENGE_CHALLENGER)
+                .toString();
+
+        String challengeDotChallenged = new StringBuilder(ParseTableConstants.RESPONSE_CHALLENGE)
+                .append(".")
+                .append(ParseTableConstants.CHALLENGE_CHALLENGED)
+                .toString();
+
+        ParseObject challengePO = ParseObject.createWithoutData(ParseTableConstants.CHALLENGE_TABLE, challenge.getId());
+        ParseQuery<ParseObject> query = ParseQuery.getQuery(ParseTableConstants.RESPONSE_TABLE);
+        query.include(ParseTableConstants.RESPONSE_CHALLENGE);
+        query.include(ParseTableConstants.RESPONSE_RESPONDER);
+        query.include(challengeDotChallenger);
+        query.include(challengeDotChallenged);
+        query.whereEqualTo(ParseTableConstants.RESPONSE_CHALLENGE, challengePO);
+        query.whereNotEqualTo(ParseTableConstants.RESPONSE_STATUS, Response.STATUS_DECLINED);
+        query.orderByAscending(ParseTableConstants.RESPONSE_CREATED_AT);
+        query.findInBackground(callback);
+    }
+
     static public void GetUsersLatestResponseToChallenge(User user, Challenge challenge, FindCallback<ParseObject> callback) {
         String challengeDotChallenger = new StringBuilder(ParseTableConstants.RESPONSE_CHALLENGE)
                 .append(".")
@@ -188,7 +192,7 @@ public class ParseHelper {
         query.include(challengeDotChallenged);
         query.whereEqualTo(ParseTableConstants.RESPONSE_CHALLENGE, challengePO);
         query.whereEqualTo(ParseTableConstants.RESPONSE_RESPONDER, responderPO);
-        query.orderByAscending(ParseTableConstants.RESPONSE_CREATED_AT);
+        query.orderByDescending(ParseTableConstants.RESPONSE_CREATED_AT);
         query.setLimit(1);
         query.findInBackground(callback);
     }
@@ -210,15 +214,15 @@ public class ParseHelper {
         query.findInBackground(callback);
     }
 
-    static public void GetChallengeImage(Challenge challenge, GetCallback<ParseObject> callback) {
+
+    static public void GetChallengeImage(Challenge challenge, GetCallback callback) {
         ParseObject challengePO = ParseObject.createWithoutData(ParseTableConstants.CHALLENGE_TABLE, challenge.getId());
         challengePO.fetchInBackground(callback);
     }
 
-    static public void GetResponseImage(Response response, GetDataCallback callback) {
-        ParseObject responsePO = response.createParseObject();
-        ParseFile image = (ParseFile) responsePO.get(ParseTableConstants.CHALLENGE_PICTURE);
-        image.getDataInBackground(callback);
+    static public void GetResponseImage(Response response, GetCallback callback) {
+        ParseObject responsePO = ParseObject.createWithoutData(ParseTableConstants.RESPONSE_TABLE, response.getId());
+        responsePO.fetchInBackground(callback);
     }
 
     static public byte[] GetImageBytes(String filePath) {
@@ -226,6 +230,35 @@ public class ParseHelper {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
         return stream.toByteArray();
+    }
+
+
+    /*
+    TODO: Please check this function
+     */
+    static public void GetPendingResponsesOfCurrentUserToChallenge(Challenge challenge, User user, FindCallback<ParseObject> callback) {
+        String challengeDotChallenger = new StringBuilder(ParseTableConstants.RESPONSE_CHALLENGE)
+                .append(".")
+                .append(ParseTableConstants.CHALLENGE_CHALLENGER)
+                .toString();
+
+        String challengeDotChallenged = new StringBuilder(ParseTableConstants.RESPONSE_CHALLENGE)
+                .append(".")
+                .append(ParseTableConstants.CHALLENGE_CHALLENGED)
+                .toString();
+
+        ParseObject challengePO = ParseObject.createWithoutData(ParseTableConstants.CHALLENGE_TABLE, challenge.getId());
+        ParseObject userP0 = ParseObject.createWithoutData(ParseTableConstants.USER_TABLE, user.getId());
+        ParseQuery<ParseObject> query = ParseQuery.getQuery(ParseTableConstants.RESPONSE_TABLE);
+        query.include(ParseTableConstants.RESPONSE_CHALLENGE);
+        query.include(ParseTableConstants.RESPONSE_RESPONDER);
+        query.include(challengeDotChallenger);
+        query.include(challengeDotChallenged);
+        query.whereEqualTo(ParseTableConstants.RESPONSE_CHALLENGE, challengePO);
+        query.whereEqualTo(ParseTableConstants.RESPONSE_RESPONDER, userP0);
+        query.whereEqualTo(ParseTableConstants.RESPONSE_STATUS, Response.STATUS_PENDING);
+        query.orderByAscending(ParseTableConstants.RESPONSE_CREATED_AT);
+        query.findInBackground(callback);
     }
 
 }
