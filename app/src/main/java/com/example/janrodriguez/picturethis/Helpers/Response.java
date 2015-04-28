@@ -39,7 +39,7 @@ public class Response implements Parcelable {
     public Response (Challenge challenge, User responder, String localFilePath) {
         this.responder = responder;
         this.localFilePath = localFilePath;
-        this.status = "pending";
+        this.status = STATUS_PENDING;
     }
 
     public Response (String id, Challenge challenge, User responder, String remoteFilePath, String status, Date createdAt) {

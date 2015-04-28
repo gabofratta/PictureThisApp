@@ -23,14 +23,11 @@ import android.widget.ListView;
 import com.example.janrodriguez.picturethis.Helpers.Challenge;
 import com.example.janrodriguez.picturethis.Helpers.CustomListAdapter;
 import com.example.janrodriguez.picturethis.Helpers.ParseHelper;
-import com.example.janrodriguez.picturethis.Helpers.ParseTableConstants;
 import com.example.janrodriguez.picturethis.Layouts.SlidingTabLayout;
 import com.example.janrodriguez.picturethis.R;
 import com.gc.materialdesign.views.ButtonFloat;
 import com.parse.FindCallback;
-import com.parse.GetCallback;
 import com.parse.ParseException;
-import com.parse.ParseFile;
 import com.parse.ParseObject;
 
 import java.util.ArrayList;
@@ -128,7 +125,6 @@ public class ChallengeFeedActivity extends BaseSidePanelActivity implements Acti
 
     @Override
     public void onStop () {
-//        refreshHandler.removeCallbacks(runnable);
         super.onStop();
     }
 
@@ -145,38 +141,39 @@ public class ChallengeFeedActivity extends BaseSidePanelActivity implements Acti
                     listOfReceivedChallenges.clear();
 
                     for (ParseObject parseObject : parseObjects) {
-
-                        final Challenge challenge = new Challenge(parseObject);
+                        Challenge challenge = new Challenge(parseObject);
                         listOfReceivedChallenges.add(challenge);
 
+                        if (challenge.getIcon() != null) {
+                            ImageProcess process = new ImageProcess(challenge, adapter1);
+                            process.execute(challenge.getIcon());
+                        }
 
-                        ParseHelper.GetChallengeImage(challenge, new GetCallback<ParseObject>() {
-                            @Override
-                            public void done(ParseObject parseObject, ParseException e) {
-                                if (e == null) {
-
-                                    ParseFile parseFile = parseObject.getParseFile(ParseTableConstants.CHALLENGE_ICON);
-
-                                    if (parseFile == null) {
-                                        return;
-                                    }
-
-                                    try {
-                                        byte[] bytes = parseFile.getData();
-                                        ImageProcess process = new ImageProcess(challenge, adapter1);
-                                        process.execute(bytes);
-                                    } catch (ParseException e1) {
-                                        e1.printStackTrace();
-                                    }
-                                }
-                            }
-                        });
+//                        ParseHelper.GetChallengeImage(challenge, new GetCallback<ParseObject>() {
+//                            @Override
+//                            public void done(ParseObject parseObject, ParseException e) {
+//                                if (e == null) {
+//
+//                                    ParseFile parseFile = parseObject.getParseFile(ParseTableConstants.CHALLENGE_ICON);
+//
+//                                    if (parseFile == null) {
+//                                        return;
+//                                    }
+//
+//                                    try {
+//                                        byte[] bytes = parseFile.getData();
+//                                        ImageProcess process = new ImageProcess(challenge, adapter1);
+//                                        process.execute(bytes);
+//                                    } catch (ParseException e1) {
+//                                        e1.printStackTrace();
+//                                    }
+//                                }
+//                            }
+//                        });
                     }
 
                     adapter1.notifyDataSetChanged();
-//                    Log.e(TAG, listOfReceivedChallenges.size()+"");
                     receivedRefreshLayout.setRefreshing(false);
-
                 } else {
                     Log.e(TAG, "Error: " + e.getMessage());
                 }
@@ -192,38 +189,39 @@ public class ChallengeFeedActivity extends BaseSidePanelActivity implements Acti
                     listOfSentChallenges.clear();
 
                     for (ParseObject parseObject : parseObjects) {
-
-                        final Challenge challenge = new Challenge(parseObject);
+                        Challenge challenge = new Challenge(parseObject);
                         listOfSentChallenges.add(challenge);
 
+                        if (challenge.getIcon() != null) {
+                            ImageProcess process = new ImageProcess(challenge, adapter2);
+                            process.execute(challenge.getIcon());
+                        }
 
-                        ParseHelper.GetChallengeImage(challenge, new GetCallback<ParseObject>() {
-                            @Override
-                            public void done(ParseObject parseObject, ParseException e) {
-                                if (e == null) {
-
-                                    ParseFile parseFile = parseObject.getParseFile(ParseTableConstants.CHALLENGE_ICON);
-
-                                    if (parseFile == null) {
-                                        return;
-                                    }
-
-                                    try {
-                                        byte[] bytes = parseFile.getData();
-                                        ImageProcess process = new ImageProcess(challenge, adapter2);
-                                        process.execute(bytes);
-                                    } catch (ParseException e1) {
-                                        e1.printStackTrace();
-                                    }
-                                }
-                            }
-                        });
+//                        ParseHelper.GetChallengeImage(challenge, new GetCallback<ParseObject>() {
+//                            @Override
+//                            public void done(ParseObject parseObject, ParseException e) {
+//                                if (e == null) {
+//
+//                                    ParseFile parseFile = parseObject.getParseFile(ParseTableConstants.CHALLENGE_ICON);
+//
+//                                    if (parseFile == null) {
+//                                        return;
+//                                    }
+//
+//                                    try {
+//                                        byte[] bytes = parseFile.getData();
+//                                        ImageProcess process = new ImageProcess(challenge, adapter2);
+//                                        process.execute(bytes);
+//                                    } catch (ParseException e1) {
+//                                        e1.printStackTrace();
+//                                    }
+//                                }
+//                            }
+//                        });
                     }
 
                     adapter2.notifyDataSetChanged();
-//                    Log.e(TAG, listOfSentChallenges.size()+"");
                     sentRefreshLayout.setRefreshing(false);
-
                 } else {
                     Log.e(TAG, "Error: " + e.getMessage());
                 }
@@ -291,7 +289,6 @@ public class ChallengeFeedActivity extends BaseSidePanelActivity implements Acti
 
         static ListView listView = null;
 
-
         public static ReceivedChallengeFeedFragment newInstance() {
             ReceivedChallengeFeedFragment fragment = new ReceivedChallengeFeedFragment();
             Bundle args = new Bundle();
@@ -300,10 +297,7 @@ public class ChallengeFeedActivity extends BaseSidePanelActivity implements Acti
             return fragment;
         }
 
-
-        public ReceivedChallengeFeedFragment() {
-
-        }
+        public ReceivedChallengeFeedFragment() {}
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -330,8 +324,6 @@ public class ChallengeFeedActivity extends BaseSidePanelActivity implements Acti
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view,
                                         int position, long id) {
-                    // TODO Auto-generated method stub
-
                     Intent intent = new Intent(getActivity(), ViewChallengeActivity.class);
                     intent.putExtra(Challenge.INTENT_TAG, listOfReceivedChallenges.get(position));
                     startActivity(intent);
@@ -340,7 +332,6 @@ public class ChallengeFeedActivity extends BaseSidePanelActivity implements Acti
                 }
             });
 
-
             return rootView;
         }
     }
@@ -348,7 +339,6 @@ public class ChallengeFeedActivity extends BaseSidePanelActivity implements Acti
     public static class SentChallengeFeedFragment extends Fragment {
 
         static ListView listView = null;
-
 
         /**
          * Returns a new instance of this fragment for the given section
@@ -362,8 +352,7 @@ public class ChallengeFeedActivity extends BaseSidePanelActivity implements Acti
             return fragment;
         }
 
-        public SentChallengeFeedFragment() {
-        }
+        public SentChallengeFeedFragment() {}
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -389,16 +378,12 @@ public class ChallengeFeedActivity extends BaseSidePanelActivity implements Acti
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view,
                                         int position, long id) {
-                    // TODO Auto-generated method stub
-
                     Intent intent = new Intent(getActivity(), ViewResponseActivity.class);
                     intent.putExtra(Challenge.INTENT_TAG, listOfSentChallenges.get(position));
                     startActivity(intent);
 
                 }
             });
-
-
 
             return rootView;
         }
