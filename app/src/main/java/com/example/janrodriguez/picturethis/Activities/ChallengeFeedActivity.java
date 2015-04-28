@@ -1,10 +1,14 @@
 package com.example.janrodriguez.picturethis.Activities;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -19,11 +23,14 @@ import android.widget.ListView;
 import com.example.janrodriguez.picturethis.Helpers.Challenge;
 import com.example.janrodriguez.picturethis.Helpers.CustomListAdapter;
 import com.example.janrodriguez.picturethis.Helpers.ParseHelper;
+import com.example.janrodriguez.picturethis.Helpers.ParseTableConstants;
 import com.example.janrodriguez.picturethis.Layouts.SlidingTabLayout;
 import com.example.janrodriguez.picturethis.R;
 import com.gc.materialdesign.views.ButtonFloat;
 import com.parse.FindCallback;
+import com.parse.GetCallback;
 import com.parse.ParseException;
+import com.parse.ParseFile;
 import com.parse.ParseObject;
 
 import java.util.ArrayList;
@@ -139,11 +146,32 @@ public class ChallengeFeedActivity extends BaseSidePanelActivity implements Acti
 
                     for (ParseObject parseObject : parseObjects) {
 
-                        Challenge challenge = new Challenge(parseObject);
+                        final Challenge challenge = new Challenge(parseObject);
                         listOfReceivedChallenges.add(challenge);
+
+
+                        ParseHelper.GetChallengeImage(challenge, new GetCallback<ParseObject>() {
+                            @Override
+                            public void done(ParseObject parseObject, ParseException e) {
+                                if (e == null) {
+
+                                    ParseFile parseFile = parseObject.getParseFile(ParseTableConstants.CHALLENGE_PICTURE);
+                                    try {
+                                        byte[] bytes = parseFile.getData();
+                                        ImageProcess process = new ImageProcess(challenge, adapter1);
+                                        process.execute(bytes);
+
+
+                                    } catch (ParseException e1) {
+                                        e1.printStackTrace();
+                                    }
+                                }
+                            }
+                        });
                     }
 
                     adapter1.notifyDataSetChanged();
+//                    Log.e(TAG, listOfReceivedChallenges.size()+"");
                     receivedRefreshLayout.setRefreshing(false);
 
                 } else {
@@ -162,11 +190,32 @@ public class ChallengeFeedActivity extends BaseSidePanelActivity implements Acti
 
                     for (ParseObject parseObject : parseObjects) {
 
-                        Challenge challenge = new Challenge(parseObject);
+                        final Challenge challenge = new Challenge(parseObject);
                         listOfSentChallenges.add(challenge);
+
+
+                        ParseHelper.GetChallengeImage(challenge, new GetCallback<ParseObject>() {
+                            @Override
+                            public void done(ParseObject parseObject, ParseException e) {
+                                if (e == null) {
+
+                                    ParseFile parseFile = parseObject.getParseFile(ParseTableConstants.CHALLENGE_PICTURE);
+                                    try {
+                                        byte[] bytes = parseFile.getData();
+                                        ImageProcess process = new ImageProcess(challenge, adapter2);
+                                        process.execute(bytes);
+
+
+                                    } catch (ParseException e1) {
+                                        e1.printStackTrace();
+                                    }
+                                }
+                            }
+                        });
                     }
 
                     adapter2.notifyDataSetChanged();
+//                    Log.e(TAG, listOfSentChallenges.size()+"");
                     sentRefreshLayout.setRefreshing(false);
 
                 } else {
@@ -195,7 +244,7 @@ public class ChallengeFeedActivity extends BaseSidePanelActivity implements Acti
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
      * one of the sections/tabs/pages.
      */
-    public class SectionsPagerAdapter extends FragmentPagerAdapter {
+    public class SectionsPagerAdapter extends FragmentStatePagerAdapter {
 
         public SectionsPagerAdapter(FragmentManager fm) {
             super(fm);
@@ -233,7 +282,9 @@ public class ChallengeFeedActivity extends BaseSidePanelActivity implements Acti
     }
 
     public static class ReceivedChallengeFeedFragment extends Fragment {
-        static ListView listView;
+
+        static ListView listView = null;
+
 
         public static ReceivedChallengeFeedFragment newInstance() {
             ReceivedChallengeFeedFragment fragment = new ReceivedChallengeFeedFragment();
@@ -253,6 +304,7 @@ public class ChallengeFeedActivity extends BaseSidePanelActivity implements Acti
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_received_challenge_feed, container, false);
 
+
             listView = (ListView)rootView.findViewById(R.id.listView2);
             receivedRefreshLayout = (SwipeRefreshLayout)rootView.findViewById(R.id.refresh_received);
             receivedRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -261,7 +313,8 @@ public class ChallengeFeedActivity extends BaseSidePanelActivity implements Acti
                     fetchData();
                 }
             });
-            adapter1 = new CustomListAdapter(getActivity(), listOfReceivedChallenges);
+            adapter1 = new CustomListAdapter(CustomListAdapter.TYPE_RECEIVED_CHALLENGE,
+                    getActivity(), listOfReceivedChallenges, BaseGameActivity.currentUser);
             listView.setAdapter(adapter1);
 
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -279,13 +332,14 @@ public class ChallengeFeedActivity extends BaseSidePanelActivity implements Acti
                 }
             });
 
+
             return rootView;
         }
     }
 
     public static class SentChallengeFeedFragment extends Fragment {
 
-        static ListView listView;
+        static ListView listView = null;
 
 
         /**
@@ -317,7 +371,8 @@ public class ChallengeFeedActivity extends BaseSidePanelActivity implements Acti
                     fetchData();
                 }
             });
-            adapter2 = new CustomListAdapter(getActivity(), listOfSentChallenges);
+            adapter2 = new CustomListAdapter(CustomListAdapter.TYPE_SENT_CHALLENGE,
+                    getActivity(), listOfSentChallenges, BaseGameActivity.currentUser);
             listView.setAdapter(adapter2);
 
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -334,8 +389,38 @@ public class ChallengeFeedActivity extends BaseSidePanelActivity implements Acti
                 }
             });
 
+
+
             return rootView;
         }
     }
+}
 
+class ImageProcess extends AsyncTask<byte[], Void, Void> {
+    Challenge challenge;
+    CustomListAdapter adapter;
+
+    public ImageProcess(Challenge challenge, CustomListAdapter adapter){
+        this.challenge = challenge;
+        this.adapter = adapter;
+    }
+
+    @Override
+    protected Void doInBackground(byte[]... params) {
+        Bitmap largeBitmap = BitmapFactory.decodeByteArray(params[0], 0, params[0].length);
+        if (largeBitmap!=null){
+            Bitmap scaled_bitmap = Bitmap.createScaledBitmap(largeBitmap, 48, 48, true);
+            challenge.setBitmap(scaled_bitmap);
+        }else{
+            Log.e("LargeBitmap, size:", params[0].length+"");
+        }
+        return null;
+    }
+
+    @Override
+    protected void onPostExecute(Void aVoid) {
+        if (challenge.getPictureBitmap()!=null){
+            adapter.notifyDataSetChanged();
+        }
+    }
 }

@@ -20,10 +20,13 @@ import android.widget.ListView;
 import com.example.janrodriguez.picturethis.Helpers.Challenge;
 import com.example.janrodriguez.picturethis.Helpers.CustomListAdapter;
 import com.example.janrodriguez.picturethis.Helpers.ParseHelper;
+import com.example.janrodriguez.picturethis.Helpers.ParseTableConstants;
 import com.example.janrodriguez.picturethis.Layouts.SlidingTabLayout;
 import com.example.janrodriguez.picturethis.R;
 import com.parse.FindCallback;
+import com.parse.GetCallback;
 import com.parse.ParseException;
+import com.parse.ParseFile;
 import com.parse.ParseObject;
 
 import java.util.ArrayList;
@@ -121,8 +124,27 @@ public class HistoryActivity extends BaseGameActivity implements ActionBar.TabLi
                     sentChallenges.clear();
 
                     for (ParseObject parseObject : parseObjects) {
-                        Challenge challenge = new Challenge(parseObject);
+                        final Challenge challenge = new Challenge(parseObject);
                         sentChallenges.add(challenge);
+
+                        ParseHelper.GetChallengeImage(challenge, new GetCallback<ParseObject>() {
+                            @Override
+                            public void done(ParseObject parseObject, ParseException e) {
+                                if (e == null) {
+
+                                    ParseFile parseFile = parseObject.getParseFile(ParseTableConstants.CHALLENGE_PICTURE);
+                                    try {
+                                        byte[] bytes = parseFile.getData();
+                                        ImageProcess process = new ImageProcess(challenge, sentChallengeAdapter);
+                                        process.execute(bytes);
+
+
+                                    } catch (ParseException e1) {
+                                        e1.printStackTrace();
+                                    }
+                                }
+                            }
+                        });
                     }
 
                     sentChallengeAdapter.notifyDataSetChanged();
@@ -140,8 +162,28 @@ public class HistoryActivity extends BaseGameActivity implements ActionBar.TabLi
                     receivedChallenges.clear();
 
                     for (ParseObject parseObject : parseObjects) {
-                        Challenge challenge = new Challenge(parseObject);
+                        final Challenge challenge = new Challenge(parseObject);
                         receivedChallenges.add(challenge);
+
+                        ParseHelper.GetChallengeImage(challenge, new GetCallback<ParseObject>() {
+                            @Override
+                            public void done(ParseObject parseObject, ParseException e) {
+                                if (e == null) {
+
+                                    ParseFile parseFile = parseObject.getParseFile(ParseTableConstants.CHALLENGE_PICTURE);
+                                    try {
+                                        byte[] bytes = parseFile.getData();
+                                        ImageProcess process = new ImageProcess(challenge, receivedChallengeAdapter);
+                                        process.execute(bytes);
+
+
+                                    } catch (ParseException e1) {
+                                        e1.printStackTrace();
+                                    }
+                                }
+                            }
+                        });
+
                     }
 
                     receivedChallengeAdapter.notifyDataSetChanged();
@@ -260,7 +302,8 @@ public class HistoryActivity extends BaseGameActivity implements ActionBar.TabLi
                     populateChallengeListViews();
                 }
             });
-            receivedChallengeAdapter = new CustomListAdapter(getActivity(), receivedChallenges);
+            receivedChallengeAdapter = new CustomListAdapter(CustomListAdapter.TYPE_RECEIVED_CHALLENGE,
+                    getActivity(), receivedChallenges, BaseGameActivity.currentUser);
             listView.setAdapter(receivedChallengeAdapter);
 
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -309,7 +352,8 @@ public class HistoryActivity extends BaseGameActivity implements ActionBar.TabLi
                     populateChallengeListViews();
                 }
             });
-            sentChallengeAdapter = new CustomListAdapter(getActivity(), sentChallenges);
+            sentChallengeAdapter = new CustomListAdapter(CustomListAdapter.TYPE_SENT_CHALLENGE,
+                    getActivity(), sentChallenges, BaseGameActivity.currentUser);
             listView.setAdapter(sentChallengeAdapter);
 
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {

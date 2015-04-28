@@ -214,6 +214,7 @@ public class ParseHelper {
         query.findInBackground(callback);
     }
 
+
     static public void GetChallengeImage(Challenge challenge, GetCallback callback) {
         ParseObject challengePO = ParseObject.createWithoutData(ParseTableConstants.CHALLENGE_TABLE, challenge.getId());
         challengePO.fetchInBackground(callback);
@@ -229,6 +230,35 @@ public class ParseHelper {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
         return stream.toByteArray();
+    }
+
+
+    /*
+    TODO: Please check this function
+     */
+    static public void GetPendingResponsesOfCurrentUserToChallenge(Challenge challenge, User user, FindCallback<ParseObject> callback) {
+        String challengeDotChallenger = new StringBuilder(ParseTableConstants.RESPONSE_CHALLENGE)
+                .append(".")
+                .append(ParseTableConstants.CHALLENGE_CHALLENGER)
+                .toString();
+
+        String challengeDotChallenged = new StringBuilder(ParseTableConstants.RESPONSE_CHALLENGE)
+                .append(".")
+                .append(ParseTableConstants.CHALLENGE_CHALLENGED)
+                .toString();
+
+        ParseObject challengePO = ParseObject.createWithoutData(ParseTableConstants.CHALLENGE_TABLE, challenge.getId());
+        ParseObject userP0 = ParseObject.createWithoutData(ParseTableConstants.USER_TABLE, user.getId());
+        ParseQuery<ParseObject> query = ParseQuery.getQuery(ParseTableConstants.RESPONSE_TABLE);
+        query.include(ParseTableConstants.RESPONSE_CHALLENGE);
+        query.include(ParseTableConstants.RESPONSE_RESPONDER);
+        query.include(challengeDotChallenger);
+        query.include(challengeDotChallenged);
+        query.whereEqualTo(ParseTableConstants.RESPONSE_CHALLENGE, challengePO);
+        query.whereEqualTo(ParseTableConstants.RESPONSE_RESPONDER, userP0);
+        query.whereEqualTo(ParseTableConstants.RESPONSE_STATUS, Response.STATUS_PENDING);
+        query.orderByAscending(ParseTableConstants.RESPONSE_CREATED_AT);
+        query.findInBackground(callback);
     }
 
 }
