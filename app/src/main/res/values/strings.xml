@@ -60,4 +60,5 @@
     <string name="response_accepted">Response accepted</string>
     <string name="response_declined">Response declined</string>
     <string name="challenge_closed">Challenge closed</string>
+    <string name="tagline">Find the spot and take a shot.</string>
 </resources>
