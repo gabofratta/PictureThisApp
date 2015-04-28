@@ -60,4 +60,6 @@
     <string name="response_accepted">Response accepted</string>
     <string name="response_declined">Response declined</string>
     <string name="challenge_closed">Challenge closed</string>
+    <string name="user_list_empty">Invite your Google+ friends to play Picture This.</string>
+    <string name="users_list_empty">Tell your friends on Google+ to use Picture This!</string>
 </resources>

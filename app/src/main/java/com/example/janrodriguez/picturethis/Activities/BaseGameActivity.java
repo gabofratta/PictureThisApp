@@ -210,7 +210,7 @@ public abstract class BaseGameActivity extends AppCompatActivity implements
     @Override
     public void onSignInSucceeded() {
         // Retrieve some profile information to personalize our app for the user.
-        if (currentUser == null) {
+        if (currentUser == null || currentUser.getId() == null) {
             final Person currentGPUser = Plus.PeopleApi.getCurrentPerson(getApiClient());
             currentUser = new User(currentGPUser.getId(), currentGPUser.getDisplayName());
             ParseHelper.GetUserByGoogleId(currentUser, new FindCallback<ParseObject>() {
