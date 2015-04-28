@@ -22,7 +22,6 @@ public class Response implements Parcelable {
     public static final String STATUS_PENDING = "pending";
 
     private String id = "";
-    private Challenge challenge;
     private User responder;
     private String localFilePath;
     private String remoteFilePath;
@@ -31,7 +30,6 @@ public class Response implements Parcelable {
 
     public Response (ParseObject po) {
         this.id = po.getObjectId();
-        this.challenge = new Challenge(po.getParseObject(ParseTableConstants.RESPONSE_CHALLENGE));
         this.responder = new User(po.getParseObject(ParseTableConstants.RESPONSE_RESPONDER));
         this.remoteFilePath = po.getParseFile(ParseTableConstants.RESPONSE_PICTURE).getUrl();
         this.status = po.getString(ParseTableConstants.RESPONSE_STATUS);
@@ -39,7 +37,6 @@ public class Response implements Parcelable {
     }
 
     public Response (Challenge challenge, User responder, String localFilePath) {
-        this.challenge = challenge;
         this.responder = responder;
         this.localFilePath = localFilePath;
         this.status = "pending";
@@ -55,7 +52,6 @@ public class Response implements Parcelable {
 
     public Response (Parcel source) {
         this.id = source.readString();
-        this.challenge = (Challenge)source.readValue(Challenge.class.getClassLoader());
         this.responder = (User)source.readValue(User.class.getClassLoader());
         this.localFilePath = source.readString();
         this.remoteFilePath = source.readString();
@@ -84,7 +80,6 @@ public class Response implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(id);
-        dest.writeValue(challenge);
         dest.writeValue(responder);
         dest.writeString(localFilePath);
         dest.writeString(remoteFilePath);
@@ -94,15 +89,13 @@ public class Response implements Parcelable {
 
     public ParseObject createParseObject() {
         String fileName = new File(getLocalFilePath()).getName();
-        byte[] fileBytes = ParseHelper.GetImageBytes(getLocalFilePath());
+        byte[] fileBytes = ImageHelper.GetImageBytes(getLocalFilePath(), ParseTableConstants.IMAGE_WIDTH, ParseTableConstants.IMAGE_HEIGHT);
         ParseFile file = new ParseFile(fileName, fileBytes);
 
         ParseObject responderPO = ParseObject.createWithoutData(ParseTableConstants.USER_TABLE, getResponder().getId());
-        ParseObject challengePO = ParseObject.createWithoutData(ParseTableConstants.CHALLENGE_TABLE, getChallenge().getId());
 
         ParseObject responsePO = new ParseObject(ParseTableConstants.RESPONSE_TABLE);
         responsePO.put(ParseTableConstants.RESPONSE_RESPONDER, responderPO);
-        responsePO.put(ParseTableConstants.RESPONSE_CHALLENGE, challengePO);
         responsePO.put(ParseTableConstants.RESPONSE_PICTURE, file);
         responsePO.put(ParseTableConstants.RESPONSE_STATUS, getStatus());
 
@@ -111,10 +104,6 @@ public class Response implements Parcelable {
 
     public String getId() {
         return id;
-    }
-
-    public Challenge getChallenge() {
-        return challenge;
     }
 
     public User getResponder() {

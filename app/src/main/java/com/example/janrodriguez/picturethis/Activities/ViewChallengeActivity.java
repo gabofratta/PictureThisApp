@@ -191,7 +191,7 @@ public class ViewChallengeActivity extends BaseGameActivity {
                 }
 
                 Response response = new Response(currentChallenge, BaseGameActivity.currentUser, currentPictureUri.getPath());
-                ParseHelper.CreateResponse(response, new SaveCallback() {
+                ParseHelper.CreateResponseToChallenge(response, currentChallenge, new SaveCallback() {
                     public void done(ParseException e) {
                         if (e == null) {
                             Toast.makeText(getApplicationContext(), getString(R.string.response_created), Toast.LENGTH_SHORT).show();
@@ -200,6 +200,7 @@ public class ViewChallengeActivity extends BaseGameActivity {
                         }
                     }
                 });
+
                 //Update user's score
                 if(loggedIntoGoogleGames()){
                     currentUser.incrementScore(Score.SEND_RESPONSE);
@@ -216,7 +217,6 @@ public class ViewChallengeActivity extends BaseGameActivity {
         if (resultCode == RESULT_OK && requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
             currentPictureUri = tempPictureUri;
             Bitmap decodedBitmap = ImageHelper.DecodeSampledBitmapFromResource(currentPictureUri.getPath(), WIDTH, HEIGHT);
-            ImageHelper.SaveImage(decodedBitmap, currentPictureUri);
             response_pic.setImageBitmap(decodedBitmap);
         } else if (resultCode == RESULT_CANCELED && requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
             ImageHelper.DeleteImageFile(tempPictureUri);

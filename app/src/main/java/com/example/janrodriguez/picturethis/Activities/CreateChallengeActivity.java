@@ -382,7 +382,6 @@ public class CreateChallengeActivity extends BaseGameActivity {
         if (resultCode == RESULT_OK && requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
             currentPictureUri = tempPictureUri;
             Bitmap decodedBitmap = ImageHelper.DecodeSampledBitmapFromResource(currentPictureUri.getPath(), WIDTH, HEIGHT);
-            ImageHelper.SaveImage(decodedBitmap, currentPictureUri);
             imageButton.setImageBitmap(decodedBitmap);
         } else if (resultCode == RESULT_CANCELED && requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
             ImageHelper.DeleteImageFile(tempPictureUri);

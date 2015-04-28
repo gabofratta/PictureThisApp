@@ -155,13 +155,16 @@ public class ChallengeFeedActivity extends BaseSidePanelActivity implements Acti
                             public void done(ParseObject parseObject, ParseException e) {
                                 if (e == null) {
 
-                                    ParseFile parseFile = parseObject.getParseFile(ParseTableConstants.CHALLENGE_PICTURE);
+                                    ParseFile parseFile = parseObject.getParseFile(ParseTableConstants.CHALLENGE_ICON);
+
+                                    if (parseFile == null) {
+                                        return;
+                                    }
+
                                     try {
                                         byte[] bytes = parseFile.getData();
                                         ImageProcess process = new ImageProcess(challenge, adapter1);
                                         process.execute(bytes);
-
-
                                     } catch (ParseException e1) {
                                         e1.printStackTrace();
                                     }
@@ -199,13 +202,16 @@ public class ChallengeFeedActivity extends BaseSidePanelActivity implements Acti
                             public void done(ParseObject parseObject, ParseException e) {
                                 if (e == null) {
 
-                                    ParseFile parseFile = parseObject.getParseFile(ParseTableConstants.CHALLENGE_PICTURE);
+                                    ParseFile parseFile = parseObject.getParseFile(ParseTableConstants.CHALLENGE_ICON);
+
+                                    if (parseFile == null) {
+                                        return;
+                                    }
+
                                     try {
                                         byte[] bytes = parseFile.getData();
                                         ImageProcess process = new ImageProcess(challenge, adapter2);
                                         process.execute(bytes);
-
-
                                     } catch (ParseException e1) {
                                         e1.printStackTrace();
                                     }
@@ -306,6 +312,7 @@ public class ChallengeFeedActivity extends BaseSidePanelActivity implements Acti
 
 
             listView = (ListView)rootView.findViewById(R.id.listView2);
+
             receivedRefreshLayout = (SwipeRefreshLayout)rootView.findViewById(R.id.refresh_received);
             receivedRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                 @Override
@@ -313,6 +320,7 @@ public class ChallengeFeedActivity extends BaseSidePanelActivity implements Acti
                     fetchData();
                 }
             });
+
             adapter1 = new CustomListAdapter(CustomListAdapter.TYPE_RECEIVED_CHALLENGE,
                     getActivity(), listOfReceivedChallenges, BaseGameActivity.currentUser);
             listView.setAdapter(adapter1);
@@ -371,6 +379,7 @@ public class ChallengeFeedActivity extends BaseSidePanelActivity implements Acti
                     fetchData();
                 }
             });
+
             adapter2 = new CustomListAdapter(CustomListAdapter.TYPE_SENT_CHALLENGE,
                     getActivity(), listOfSentChallenges, BaseGameActivity.currentUser);
             listView.setAdapter(adapter2);
@@ -407,13 +416,8 @@ class ImageProcess extends AsyncTask<byte[], Void, Void> {
 
     @Override
     protected Void doInBackground(byte[]... params) {
-        Bitmap largeBitmap = BitmapFactory.decodeByteArray(params[0], 0, params[0].length);
-        if (largeBitmap!=null){
-            Bitmap scaled_bitmap = Bitmap.createScaledBitmap(largeBitmap, 48, 48, true);
-            challenge.setBitmap(scaled_bitmap);
-        }else{
-            Log.e("LargeBitmap, size:", params[0].length+"");
-        }
+        Bitmap iconBitmap = BitmapFactory.decodeByteArray(params[0], 0, params[0].length);
+        challenge.setBitmap(iconBitmap);
         return null;
     }
 

@@ -132,13 +132,16 @@ public class HistoryActivity extends BaseGameActivity implements ActionBar.TabLi
                             public void done(ParseObject parseObject, ParseException e) {
                                 if (e == null) {
 
-                                    ParseFile parseFile = parseObject.getParseFile(ParseTableConstants.CHALLENGE_PICTURE);
+                                    ParseFile parseFile = parseObject.getParseFile(ParseTableConstants.CHALLENGE_ICON);
+
+                                    if (parseFile == null) {
+                                        return;
+                                    }
+
                                     try {
                                         byte[] bytes = parseFile.getData();
                                         ImageProcess process = new ImageProcess(challenge, sentChallengeAdapter);
                                         process.execute(bytes);
-
-
                                     } catch (ParseException e1) {
                                         e1.printStackTrace();
                                     }
@@ -170,13 +173,16 @@ public class HistoryActivity extends BaseGameActivity implements ActionBar.TabLi
                             public void done(ParseObject parseObject, ParseException e) {
                                 if (e == null) {
 
-                                    ParseFile parseFile = parseObject.getParseFile(ParseTableConstants.CHALLENGE_PICTURE);
+                                    ParseFile parseFile = parseObject.getParseFile(ParseTableConstants.CHALLENGE_ICON);
+
+                                    if (parseFile == null) {
+                                        return;
+                                    }
+
                                     try {
                                         byte[] bytes = parseFile.getData();
                                         ImageProcess process = new ImageProcess(challenge, receivedChallengeAdapter);
                                         process.execute(bytes);
-
-
                                     } catch (ParseException e1) {
                                         e1.printStackTrace();
                                     }
@@ -302,6 +308,7 @@ public class HistoryActivity extends BaseGameActivity implements ActionBar.TabLi
                     populateChallengeListViews();
                 }
             });
+
             receivedChallengeAdapter = new CustomListAdapter(CustomListAdapter.TYPE_RECEIVED_CHALLENGE,
                     getActivity(), receivedChallenges, BaseGameActivity.currentUser);
             listView.setAdapter(receivedChallengeAdapter);
@@ -345,6 +352,7 @@ public class HistoryActivity extends BaseGameActivity implements ActionBar.TabLi
             View rootView = inflater.inflate(R.layout.fragment_sent_challenge_feed, container, false);
 
             listView = (ListView)rootView.findViewById(R.id.listView3);
+
             sentRefreshLayout = (SwipeRefreshLayout)rootView.findViewById(R.id.refresh_sent);
             sentRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                 @Override
@@ -352,6 +360,7 @@ public class HistoryActivity extends BaseGameActivity implements ActionBar.TabLi
                     populateChallengeListViews();
                 }
             });
+
             sentChallengeAdapter = new CustomListAdapter(CustomListAdapter.TYPE_SENT_CHALLENGE,
                     getActivity(), sentChallenges, BaseGameActivity.currentUser);
             listView.setAdapter(sentChallengeAdapter);
