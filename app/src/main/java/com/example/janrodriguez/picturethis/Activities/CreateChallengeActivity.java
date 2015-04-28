@@ -18,7 +18,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -311,8 +310,8 @@ public class CreateChallengeActivity extends BaseGameActivity {
             public void onLocationChanged(Location location) {
                 if (currentLocation == null) {
                     currentLocation = new MyGeoPoint();
-                    CheckBox checkLocation = (CheckBox) findViewById(R.id.checkLocation);
-                    checkLocation.setChecked(true);
+                    ImageView locationIcon = (ImageView) findViewById(R.id.location_icon);
+                    locationIcon.setImageResource(R.drawable.ic_action_location_found);
                 }
                 currentLocation.setLatitude(location.getLatitude());
                 currentLocation.setLongitude(location.getLongitude());

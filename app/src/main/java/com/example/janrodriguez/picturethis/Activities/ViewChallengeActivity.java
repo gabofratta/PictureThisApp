@@ -10,8 +10,8 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -97,8 +97,12 @@ public class ViewChallengeActivity extends BaseGameActivity {
         response_pic = (ImageButton) findViewById(R.id.response_picture);
         sendResponseButton = (Button) findViewById(R.id.sendResponse_button);
 
-        CheckBox checkMultiPlayer = (CheckBox) findViewById(R.id.multiplayer_checkbox);
-        checkMultiPlayer.setChecked(currentChallenge.isMultiplayer());
+        ImageView multiplayerIcon = (ImageView) findViewById(R.id.multiplayer_icon);
+        if (currentChallenge.isMultiplayer()) {
+            multiplayerIcon.setImageResource(R.drawable.ic_action_group);
+        } else {
+            multiplayerIcon.setImageResource(R.drawable.ic_action_person);
+        }
 
         // Setting the Challenge Picture
         challenge_pic = (ImageButton) findViewById(R.id.challenge_picture);

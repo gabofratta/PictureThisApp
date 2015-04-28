@@ -33,7 +33,6 @@ import java.util.Locale;
 public class ChallengeFeedActivity extends BaseSidePanelActivity implements ActionBar.TabListener {
 
     static private final String TAG = "ChallengeFeedActivity";
-    static private final int REFRESH_RATE = 30000;
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide

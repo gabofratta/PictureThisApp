@@ -51,14 +51,12 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true" />
 
-        <CheckBox
+        <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text=""
-            android:id="@+id/checkLocation"
-            android:layout_below="@+id/linearLayout"
-            android:layout_centerHorizontal="true"
-            android:enabled="false" />
+            android:id="@+id/location_icon"
+            android:src="@drawable/ic_action_location_searching"
+            android:layout_margin="10dp" />
 
         <Button
             android:layout_width="wrap_content"

@@ -14,7 +14,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Game room"
+            android:text="Title"
             android:id="@+id/challenge_title"
             android:layout_alignParentTop="true"
             android:layout_alignParentLeft="false"
@@ -107,7 +107,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:text="Bob"
                     android:id="@+id/challenger_name"
                     android:layout_column="1" />
 
@@ -130,7 +129,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:text="10:12am on April 20, 2015"
                     android:id="@+id/challenge_date"
                     android:layout_column="1" />
             </TableRow>
@@ -151,7 +149,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:text="Open"
                     android:id="@+id/status_text"
                     android:layout_column="1" />
             </TableRow>
@@ -190,16 +187,18 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:text="Multiplayer Challenge"
+                    android:text="Multiplayer"
                     android:id="@+id/textView7"
-                    android:layout_column="0" />
+                    android:layout_column="0"
+                    android:layout_gravity="center_vertical" />
 
-                <CheckBox
+                <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/multiplayer_checkbox"
-                    android:layout_column="1"
-                    android:enabled="false" />
+                    android:id="@+id/multiplayer_icon"
+                    android:layout_gravity="center_vertical"
+                    android:focusableInTouchMode="false" />
+
             </TableRow>
         </TableLayout>
 
