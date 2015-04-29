@@ -57,4 +57,18 @@
     <string name="user_list_empty">Invite your Google+ friends to play Picture This.</string>
     <string name="tagline">Find the spot and take a shot.</string>
     <string name="no_challenges">No challenges to display</string>
+    <string name="challenge">Challenge</string>
+    <string name="my_response">My Response</string>
+    <string name="challenger">Challenger</string>
+    <string name="date">Date</string>
+    <string name="status">Status</string>
+    <string name="locatin_text">Location</string>
+    <string name="view_location">View Map</string>
+    <string name="multiplayer_text">Multiplayer</string>
+    <string name="send_response">Send Response</string>
+    <string name="my_challenge">My Challenge</string>
+    <string name="response">Response</string>
+    <string name="responder">Responder</string>
+    <string name="accept">Accept</string>
+    <string name="decline">Decline</string>
 </resources>

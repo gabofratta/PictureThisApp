@@ -33,7 +33,9 @@ import com.parse.SaveCallback;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Locale;
 
 public class ViewChallengeActivity extends BaseGameActivity {
 
@@ -93,7 +95,8 @@ public class ViewChallengeActivity extends BaseGameActivity {
         challengerName.setText(currentChallenge.getChallenger().getName());
 
         challengeDate = (TextView) findViewById(R.id.challenge_date);
-        challengeDate.setText(currentChallenge.getCreatedAt().toString());
+        SimpleDateFormat format = new SimpleDateFormat("dd MMM h:mm a", Locale.ENGLISH);
+        challengeDate.setText(format.format(currentChallenge.getCreatedAt()));
 
         response_pic = (ImageButton) findViewById(R.id.response_picture);
         sendResponseButton = (Button) findViewById(R.id.sendResponse_button);
