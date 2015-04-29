@@ -304,7 +304,6 @@ public class CreateChallengeActivity extends BaseGameActivity {
                 for (User challenged: challengedList){
                     challengedIDList.add(challenged.getId());
                 }
-                challengedIDList.add(BaseGameActivity.currentUser.getId());
 
                 // Create our Installation query
                 ParseQuery pushQuery = ParseInstallation.getQuery();
