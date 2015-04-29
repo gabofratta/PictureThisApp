@@ -64,7 +64,7 @@ public class CustomListAdapter extends ArrayAdapter<Challenge> {
             } else if (challenge.isActive() && challenge.getChallengedStatus() == Challenge.Status.NEED_ACTION) {
                 rowView.setBackgroundResource(R.drawable.rounded_corners_action_needed);
             } else {
-                // some color for history ?
+                rowView.setBackgroundResource(R.drawable.rounded_corners_history);
             }
         } else {
             String challenged = challenge.getChallengedList().toString();
@@ -75,7 +75,7 @@ public class CustomListAdapter extends ArrayAdapter<Challenge> {
             } else if (challenge.isActive() && challenge.getChallengerStatus() == Challenge.Status.NEED_ACTION) {
                 rowView.setBackgroundResource(R.drawable.rounded_corners_action_needed);
             } else {
-                // some color for history ?
+                rowView.setBackgroundResource(R.drawable.rounded_corners_history);
             }
         }
 
