@@ -43,8 +43,12 @@ import com.google.android.gms.plus.Plus;
 import com.google.android.gms.plus.model.people.PersonBuffer;
 import com.parse.FindCallback;
 import com.parse.ParseException;
+import com.parse.ParseInstallation;
 import com.parse.ParseObject;
+import com.parse.ParsePush;
+import com.parse.ParseQuery;
 import com.parse.SaveCallback;
+import com.parse.SendCallback;
 
 import java.io.File;
 import java.io.IOException;
@@ -295,6 +299,34 @@ public class CreateChallengeActivity extends BaseGameActivity {
                     currentUser.updateScore(getApiClient());
                     Games.Achievements.unlock(getApiClient(), Achievement.CREATE_CHALL);
                 }
+
+                ArrayList<String> challengedIDList = new ArrayList<String>();
+                for (User challenged: challengedList){
+                    challengedIDList.add(challenged.getId());
+                }
+                challengedIDList.add(BaseGameActivity.currentUser.getId());
+
+                // Create our Installation query
+                ParseQuery pushQuery = ParseInstallation.getQuery();
+                pushQuery.whereContainedIn("user", challengedIDList);
+
+                // Send push notification to query
+                ParsePush push = new ParsePush();
+                push.setQuery(pushQuery); // Set our Installation query
+                push.setMessage("You received a challenge from " + BaseGameActivity.currentUser.getName());
+
+                push.sendInBackground(new SendCallback() {
+                    @Override
+                    public void done(ParseException e) {
+                        if (e==null){
+                            Log.i(TAG, "Push sent successfully!");
+                        }else{
+                            Log.e(TAG, e.getMessage());
+
+                        }
+                    }
+                });
+
                 finish();
             }
         });

@@ -31,6 +31,7 @@ import com.google.android.gms.plus.Plus;
 import com.google.android.gms.plus.model.people.Person;
 import com.parse.FindCallback;
 import com.parse.ParseException;
+import com.parse.ParseInstallation;
 import com.parse.ParseObject;
 import com.parse.SaveCallback;
 
@@ -211,6 +212,7 @@ public abstract class BaseGameActivity extends AppCompatActivity implements
     public void onSignInSucceeded() {
         // Retrieve some profile information to personalize our app for the user.
         if (currentUser == null || currentUser.getId() == null) {
+
             final Person currentGPUser = Plus.PeopleApi.getCurrentPerson(getApiClient());
             currentUser = new User(currentGPUser.getId(), currentGPUser.getDisplayName());
             ParseHelper.GetUserByGoogleId(currentUser, new FindCallback<ParseObject>() {
@@ -218,17 +220,27 @@ public abstract class BaseGameActivity extends AppCompatActivity implements
                 public void done(List<ParseObject> parseObjects, ParseException e) {
                     if (e == null) {
                         if (parseObjects.size() == 0) { //User not found
-                            ParseHelper.CreateUser(currentUser, new SaveCallback() {
+                            final ParseObject userPO = currentUser.createParseObject();
+                            userPO.saveInBackground(new SaveCallback() {
                                 @Override
                                 public void done(ParseException e) {
                                     if (e != null) {
                                         Log.e(TAG, "Error creating user.");
                                         return;
+                                    }else{
+                                        ParseInstallation installation = ParseInstallation.getCurrentInstallation();
+                                        installation.put("user", userPO.getObjectId());
+                                        installation.saveInBackground();
                                     }
                                 }
                             });
+
                         } else { //User found
                             currentUser = new User(parseObjects.get(0));
+
+                            ParseInstallation installation = ParseInstallation.getCurrentInstallation();
+                            installation.put("user", currentUser.getId());
+                            installation.saveInBackground();
                         }
                     } else {
                         Log.e(TAG, "Error getting user from google plus id");
