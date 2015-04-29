@@ -237,6 +237,10 @@ public abstract class BaseGameActivity extends AppCompatActivity implements
 
                         } else { //User found
                             currentUser = new User(parseObjects.get(0));
+
+                            ParseInstallation installation = ParseInstallation.getCurrentInstallation();
+                            installation.put("user", currentUser.getId());
+                            installation.saveInBackground();
                         }
                     } else {
                         Log.e(TAG, "Error getting user from google plus id");
