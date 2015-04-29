@@ -27,7 +27,9 @@ import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.SaveCallback;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Locale;
 
 public class ViewResponseActivity extends BaseGameActivity {
 
@@ -79,7 +81,8 @@ public class ViewResponseActivity extends BaseGameActivity {
         challengeTitle.setText(currentChallenge.getTitle());
 
         challengeDate = (TextView) findViewById(R.id.challenge_date);
-        challengeDate.setText(currentChallenge.getCreatedAt().toString());
+        SimpleDateFormat format = new SimpleDateFormat("dd MMM h:mm a", Locale.ENGLISH);
+        challengeDate.setText(format.format(currentChallenge.getCreatedAt()));
 
         acceptButton = (Button) findViewById(R.id.accept_button);
         declineButton = (Button) findViewById(R.id.decline_button);
