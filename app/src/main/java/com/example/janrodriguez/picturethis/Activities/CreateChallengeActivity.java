@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -28,6 +27,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.janrodriguez.picturethis.Helpers.Achievement;
+import com.example.janrodriguez.picturethis.Helpers.BitmapCameraWorkerTask;
 import com.example.janrodriguez.picturethis.Helpers.Challenge;
 import com.example.janrodriguez.picturethis.Helpers.ImageHelper;
 import com.example.janrodriguez.picturethis.Helpers.MyGeoPoint;
@@ -63,7 +63,7 @@ public class CreateChallengeActivity extends BaseGameActivity {
     private ArrayAdapter<User> usersAdapter;
 
     private ListView usersListView;
-    private ImageView imageButton;
+    private ImageView imageView;
     private Button mapButton;
     private Button usersButton;
     private Button sendButton;
@@ -191,8 +191,8 @@ public class CreateChallengeActivity extends BaseGameActivity {
             }
         });
 
-        imageButton = (ImageButton) findViewById(R.id.picture);
-        imageButton.setOnClickListener(new View.OnClickListener() {
+        imageView = (ImageButton) findViewById(R.id.picture);
+        imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (listViewOpen) {
@@ -381,8 +381,8 @@ public class CreateChallengeActivity extends BaseGameActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK && requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
             currentPictureUri = tempPictureUri;
-            Bitmap decodedBitmap = ImageHelper.DecodeSampledBitmapFromResource(currentPictureUri.getPath(), WIDTH, HEIGHT);
-            imageButton.setImageBitmap(decodedBitmap);
+            BitmapCameraWorkerTask workerTask = new BitmapCameraWorkerTask(imageView, currentPictureUri, WIDTH, HEIGHT);
+            workerTask.execute();
         } else if (resultCode == RESULT_CANCELED && requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
             ImageHelper.DeleteImageFile(tempPictureUri);
         }
