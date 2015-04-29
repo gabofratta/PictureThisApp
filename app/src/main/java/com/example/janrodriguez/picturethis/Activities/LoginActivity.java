@@ -14,6 +14,7 @@ public class LoginActivity extends BaseGameActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         mConnectOnStart = false;
 
         super.onCreate(savedInstanceState);
@@ -35,6 +36,7 @@ public class LoginActivity extends BaseGameActivity {
 
         Intent intent = new Intent(this, ChallengeFeedActivity.class);
         finish();
+
         startActivity(intent);
     }
 }

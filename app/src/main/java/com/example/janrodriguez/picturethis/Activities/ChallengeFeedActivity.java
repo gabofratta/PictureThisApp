@@ -121,6 +121,7 @@ public class ChallengeFeedActivity extends BaseSidePanelActivity implements Acti
     @Override
     public void onSignInSucceeded () {
         fetchData();
+
     }
 
     @Override
@@ -131,6 +132,7 @@ public class ChallengeFeedActivity extends BaseSidePanelActivity implements Acti
     protected static void fetchData(){
         ParseHelper.GetActiveChallengesReceivedByUser(BaseGameActivity.currentUser, getFindCallbackReceived());
         ParseHelper.GetActiveChallengesInitiatedByUser(BaseGameActivity.currentUser, getFindCallbackSent());
+
     }
 
     private static FindCallback<ParseObject> getFindCallbackReceived() {
