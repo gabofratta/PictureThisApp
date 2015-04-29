@@ -1,8 +1,6 @@
 package com.example.janrodriguez.picturethis.Activities;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -14,6 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.janrodriguez.picturethis.Helpers.Achievement;
+import com.example.janrodriguez.picturethis.Helpers.BitmapQueryWorkerTask;
 import com.example.janrodriguez.picturethis.Helpers.Challenge;
 import com.example.janrodriguez.picturethis.Helpers.ParseHelper;
 import com.example.janrodriguez.picturethis.Helpers.ParseTableConstants;
@@ -24,6 +23,7 @@ import com.google.android.gms.games.Games;
 import com.parse.FindCallback;
 import com.parse.GetCallback;
 import com.parse.ParseException;
+import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.SaveCallback;
 
@@ -100,13 +100,9 @@ public class ViewResponseActivity extends BaseGameActivity {
             @Override
             public void done(ParseObject parseObject, ParseException e) {
                 if (e == null) {
-                    try {
-                        byte[] data = parseObject.getParseFile(ParseTableConstants.CHALLENGE_PICTURE).getData();
-                        Bitmap bmp = BitmapFactory.decodeByteArray(data, 0, data.length);
-                        challenge_pic.setImageBitmap(bmp);
-                    } catch (ParseException e1) {
-                        Log.e(TAG, "Error: " + e1.getMessage());
-                    }
+                    ParseFile parseFile = parseObject.getParseFile(ParseTableConstants.CHALLENGE_PICTURE);
+                    BitmapQueryWorkerTask workerTask = new BitmapQueryWorkerTask(challenge_pic, parseFile);
+                    workerTask.execute();
                 } else {
                     Log.e(TAG, "Error: " + e.getMessage());
                 }
@@ -130,13 +126,9 @@ public class ViewResponseActivity extends BaseGameActivity {
                         TextView responderTextView = (TextView) findViewById(R.id.responder_name);
                         responderTextView.setText(response.getResponder().getName());
 
-                        try {
-                            byte[] data = parseObjects.get(0).getParseFile(ParseTableConstants.RESPONSE_PICTURE).getData();
-                            Bitmap bmp = BitmapFactory.decodeByteArray(data, 0, data.length);
-                            response_pic.setImageBitmap(bmp);
-                        } catch (ParseException e1) {
-                            Log.e(TAG, "Error: " + e1.getMessage());
-                        }
+                        ParseFile parseFile = parseObjects.get(0).getParseFile(ParseTableConstants.RESPONSE_PICTURE);
+                        BitmapQueryWorkerTask workerTask = new BitmapQueryWorkerTask(response_pic, parseFile);
+                        workerTask.execute();
                     }
                 } else {
                     Log.e(TAG, "Error: " + e.getMessage());
