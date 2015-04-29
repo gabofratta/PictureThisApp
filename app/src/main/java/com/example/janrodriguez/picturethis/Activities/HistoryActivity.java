@@ -128,28 +128,6 @@ public class HistoryActivity extends BaseGameActivity implements ActionBar.TabLi
                             ImageProcess process = new ImageProcess(challenge, sentChallengeAdapter);
                             process.execute(challenge.getIcon());
                         }
-
-//                        ParseHelper.GetChallengeImage(challenge, new GetCallback<ParseObject>() {
-//                            @Override
-//                            public void done(ParseObject parseObject, ParseException e) {
-//                                if (e == null) {
-//
-//                                    ParseFile parseFile = parseObject.getParseFile(ParseTableConstants.CHALLENGE_ICON);
-//
-//                                    if (parseFile == null) {
-//                                        return;
-//                                    }
-//
-//                                    try {
-//                                        byte[] bytes = parseFile.getData();
-//                                        ImageProcess process = new ImageProcess(challenge, sentChallengeAdapter);
-//                                        process.execute(bytes);
-//                                    } catch (ParseException e1) {
-//                                        e1.printStackTrace();
-//                                    }
-//                                }
-//                            }
-//                        });
                     }
 
                     sentChallengeAdapter.notifyDataSetChanged();
@@ -174,28 +152,6 @@ public class HistoryActivity extends BaseGameActivity implements ActionBar.TabLi
                             ImageProcess process = new ImageProcess(challenge, receivedChallengeAdapter);
                             process.execute(challenge.getIcon());
                         }
-
-//                        ParseHelper.GetChallengeImage(challenge, new GetCallback<ParseObject>() {
-//                            @Override
-//                            public void done(ParseObject parseObject, ParseException e) {
-//                                if (e == null) {
-//
-//                                    ParseFile parseFile = parseObject.getParseFile(ParseTableConstants.CHALLENGE_ICON);
-//
-//                                    if (parseFile == null) {
-//                                        return;
-//                                    }
-//
-//                                    try {
-//                                        byte[] bytes = parseFile.getData();
-//                                        ImageProcess process = new ImageProcess(challenge, receivedChallengeAdapter);
-//                                        process.execute(bytes);
-//                                    } catch (ParseException e1) {
-//                                        e1.printStackTrace();
-//                                    }
-//                                }
-//                            }
-//                        });
                     }
 
                     receivedChallengeAdapter.notifyDataSetChanged();
@@ -316,7 +272,7 @@ public class HistoryActivity extends BaseGameActivity implements ActionBar.TabLi
             });
 
             receivedChallengeAdapter = new CustomListAdapter(CustomListAdapter.TYPE_RECEIVED_CHALLENGE,
-                    getActivity(), receivedChallenges, BaseGameActivity.currentUser);
+                    getActivity(), receivedChallenges, rootView);
             listView.setAdapter(receivedChallengeAdapter);
 
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -368,7 +324,7 @@ public class HistoryActivity extends BaseGameActivity implements ActionBar.TabLi
             });
 
             sentChallengeAdapter = new CustomListAdapter(CustomListAdapter.TYPE_SENT_CHALLENGE,
-                    getActivity(), sentChallenges, BaseGameActivity.currentUser);
+                    getActivity(), sentChallenges, rootView);
             listView.setAdapter(sentChallengeAdapter);
 
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {

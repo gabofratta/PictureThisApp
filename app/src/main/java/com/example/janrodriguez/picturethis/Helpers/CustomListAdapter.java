@@ -23,18 +23,19 @@ public class CustomListAdapter extends ArrayAdapter<Challenge> {
     private final int type;
     public static int TYPE_RECEIVED_CHALLENGE = 1;
     public static int TYPE_SENT_CHALLENGE = 2;
-    private User user;
+    private View rootView;
+
     private static int COLOR_NEED_ACTION = Color.parseColor("#FFCDD2");
     private static int COLOR_NO_NEED_ACTION = Color.parseColor("#DCEDC8");
 
     private ArrayList<Challenge> challenges;
 
-    public CustomListAdapter(int type, Activity context, ArrayList<Challenge> challenges, User user) {
+    public CustomListAdapter(int type, Activity context, ArrayList<Challenge> challenges, View rootView) {
         super(context, R.layout.my_list, challenges);
         this.type = type;
         this.context = context;
         this.challenges = challenges;
-        this.user = user;
+        this.rootView = rootView;
     }
 
     public View getView(int position,View view,ViewGroup parent) {
@@ -79,5 +80,19 @@ public class CustomListAdapter extends ArrayAdapter<Challenge> {
         }
 
         return rowView;
-    };
+    }
+
+    @Override
+    public void notifyDataSetChanged() {
+        TextView emptyText = (TextView) rootView.findViewById(R.id.empty_challenges);
+
+        if (getCount() == 0) {
+            emptyText.setVisibility(View.VISIBLE);
+        } else {
+            emptyText.setVisibility(View.GONE);
+        }
+
+        super.notifyDataSetChanged();
+    }
+
 }
