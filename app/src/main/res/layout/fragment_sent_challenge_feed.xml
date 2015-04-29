@@ -14,7 +14,9 @@
             android:id="@+id/listView3"
             android:layout_alignParentTop="true"
             android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true" />
+            android:layout_alignParentStart="true"
+            android:divider="@null"
+            android:dividerHeight="3dip"/>
     </android.support.v4.widget.SwipeRefreshLayout>
 
 

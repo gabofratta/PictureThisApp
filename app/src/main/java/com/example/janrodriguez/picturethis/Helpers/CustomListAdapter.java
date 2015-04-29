@@ -24,8 +24,8 @@ public class CustomListAdapter extends ArrayAdapter<Challenge> {
     public static int TYPE_RECEIVED_CHALLENGE = 1;
     public static int TYPE_SENT_CHALLENGE = 2;
     private User user;
-    private static int COLOR_NEED_ACTION = Color.MAGENTA;
-    private static int COLOR_NO_NEED_ACTION = Color.WHITE;
+    private static int COLOR_NEED_ACTION = Color.parseColor("#FFCDD2");
+    private static int COLOR_NO_NEED_ACTION = Color.parseColor("#DCEDC8");
 
     private ArrayList<Challenge> challenges;
 
@@ -59,9 +59,9 @@ public class CustomListAdapter extends ArrayAdapter<Challenge> {
             extratxt.setText("Challenger: " + challenge.getChallenger().toString());
 
             if (challenge.isActive() && challenge.getChallengedStatus() == Challenge.Status.WAITING) {
-                rowView.setBackgroundColor(COLOR_NO_NEED_ACTION);
+                rowView.setBackgroundResource(R.drawable.rounded_corners_no_action);
             } else if (challenge.isActive() && challenge.getChallengedStatus() == Challenge.Status.NEED_ACTION) {
-                rowView.setBackgroundColor(COLOR_NEED_ACTION);
+                rowView.setBackgroundResource(R.drawable.rounded_corners_action_needed);
             } else {
                 // some color for history ?
             }
@@ -70,9 +70,9 @@ public class CustomListAdapter extends ArrayAdapter<Challenge> {
             extratxt.setText("Challenged: " + challenged.substring(1, challenged.length() - 1));
 
             if (challenge.isActive() && challenge.getChallengerStatus() == Challenge.Status.WAITING) {
-                rowView.setBackgroundColor(COLOR_NO_NEED_ACTION);
+                rowView.setBackgroundResource(R.drawable.rounded_corners_no_action);
             } else if (challenge.isActive() && challenge.getChallengerStatus() == Challenge.Status.NEED_ACTION) {
-                rowView.setBackgroundColor(COLOR_NEED_ACTION);
+                rowView.setBackgroundResource(R.drawable.rounded_corners_action_needed);
             } else {
                 // some color for history ?
             }
