@@ -56,4 +56,5 @@
     <string name="challenge_closed">Challenge closed</string>
     <string name="user_list_empty">Invite your Google+ friends to play Picture This.</string>
     <string name="tagline">Find the spot and take a shot.</string>
+    <string name="no_challenges">No challenges to display</string>
 </resources>

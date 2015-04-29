@@ -148,28 +148,6 @@ public class ChallengeFeedActivity extends BaseSidePanelActivity implements Acti
                             ImageProcess process = new ImageProcess(challenge, adapter1);
                             process.execute(challenge.getIcon());
                         }
-
-//                        ParseHelper.GetChallengeImage(challenge, new GetCallback<ParseObject>() {
-//                            @Override
-//                            public void done(ParseObject parseObject, ParseException e) {
-//                                if (e == null) {
-//
-//                                    ParseFile parseFile = parseObject.getParseFile(ParseTableConstants.CHALLENGE_ICON);
-//
-//                                    if (parseFile == null) {
-//                                        return;
-//                                    }
-//
-//                                    try {
-//                                        byte[] bytes = parseFile.getData();
-//                                        ImageProcess process = new ImageProcess(challenge, adapter1);
-//                                        process.execute(bytes);
-//                                    } catch (ParseException e1) {
-//                                        e1.printStackTrace();
-//                                    }
-//                                }
-//                            }
-//                        });
                     }
 
                     adapter1.notifyDataSetChanged();
@@ -196,28 +174,6 @@ public class ChallengeFeedActivity extends BaseSidePanelActivity implements Acti
                             ImageProcess process = new ImageProcess(challenge, adapter2);
                             process.execute(challenge.getIcon());
                         }
-
-//                        ParseHelper.GetChallengeImage(challenge, new GetCallback<ParseObject>() {
-//                            @Override
-//                            public void done(ParseObject parseObject, ParseException e) {
-//                                if (e == null) {
-//
-//                                    ParseFile parseFile = parseObject.getParseFile(ParseTableConstants.CHALLENGE_ICON);
-//
-//                                    if (parseFile == null) {
-//                                        return;
-//                                    }
-//
-//                                    try {
-//                                        byte[] bytes = parseFile.getData();
-//                                        ImageProcess process = new ImageProcess(challenge, adapter2);
-//                                        process.execute(bytes);
-//                                    } catch (ParseException e1) {
-//                                        e1.printStackTrace();
-//                                    }
-//                                }
-//                            }
-//                        });
                     }
 
                     adapter2.notifyDataSetChanged();
@@ -316,7 +272,7 @@ public class ChallengeFeedActivity extends BaseSidePanelActivity implements Acti
             });
 
             adapter1 = new CustomListAdapter(CustomListAdapter.TYPE_RECEIVED_CHALLENGE,
-                    getActivity(), listOfReceivedChallenges, BaseGameActivity.currentUser);
+                    getActivity(), listOfReceivedChallenges, rootView);
             listView.setAdapter(adapter1);
 
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -370,7 +326,7 @@ public class ChallengeFeedActivity extends BaseSidePanelActivity implements Acti
             });
 
             adapter2 = new CustomListAdapter(CustomListAdapter.TYPE_SENT_CHALLENGE,
-                    getActivity(), listOfSentChallenges, BaseGameActivity.currentUser);
+                    getActivity(), listOfSentChallenges, rootView);
             listView.setAdapter(adapter2);
 
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
