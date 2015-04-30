@@ -165,7 +165,7 @@ public class ViewResponseActivity extends BaseGameActivity {
                 // Send push notification to query
                 ParsePush push = new ParsePush();
                 push.setQuery(pushQuery); // Set our Installation query
-                push.setMessage("Congratulation! You are the winner of the challenge \""+ currentChallenge.getTitle()+"\"");
+                push.setMessage("Congratulations! You are the winner of the challenge \""+ currentChallenge.getTitle()+"\"");
 
                 push.sendInBackground(new SendCallback() {
                     @Override
@@ -196,7 +196,7 @@ public class ViewResponseActivity extends BaseGameActivity {
                     ParsePush push2 = new ParsePush();
                     push2.setQuery(pushQuery2); // Set our Installation query
                     push2.setMessage("The winner of the challenge \"" + currentChallenge.getTitle()
-                            + "\" is " + response.getResponder().getName() +". Sorry you are lost");
+                            + "\" is " + response.getResponder().getName() +". Sorry you lost");
 
                     push2.sendInBackground(new SendCallback() {
                         @Override
