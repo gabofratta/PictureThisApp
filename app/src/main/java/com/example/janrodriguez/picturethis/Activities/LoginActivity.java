@@ -14,6 +14,8 @@ public class LoginActivity extends BaseGameActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        //Redefine current user when swapping accounts
+        currentUser = null;
 
         mConnectOnStart = false;
 
