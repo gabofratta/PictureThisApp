@@ -16,7 +16,9 @@
 
 package com.example.janrodriguez.picturethis.Activities;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -70,6 +72,12 @@ public abstract class BaseGameActivity extends AppCompatActivity implements
     public static final int CLIENT_APPSTATE = GameHelper.CLIENT_APPSTATE;
     public static final int CLIENT_PLUS = GameHelper.CLIENT_PLUS;
     public static final int CLIENT_ALL = GameHelper.CLIENT_ALL;
+
+    public static final String STATE_USERNAME = "username";
+    public static final String STATE_USERID = "userid";
+    public static final String STATE_USER_GOOG_ID = "usergoogleid";
+    public static final String STATE_USER_SCORE = "userscore";
+    public static final String SHARED_PREF_NAME = "userinfo";
 
      //Requested clients. By default, that's just the games client.
 //    protected int mRequestedClients = CLIENT_GAMES | CLIENT_PLUS;
@@ -238,6 +246,8 @@ public abstract class BaseGameActivity extends AppCompatActivity implements
                         } else { //User found
                             currentUser = new User(parseObjects.get(0));
 
+                            saveUserSharedPref ();
+
                             ParseInstallation installation = ParseInstallation.getCurrentInstallation();
                             installation.put("user", currentUser.getId());
                             installation.saveInBackground();
@@ -248,6 +258,17 @@ public abstract class BaseGameActivity extends AppCompatActivity implements
                 }
             });
         }
+    }
+
+    private void saveUserSharedPref () {
+        Log.d(TAG, "Saving user prefs");
+        SharedPreferences sharedPref = BaseGameActivity.this.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString(STATE_USERNAME, currentUser.getName());
+        editor.putString(STATE_USER_GOOG_ID, currentUser.getGoogleId());
+        editor.putString(STATE_USERID, currentUser.getId());
+        editor.putInt(STATE_USER_SCORE, currentUser.getScore());
+        editor.commit();
     }
 
     @Override
