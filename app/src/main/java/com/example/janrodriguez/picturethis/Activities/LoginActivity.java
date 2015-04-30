@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 
 import com.example.janrodriguez.picturethis.Helpers.User;
 import com.example.janrodriguez.picturethis.R;
@@ -29,7 +28,6 @@ public class LoginActivity extends BaseGameActivity {
         SharedPreferences sharedPreferences = LoginActivity.this.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);;
         //User signing in again
         if(sharedPreferences.getString(STATE_USERID, null) != null) {
-            Log.d(TAG, "Got user id: "+sharedPreferences.getString(STATE_USERID, null));
             //Set current user info
             String uName = sharedPreferences.getString(STATE_USERNAME, "");
             String uId = sharedPreferences.getString(STATE_USERID, "");

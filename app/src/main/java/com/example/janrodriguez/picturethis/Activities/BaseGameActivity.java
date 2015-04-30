@@ -261,7 +261,6 @@ public abstract class BaseGameActivity extends AppCompatActivity implements
     }
 
     private void saveUserSharedPref () {
-        Log.d(TAG, "Saving user prefs");
         SharedPreferences sharedPref = BaseGameActivity.this.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putString(STATE_USERNAME, currentUser.getName());

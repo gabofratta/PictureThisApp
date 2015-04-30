@@ -47,11 +47,9 @@ public class BaseSidePanelActivity extends BaseGameActivity implements
             case SettingsAdapter.LOG_OUT_POSITION:
                 //Remove user shared preferences
                 SharedPreferences sharedPref = BaseSidePanelActivity.this.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);;
-                Log.d(TAG, "REMOVING SHARED PREFS WITH ID: " + sharedPref.getString(STATE_USERID, "nothing"));
                 SharedPreferences.Editor editor = sharedPref.edit();
                 editor.clear();
                 editor.commit();
-                Log.d(TAG, "REMOVED USER PREFS");
 
                 Plus.AccountApi.clearDefaultAccount(getApiClient());
                 getApiClient().disconnect();
