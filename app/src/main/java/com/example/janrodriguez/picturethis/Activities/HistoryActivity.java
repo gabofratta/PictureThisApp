@@ -286,6 +286,8 @@ public class HistoryActivity extends BaseGameActivity implements ActionBar.TabLi
                 }
             });
 
+            listView.setPadding(listView.getPaddingLeft(), listView.getPaddingTop(), listView.getPaddingRight(), 15);
+
             return rootView;
         }
     }
@@ -336,6 +338,8 @@ public class HistoryActivity extends BaseGameActivity implements ActionBar.TabLi
                     startActivity(intent);
                 }
             });
+
+            listView.setPadding(listView.getPaddingLeft(), listView.getPaddingTop(), listView.getPaddingRight(), 15);
 
             return rootView;
         }
