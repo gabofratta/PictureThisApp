@@ -25,15 +25,11 @@
         android:layout_centerHorizontal="true" />
 
     <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="192dp"
+        android:layout_height="192dp"
         android:id="@+id/imageView"
-        android:minWidth="200dp"
-        android:minHeight="200dp"
-        android:maxWidth="300dp"
-        android:maxHeight="400dp"
-        android:src="@mipmap/launcher_icon"
-        android:scaleType="fitCenter"
+        android:src="@mipmap/ic_pt_96dp"
+        android:scaleType="centerInside"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="34dp" />
