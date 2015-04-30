@@ -26,7 +26,8 @@
         android:layout_height="wrap_content"
         android:clickable="false"
         android:focusable="false"
-        android:textIsSelectable="false"/>
+        android:textIsSelectable="false"
+        android:textColor="@color/primary_text"/>
 </LinearLayout>
 
 

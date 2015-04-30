@@ -22,7 +22,7 @@
     <style name="Theme.Sample" parent="Theme.Base" />
 
     <style name="AppTheme" parent="Theme.Sample"/>
-    <style name="AppThemeNoActionBar" parent="Theme.Sample">
+    <style name="AppThemeNoActionBar" parent="AppTheme">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
