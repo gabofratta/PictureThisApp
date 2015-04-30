@@ -24,8 +24,12 @@ import com.parse.FindCallback;
 import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
+import com.parse.ParseInstallation;
 import com.parse.ParseObject;
+import com.parse.ParsePush;
+import com.parse.ParseQuery;
 import com.parse.SaveCallback;
+import com.parse.SendCallback;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -151,6 +155,28 @@ public class ViewResponseActivity extends BaseGameActivity {
                     currentUser.updateScore(getApiClient());
                     Games.Achievements.unlock(getApiClient(), Achievement.ACCEPT_RESPONSE);
                 }
+
+                // Create our Installation query
+                ParseQuery pushQuery = ParseInstallation.getQuery();
+                pushQuery.whereEqualTo("user", response.getResponder().getId());
+
+                // Send push notification to query
+                ParsePush push = new ParsePush();
+                push.setQuery(pushQuery); // Set our Installation query
+                push.setMessage("Congratulation! You are the winner of the challenge \""+ currentChallenge.getTitle()+"\"");
+
+                push.sendInBackground(new SendCallback() {
+                    @Override
+                    public void done(ParseException e) {
+                        if (e==null){
+                            Log.i(TAG, "Push sent successfully!");
+                        }else{
+                            Log.e(TAG, e.getMessage());
+
+                        }
+                    }
+                });
+
                 finish();
             }
         });
@@ -164,6 +190,29 @@ public class ViewResponseActivity extends BaseGameActivity {
                     currentUser.updateScore(getApiClient());
                     Games.Achievements.unlock(getApiClient(), Achievement.DECLINE_RESPONSE);
                 }
+
+                // Create our Installation query
+                ParseQuery pushQuery = ParseInstallation.getQuery();
+                pushQuery.whereEqualTo("user", response.getResponder().getId());
+
+                // Send push notification to query
+                ParsePush push = new ParsePush();
+                push.setQuery(pushQuery); // Set our Installation query
+                push.setMessage("Your response to the challenge \""+ currentChallenge.getTitle()+"\""
+                    + " has been declined by "+ BaseGameActivity.currentUser.getName());
+
+                push.sendInBackground(new SendCallback() {
+                    @Override
+                    public void done(ParseException e) {
+                        if (e==null){
+                            Log.i(TAG, "Push sent successfully!");
+                        }else{
+                            Log.e(TAG, e.getMessage());
+
+                        }
+                    }
+                });
+
                 finish();
             }
         });

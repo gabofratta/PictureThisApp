@@ -312,7 +312,8 @@ public class CreateChallengeActivity extends BaseGameActivity {
                 // Send push notification to query
                 ParsePush push = new ParsePush();
                 push.setQuery(pushQuery); // Set our Installation query
-                push.setMessage("You received a challenge from " + BaseGameActivity.currentUser.getName());
+                push.setMessage(BaseGameActivity.currentUser.getName() + " sent you a challenge titled \""+
+                        challenge.getTitle()+ "\"");
 
                 push.sendInBackground(new SendCallback() {
                     @Override

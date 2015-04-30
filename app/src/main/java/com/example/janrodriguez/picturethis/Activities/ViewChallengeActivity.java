@@ -28,8 +28,12 @@ import com.parse.FindCallback;
 import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
+import com.parse.ParseInstallation;
 import com.parse.ParseObject;
+import com.parse.ParsePush;
+import com.parse.ParseQuery;
 import com.parse.SaveCallback;
+import com.parse.SendCallback;
 
 import java.io.File;
 import java.io.IOException;
@@ -193,6 +197,28 @@ public class ViewChallengeActivity extends BaseGameActivity {
                             Toast.makeText(getApplicationContext(), getString(R.string.response_created), Toast.LENGTH_SHORT).show();
                         } else {
                             Log.e(TAG, "Error: " + e.getMessage());
+                        }
+                    }
+                });
+
+                // Create our Installation query
+                ParseQuery pushQuery = ParseInstallation.getQuery();
+                pushQuery.whereEqualTo("user", currentChallenge.getChallenger().getId());
+
+                // Send push notification to query
+                ParsePush push = new ParsePush();
+                push.setQuery(pushQuery); // Set our Installation query
+                push.setMessage(BaseGameActivity.currentUser.getName() + " sent you a response to the challenge \""
+                        + currentChallenge.getTitle() +"\"");
+
+                push.sendInBackground(new SendCallback() {
+                    @Override
+                    public void done(ParseException e) {
+                        if (e==null){
+                            Log.i(TAG, "Push sent successfully!");
+                        }else{
+                            Log.e(TAG, e.getMessage());
+
                         }
                     }
                 });
