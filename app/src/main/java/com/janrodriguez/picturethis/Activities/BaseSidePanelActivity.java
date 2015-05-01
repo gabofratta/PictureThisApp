@@ -1,6 +1,8 @@
 package com.janrodriguez.picturethis.Activities;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -43,15 +45,22 @@ public class BaseSidePanelActivity extends BaseGameActivity implements
 
         switch (position) {
             case SettingsAdapter.LOG_OUT_POSITION:
+                //Remove user shared preferences
+                SharedPreferences sharedPref = BaseSidePanelActivity.this.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);;
+                SharedPreferences.Editor editor = sharedPref.edit();
+                editor.clear();
+                editor.commit();
+
                 Plus.AccountApi.clearDefaultAccount(getApiClient());
                 getApiClient().disconnect();
+
                 Intent loginIntent = new Intent(this, LoginActivity.class);
                 loginIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 finish();
                 startActivity(loginIntent);
                 break;
             case SettingsAdapter.ACHIEVEMENTS_POSITION:
-                if((mRequestedClients & CLIENT_GAMES )!= 0){
+                if(loggedIntoGoogleGames()){
                     startActivityForResult(Games.Achievements.getAchievementsIntent(getApiClient()), REQUEST_ACHIEVEMENTS);
                 }else {
                     Toast.makeText(this, "Not logged in to google games.", Toast.LENGTH_LONG).show();
@@ -59,6 +68,7 @@ public class BaseSidePanelActivity extends BaseGameActivity implements
                 }
                 break;
             case SettingsAdapter.HISTORY_POSITION:
+                mDrawerLayout.closeDrawers();
                 Intent intent = new Intent(this, HistoryActivity.class);
                 startActivity(intent);
                 break;

@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -16,6 +15,7 @@ import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -26,7 +26,14 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.api.CommonStatusCodes;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.games.Games;
+import com.google.android.gms.plus.People;
+import com.google.android.gms.plus.Plus;
+import com.google.android.gms.plus.model.people.PersonBuffer;
 import com.janrodriguez.picturethis.Helpers.Achievement;
+import com.janrodriguez.picturethis.Helpers.BitmapCameraWorkerTask;
 import com.janrodriguez.picturethis.Helpers.Challenge;
 import com.janrodriguez.picturethis.Helpers.ImageHelper;
 import com.janrodriguez.picturethis.Helpers.MyGeoPoint;
@@ -34,16 +41,14 @@ import com.janrodriguez.picturethis.Helpers.ParseHelper;
 import com.janrodriguez.picturethis.Helpers.Score;
 import com.janrodriguez.picturethis.Helpers.User;
 import com.janrodriguez.picturethis.R;
-import com.google.android.gms.common.api.CommonStatusCodes;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.games.Games;
-import com.google.android.gms.plus.People;
-import com.google.android.gms.plus.Plus;
-import com.google.android.gms.plus.model.people.PersonBuffer;
 import com.parse.FindCallback;
 import com.parse.ParseException;
+import com.parse.ParseInstallation;
 import com.parse.ParseObject;
+import com.parse.ParsePush;
+import com.parse.ParseQuery;
 import com.parse.SaveCallback;
+import com.parse.SendCallback;
 
 import java.io.File;
 import java.io.IOException;
@@ -62,7 +67,7 @@ public class CreateChallengeActivity extends BaseGameActivity {
     private ArrayAdapter<User> usersAdapter;
 
     private ListView usersListView;
-    private ImageView imageButton;
+    private ImageView imageView;
     private Button mapButton;
     private Button usersButton;
     private Button sendButton;
@@ -125,7 +130,24 @@ public class CreateChallengeActivity extends BaseGameActivity {
                                     usersList.add(user);
                                 }
 
-                                usersAdapter.notifyDataSetChanged();
+                                if (usersList.size() == 0) {
+                                    ArrayList<String> dummyList = new ArrayList<String>();
+                                    dummyList.add(getString(R.string.user_list_empty));
+
+                                    ArrayAdapter<String> dummyAdapter = new ArrayAdapter<String>(
+                                            CreateChallengeActivity.this, android.R.layout.simple_list_item_1, dummyList);
+
+                                    usersListView.setAdapter(dummyAdapter);
+                                    usersListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                        public void onItemClick(AdapterView<?> list, View view, int pos, long id) {
+                                            Uri googlePlusPage = Uri.parse("https://plus.google.com/" + currentUser.getGoogleId());
+                                            Intent intent = new Intent(Intent.ACTION_VIEW, googlePlusPage);
+                                            startActivity(intent);
+                                        }
+                                    });
+                                } else {
+                                    usersAdapter.notifyDataSetChanged();
+                                }
                             } else {
                                 Log.e(TAG, "Error: " + e.getMessage());
                             }
@@ -173,8 +195,8 @@ public class CreateChallengeActivity extends BaseGameActivity {
             }
         });
 
-        imageButton = (ImageButton) findViewById(R.id.picture);
-        imageButton.setOnClickListener(new View.OnClickListener() {
+        imageView = (ImageButton) findViewById(R.id.picture);
+        imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (listViewOpen) {
@@ -277,6 +299,34 @@ public class CreateChallengeActivity extends BaseGameActivity {
                     currentUser.updateScore(getApiClient());
                     Games.Achievements.unlock(getApiClient(), Achievement.CREATE_CHALL);
                 }
+
+                ArrayList<String> challengedIDList = new ArrayList<String>();
+                for (User challenged: challengedList){
+                    challengedIDList.add(challenged.getId());
+                }
+
+                // Create our Installation query
+                ParseQuery pushQuery = ParseInstallation.getQuery();
+                pushQuery.whereContainedIn("user", challengedIDList);
+
+                // Send push notification to query
+                ParsePush push = new ParsePush();
+                push.setQuery(pushQuery); // Set our Installation query
+                push.setMessage(BaseGameActivity.currentUser.getName() + " sent you a challenge titled \""+
+                        challenge.getTitle()+ "\"");
+
+                push.sendInBackground(new SendCallback() {
+                    @Override
+                    public void done(ParseException e) {
+                        if (e==null){
+                            Log.i(TAG, "Push sent successfully!");
+                        }else{
+                            Log.e(TAG, e.getMessage());
+
+                        }
+                    }
+                });
+
                 finish();
             }
         });
@@ -331,6 +381,12 @@ public class CreateChallengeActivity extends BaseGameActivity {
     }
 
     private void closeListViewAndSaveSelection() {
+        if (usersList.size() == 0) {
+            usersListView.setVisibility(View.INVISIBLE);
+            listViewOpen = false;
+            return;
+        }
+
         StringBuilder usersDisplayText = new StringBuilder();
         SparseBooleanArray checked = usersListView.getCheckedItemPositions();
         challengedList.clear();
@@ -357,18 +413,8 @@ public class CreateChallengeActivity extends BaseGameActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK && requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
             currentPictureUri = tempPictureUri;
-            Bitmap bitmap = null;
-            try {
-                bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), currentPictureUri);
-            } catch (IOException e) {
-                Log.e(TAG, "Error: " + e.getMessage());
-            }
-
-            if (bitmap != null) {
-                Bitmap decodedBitmap = ImageHelper.DecodeSampledBitmapFromResource(currentPictureUri.getPath(), WIDTH, HEIGHT);
-                ImageHelper.SaveImage(decodedBitmap, currentPictureUri);
-                imageButton.setImageBitmap(decodedBitmap);
-            }
+            BitmapCameraWorkerTask workerTask = new BitmapCameraWorkerTask(imageView, currentPictureUri, WIDTH, HEIGHT);
+            workerTask.execute();
         } else if (resultCode == RESULT_CANCELED && requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
             ImageHelper.DeleteImageFile(tempPictureUri);
         }

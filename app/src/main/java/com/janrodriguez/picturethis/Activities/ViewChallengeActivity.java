@@ -1,8 +1,6 @@
 package com.janrodriguez.picturethis.Activities;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -15,7 +13,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.games.Games;
 import com.janrodriguez.picturethis.Helpers.Achievement;
+import com.janrodriguez.picturethis.Helpers.BitmapCameraWorkerTask;
+import com.janrodriguez.picturethis.Helpers.BitmapQueryWorkerTask;
 import com.janrodriguez.picturethis.Helpers.Challenge;
 import com.janrodriguez.picturethis.Helpers.ImageHelper;
 import com.janrodriguez.picturethis.Helpers.ParseHelper;
@@ -23,16 +24,22 @@ import com.janrodriguez.picturethis.Helpers.ParseTableConstants;
 import com.janrodriguez.picturethis.Helpers.Response;
 import com.janrodriguez.picturethis.Helpers.Score;
 import com.janrodriguez.picturethis.R;
-import com.google.android.gms.games.Games;
 import com.parse.FindCallback;
 import com.parse.GetCallback;
 import com.parse.ParseException;
+import com.parse.ParseFile;
+import com.parse.ParseInstallation;
 import com.parse.ParseObject;
+import com.parse.ParsePush;
+import com.parse.ParseQuery;
 import com.parse.SaveCallback;
+import com.parse.SendCallback;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Locale;
 
 public class ViewChallengeActivity extends BaseGameActivity {
 
@@ -92,7 +99,8 @@ public class ViewChallengeActivity extends BaseGameActivity {
         challengerName.setText(currentChallenge.getChallenger().getName());
 
         challengeDate = (TextView) findViewById(R.id.challenge_date);
-        challengeDate.setText(currentChallenge.getCreatedAt().toString());
+        SimpleDateFormat format = new SimpleDateFormat("dd MMM h:mm a", Locale.ENGLISH);
+        challengeDate.setText(format.format(currentChallenge.getCreatedAt()));
 
         response_pic = (ImageButton) findViewById(R.id.response_picture);
         sendResponseButton = (Button) findViewById(R.id.sendResponse_button);
@@ -108,15 +116,11 @@ public class ViewChallengeActivity extends BaseGameActivity {
         challenge_pic = (ImageButton) findViewById(R.id.challenge_picture);
         ParseHelper.GetChallengeImage(currentChallenge, new GetCallback<ParseObject>() {
             @Override
-            public void done(ParseObject data, ParseException e) {
+            public void done(ParseObject parseObject, ParseException e) {
                 if (e == null) {
-                    Bitmap bmp = null;
-                    try {
-                        bmp = BitmapFactory.decodeByteArray(data.getParseFile(ParseTableConstants.CHALLENGE_PICTURE).getData(), 0, data.getParseFile(ParseTableConstants.CHALLENGE_PICTURE).getData().length);
-                    } catch (ParseException e1) {
-                        Log.e(TAG, "Error: " + e1.getMessage());
-                    }
-                    challenge_pic.setImageBitmap(bmp);
+                    ParseFile parseFile = parseObject.getParseFile(ParseTableConstants.CHALLENGE_PICTURE);
+                    BitmapQueryWorkerTask workerTask = new BitmapQueryWorkerTask(challenge_pic, parseFile);
+                    workerTask.execute();
                 } else {
                     Log.e("Tag", "Error: " + e.getMessage());
                 }
@@ -138,14 +142,9 @@ public class ViewChallengeActivity extends BaseGameActivity {
                             sendResponseButton.setVisibility(View.VISIBLE);
                             setClickListeners();
                         } else {
-                            Bitmap bmp = null;
-                            try {
-                                byte[] data = parseObjects.get(0).getParseFile(ParseTableConstants.RESPONSE_PICTURE).getData();
-                                bmp = BitmapFactory.decodeByteArray(data, 0, data.length);
-                                response_pic.setImageBitmap(bmp);
-                            } catch (ParseException e1) {
-                                Log.e(TAG, "Error: " + e1.getMessage());
-                            }
+                            ParseFile parseFile = parseObjects.get(0).getParseFile(ParseTableConstants.RESPONSE_PICTURE);
+                            BitmapQueryWorkerTask workerTask = new BitmapQueryWorkerTask(response_pic, parseFile);
+                            workerTask.execute();
                         }
                     }
                     else
@@ -192,7 +191,7 @@ public class ViewChallengeActivity extends BaseGameActivity {
                 }
 
                 Response response = new Response(currentChallenge, BaseGameActivity.currentUser, currentPictureUri.getPath());
-                ParseHelper.CreateResponse(response, new SaveCallback() {
+                ParseHelper.CreateResponseToChallenge(response, currentChallenge, new SaveCallback() {
                     public void done(ParseException e) {
                         if (e == null) {
                             Toast.makeText(getApplicationContext(), getString(R.string.response_created), Toast.LENGTH_SHORT).show();
@@ -201,6 +200,29 @@ public class ViewChallengeActivity extends BaseGameActivity {
                         }
                     }
                 });
+
+                // Create our Installation query
+                ParseQuery pushQuery = ParseInstallation.getQuery();
+                pushQuery.whereEqualTo("user", currentChallenge.getChallenger().getId());
+
+                // Send push notification to query
+                ParsePush push = new ParsePush();
+                push.setQuery(pushQuery); // Set our Installation query
+                push.setMessage(BaseGameActivity.currentUser.getName() + " sent you a response to the challenge \""
+                        + currentChallenge.getTitle() +"\"");
+
+                push.sendInBackground(new SendCallback() {
+                    @Override
+                    public void done(ParseException e) {
+                        if (e==null){
+                            Log.i(TAG, "Push sent successfully!");
+                        }else{
+                            Log.e(TAG, e.getMessage());
+
+                        }
+                    }
+                });
+
                 //Update user's score
                 if(loggedIntoGoogleGames()){
                     currentUser.incrementScore(Score.SEND_RESPONSE);
@@ -215,20 +237,9 @@ public class ViewChallengeActivity extends BaseGameActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK && requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
-
             currentPictureUri = tempPictureUri;
-            Bitmap bitmap = null;
-            try {
-                bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), currentPictureUri);
-            } catch (IOException e) {
-                Log.e(TAG, "Error: " + e.getMessage());
-            }
-
-            if(bitmap != null) {
-                Bitmap decodedBitmap = ImageHelper.DecodeSampledBitmapFromResource(currentPictureUri.getPath(), WIDTH, HEIGHT);
-                ImageHelper.SaveImage(decodedBitmap, currentPictureUri);
-                response_pic.setImageBitmap(decodedBitmap);
-            }
+            BitmapCameraWorkerTask workerTask = new BitmapCameraWorkerTask(response_pic, currentPictureUri, WIDTH, HEIGHT);
+            workerTask.execute();
         } else if (resultCode == RESULT_CANCELED && requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
             ImageHelper.DeleteImageFile(tempPictureUri);
         }

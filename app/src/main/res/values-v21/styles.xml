@@ -17,6 +17,20 @@
 <resources>
 
   <!--<style name="Theme.Base" parent="android:Theme.Material.Light" />-->
+    <style name="AppTheme" parent="Theme.AppCompat">
+        <!-- Main theme colors -->
+        <!--   your app branding color for the app bar -->
+        <item name="android:colorPrimary">@color/primary_light</item>
+        <!--   darker variant for the status bar and contextual app bars -->
+        <item name="android:colorPrimaryDark">@color/primary_dark</item>
+        <!--   lighter variant for the status bar and contextual app bars -->
+        <item name="android:colorBackground">@color/primary</item>
+        <!--   theme UI controls like checkboxes and text fields -->
+        <item name="android:colorAccent">@color/accent</item>
+
+        <item name="android:textColorPrimary">@color/primary_light</item>
+
+    </style>
 
 
 </resources>

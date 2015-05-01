@@ -123,6 +123,11 @@ public class HistoryActivity extends BaseGameActivity implements ActionBar.TabLi
                     for (ParseObject parseObject : parseObjects) {
                         Challenge challenge = new Challenge(parseObject);
                         sentChallenges.add(challenge);
+
+                        if (challenge.getIcon() != null) {
+                            ImageProcess process = new ImageProcess(challenge, sentChallengeAdapter);
+                            process.execute(challenge.getIcon());
+                        }
                     }
 
                     sentChallengeAdapter.notifyDataSetChanged();
@@ -142,6 +147,11 @@ public class HistoryActivity extends BaseGameActivity implements ActionBar.TabLi
                     for (ParseObject parseObject : parseObjects) {
                         Challenge challenge = new Challenge(parseObject);
                         receivedChallenges.add(challenge);
+
+                        if (challenge.getIcon() != null) {
+                            ImageProcess process = new ImageProcess(challenge, receivedChallengeAdapter);
+                            process.execute(challenge.getIcon());
+                        }
                     }
 
                     receivedChallengeAdapter.notifyDataSetChanged();
@@ -260,7 +270,9 @@ public class HistoryActivity extends BaseGameActivity implements ActionBar.TabLi
                     populateChallengeListViews();
                 }
             });
-            receivedChallengeAdapter = new CustomListAdapter(getActivity(), receivedChallenges);
+
+            receivedChallengeAdapter = new CustomListAdapter(CustomListAdapter.TYPE_RECEIVED_CHALLENGE,
+                    getActivity(), receivedChallenges, rootView);
             listView.setAdapter(receivedChallengeAdapter);
 
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -273,6 +285,8 @@ public class HistoryActivity extends BaseGameActivity implements ActionBar.TabLi
                     startActivity(intent);
                 }
             });
+
+            listView.setPadding(listView.getPaddingLeft(), listView.getPaddingTop(), listView.getPaddingRight(), 15);
 
             return rootView;
         }
@@ -302,6 +316,7 @@ public class HistoryActivity extends BaseGameActivity implements ActionBar.TabLi
             View rootView = inflater.inflate(R.layout.fragment_sent_challenge_feed, container, false);
 
             listView = (ListView)rootView.findViewById(R.id.listView3);
+
             sentRefreshLayout = (SwipeRefreshLayout)rootView.findViewById(R.id.refresh_sent);
             sentRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                 @Override
@@ -309,7 +324,9 @@ public class HistoryActivity extends BaseGameActivity implements ActionBar.TabLi
                     populateChallengeListViews();
                 }
             });
-            sentChallengeAdapter = new CustomListAdapter(getActivity(), sentChallenges);
+
+            sentChallengeAdapter = new CustomListAdapter(CustomListAdapter.TYPE_SENT_CHALLENGE,
+                    getActivity(), sentChallenges, rootView);
             listView.setAdapter(sentChallengeAdapter);
 
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -321,6 +338,8 @@ public class HistoryActivity extends BaseGameActivity implements ActionBar.TabLi
                     startActivity(intent);
                 }
             });
+
+            listView.setPadding(listView.getPaddingLeft(), listView.getPaddingTop(), listView.getPaddingRight(), 15);
 
             return rootView;
         }

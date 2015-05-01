@@ -74,6 +74,15 @@
                 android:layout_centerHorizontal="true"
                 android:onClick="viewChallengeFeedActivity"/>
 
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Test Push"
+                android:id="@+id/button"
+                android:layout_below="@+id/button7"
+                android:layout_centerHorizontal="true"
+                android:onClick="testPush"/>
+
 
         </RelativeLayout>
     </FrameLayout>

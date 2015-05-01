@@ -105,4 +105,8 @@ public class MainActivity extends BaseSidePanelActivity {
         Intent intent = new Intent(this, ChallengeFeedActivity.class);
         startActivity(intent);
     }
+
+    public void testPush(View view) {
+    }
+
 }

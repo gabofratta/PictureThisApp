@@ -1,11 +1,10 @@
 package com.janrodriguez.picturethis.Helpers;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.util.Log;
 
 import com.parse.FindCallback;
 import com.parse.GetCallback;
+import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.SaveCallback;
@@ -13,7 +12,6 @@ import com.parse.SaveCallback;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 
 /**
@@ -33,9 +31,16 @@ public class ParseHelper {
         }
     }
 
-    static public void CreateResponse(Response response, SaveCallback callback) {
-        ParseObject responsePO = response.createParseObject();
-        responsePO.saveInBackground(callback);
+    static public void CreateResponseToChallenge(Response response, final Challenge challenge, final SaveCallback callback) {
+        ParseObject challengePO = ParseObject.createWithoutData(ParseTableConstants.CHALLENGE_TABLE, challenge.getId());
+        final ParseObject responsePO = response.createParseObject();
+        responsePO.put(ParseTableConstants.RESPONSE_CHALLENGE, challengePO);
+        responsePO.saveInBackground(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                AddResponseToChallenge(responsePO.getObjectId(), challenge, callback);
+            }
+        });
     }
 
     static public void CreateUser(User user, SaveCallback callback) {
@@ -49,21 +54,37 @@ public class ParseHelper {
         userPO.saveInBackground(callback);
     }
 
+    static private void AddResponseToChallenge(String responseID, Challenge challenge, SaveCallback saveCallback) {
+        JSONObject responseJSON;
+        try {
+            responseJSON = new JSONObject()
+                    .put("__type", "Pointer")
+                    .put("className", "Response")
+                    .put("objectId", responseID);
+        } catch (JSONException e) {
+            Log.e(TAG, "Error: " + e.getMessage());
+            return;
+        }
+
+        ParseObject challengePO = ParseObject.createWithoutData(ParseTableConstants.CHALLENGE_TABLE, challenge.getId());
+        challengePO.add(ParseTableConstants.CHALLENGE_RESPONSES, responseJSON);
+        challengePO.saveInBackground(saveCallback);
+    }
+
     static private void UpdateResponseStatus(Response response, String status, SaveCallback callback) {
         ParseObject responsePO = ParseObject.createWithoutData(ParseTableConstants.RESPONSE_TABLE, response.getId());
         responsePO.put(ParseTableConstants.RESPONSE_STATUS, status);
         responsePO.saveInBackground(callback);
     }
 
-    static private void SetChallengeInactive(Challenge challenge, SaveCallback callback) {
+    static public void SetChallengeInactive(Challenge challenge, SaveCallback callback) {
         ParseObject challengePO = ParseObject.createWithoutData(ParseTableConstants.CHALLENGE_TABLE, challenge.getId());
         challengePO.put(ParseTableConstants.CHALLENGE_ACTIVE, false);
         challengePO.saveInBackground(callback);
     }
 
-    static public void SetResponseStatusAccepted(Response response, SaveCallback responseCallback, SaveCallback challengeCallback) {
+    static public void SetResponseStatusAccepted(Response response, SaveCallback responseCallback) {
         UpdateResponseStatus(response, Response.STATUS_ACCEPTED, responseCallback);
-        SetChallengeInactive(response.getChallenge(), challengeCallback);
     }
 
     static public void SetResponseStatusDeclined(Response response, SaveCallback responseCallback) {
@@ -71,10 +92,17 @@ public class ParseHelper {
     }
 
     static private void GetChallengesInitiatedByUser(User user, boolean active, FindCallback<ParseObject> callback) {
+        String responseDotResponder = new StringBuilder(ParseTableConstants.CHALLENGE_RESPONSES)
+                .append(".")
+                .append(ParseTableConstants.RESPONSE_RESPONDER)
+                .toString();
+
         ParseObject challengerPO = ParseObject.createWithoutData(ParseTableConstants.USER_TABLE, user.getId());
         ParseQuery<ParseObject> query = ParseQuery.getQuery(ParseTableConstants.CHALLENGE_TABLE);
         query.include(ParseTableConstants.CHALLENGE_CHALLENGER);
         query.include(ParseTableConstants.CHALLENGE_CHALLENGED);
+        query.include(ParseTableConstants.CHALLENGE_RESPONSES);
+        query.include(responseDotResponder);
         query.whereEqualTo(ParseTableConstants.CHALLENGE_CHALLENGER, challengerPO);
         query.whereEqualTo(ParseTableConstants.CHALLENGE_ACTIVE, active);
         query.orderByDescending(ParseTableConstants.CHALLENGE_CREATED_AT);
@@ -101,9 +129,16 @@ public class ParseHelper {
             return;
         }
 
+        String responseDotResponder = new StringBuilder(ParseTableConstants.CHALLENGE_RESPONSES)
+                .append(".")
+                .append(ParseTableConstants.RESPONSE_RESPONDER)
+                .toString();
+
         ParseQuery<ParseObject> query = ParseQuery.getQuery(ParseTableConstants.CHALLENGE_TABLE);
         query.include(ParseTableConstants.CHALLENGE_CHALLENGER);
         query.include(ParseTableConstants.CHALLENGE_CHALLENGED);
+        query.include(ParseTableConstants.CHALLENGE_RESPONSES);
+        query.include(responseDotResponder);
         query.whereEqualTo(ParseTableConstants.CHALLENGE_CHALLENGED, challenged);
         query.whereEqualTo(ParseTableConstants.CHALLENGE_ACTIVE, active);
         query.orderByDescending(ParseTableConstants.CHALLENGE_CREATED_AT);
@@ -119,22 +154,10 @@ public class ParseHelper {
     }
 
     static private void GetResponsesToChallenge(Challenge challenge, String status, FindCallback<ParseObject> callback) {
-        String challengeDotChallenger = new StringBuilder(ParseTableConstants.RESPONSE_CHALLENGE)
-                .append(".")
-                .append(ParseTableConstants.CHALLENGE_CHALLENGER)
-                .toString();
-
-        String challengeDotChallenged = new StringBuilder(ParseTableConstants.RESPONSE_CHALLENGE)
-                .append(".")
-                .append(ParseTableConstants.CHALLENGE_CHALLENGED)
-                .toString();
-
         ParseObject challengePO = ParseObject.createWithoutData(ParseTableConstants.CHALLENGE_TABLE, challenge.getId());
         ParseQuery<ParseObject> query = ParseQuery.getQuery(ParseTableConstants.RESPONSE_TABLE);
         query.include(ParseTableConstants.RESPONSE_CHALLENGE);
         query.include(ParseTableConstants.RESPONSE_RESPONDER);
-        query.include(challengeDotChallenger);
-        query.include(challengeDotChallenged);
         query.whereEqualTo(ParseTableConstants.RESPONSE_CHALLENGE, challengePO);
         query.whereEqualTo(ParseTableConstants.RESPONSE_STATUS, status);
         query.orderByAscending(ParseTableConstants.RESPONSE_CREATED_AT);
@@ -150,22 +173,10 @@ public class ParseHelper {
     }
 
     static public void GetPendingOrAcceptedResponsesToChallenge(Challenge challenge, FindCallback<ParseObject> callback) {
-        String challengeDotChallenger = new StringBuilder(ParseTableConstants.RESPONSE_CHALLENGE)
-                .append(".")
-                .append(ParseTableConstants.CHALLENGE_CHALLENGER)
-                .toString();
-
-        String challengeDotChallenged = new StringBuilder(ParseTableConstants.RESPONSE_CHALLENGE)
-                .append(".")
-                .append(ParseTableConstants.CHALLENGE_CHALLENGED)
-                .toString();
-
         ParseObject challengePO = ParseObject.createWithoutData(ParseTableConstants.CHALLENGE_TABLE, challenge.getId());
         ParseQuery<ParseObject> query = ParseQuery.getQuery(ParseTableConstants.RESPONSE_TABLE);
         query.include(ParseTableConstants.RESPONSE_CHALLENGE);
         query.include(ParseTableConstants.RESPONSE_RESPONDER);
-        query.include(challengeDotChallenger);
-        query.include(challengeDotChallenged);
         query.whereEqualTo(ParseTableConstants.RESPONSE_CHALLENGE, challengePO);
         query.whereNotEqualTo(ParseTableConstants.RESPONSE_STATUS, Response.STATUS_DECLINED);
         query.orderByAscending(ParseTableConstants.RESPONSE_CREATED_AT);
@@ -173,23 +184,11 @@ public class ParseHelper {
     }
 
     static public void GetUsersLatestResponseToChallenge(User user, Challenge challenge, FindCallback<ParseObject> callback) {
-        String challengeDotChallenger = new StringBuilder(ParseTableConstants.RESPONSE_CHALLENGE)
-                .append(".")
-                .append(ParseTableConstants.CHALLENGE_CHALLENGER)
-                .toString();
-
-        String challengeDotChallenged = new StringBuilder(ParseTableConstants.RESPONSE_CHALLENGE)
-                .append(".")
-                .append(ParseTableConstants.CHALLENGE_CHALLENGED)
-                .toString();
-
         ParseObject challengePO = ParseObject.createWithoutData(ParseTableConstants.CHALLENGE_TABLE, challenge.getId());
         ParseObject responderPO = ParseObject.createWithoutData(ParseTableConstants.USER_TABLE, user.getId());
         ParseQuery<ParseObject> query = ParseQuery.getQuery(ParseTableConstants.RESPONSE_TABLE);
         query.include(ParseTableConstants.RESPONSE_CHALLENGE);
         query.include(ParseTableConstants.RESPONSE_RESPONDER);
-        query.include(challengeDotChallenger);
-        query.include(challengeDotChallenged);
         query.whereEqualTo(ParseTableConstants.RESPONSE_CHALLENGE, challengePO);
         query.whereEqualTo(ParseTableConstants.RESPONSE_RESPONDER, responderPO);
         query.orderByDescending(ParseTableConstants.RESPONSE_CREATED_AT);
@@ -223,14 +222,6 @@ public class ParseHelper {
         ParseObject responsePO = ParseObject.createWithoutData(ParseTableConstants.RESPONSE_TABLE, response.getId());
         responsePO.fetchInBackground(callback);
     }
-
-    static public byte[] GetImageBytes(String filePath) {
-        Bitmap bitmap = BitmapFactory.decodeFile(filePath);
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-        return stream.toByteArray();
-    }
-
 }
 
 

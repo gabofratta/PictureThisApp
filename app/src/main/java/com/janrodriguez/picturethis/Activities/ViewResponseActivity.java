@@ -1,8 +1,6 @@
 package com.janrodriguez.picturethis.Activities;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -13,21 +11,31 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.games.Games;
 import com.janrodriguez.picturethis.Helpers.Achievement;
+import com.janrodriguez.picturethis.Helpers.BitmapQueryWorkerTask;
 import com.janrodriguez.picturethis.Helpers.Challenge;
 import com.janrodriguez.picturethis.Helpers.ParseHelper;
 import com.janrodriguez.picturethis.Helpers.ParseTableConstants;
 import com.janrodriguez.picturethis.Helpers.Response;
 import com.janrodriguez.picturethis.Helpers.Score;
+import com.janrodriguez.picturethis.Helpers.User;
 import com.janrodriguez.picturethis.R;
-import com.google.android.gms.games.Games;
 import com.parse.FindCallback;
 import com.parse.GetCallback;
 import com.parse.ParseException;
+import com.parse.ParseFile;
+import com.parse.ParseInstallation;
 import com.parse.ParseObject;
+import com.parse.ParsePush;
+import com.parse.ParseQuery;
 import com.parse.SaveCallback;
+import com.parse.SendCallback;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class ViewResponseActivity extends BaseGameActivity {
 
@@ -79,7 +87,8 @@ public class ViewResponseActivity extends BaseGameActivity {
         challengeTitle.setText(currentChallenge.getTitle());
 
         challengeDate = (TextView) findViewById(R.id.challenge_date);
-        challengeDate.setText(currentChallenge.getCreatedAt().toString());
+        SimpleDateFormat format = new SimpleDateFormat("dd MMM h:mm a", Locale.ENGLISH);
+        challengeDate.setText(format.format(currentChallenge.getCreatedAt()));
 
         acceptButton = (Button) findViewById(R.id.accept_button);
         declineButton = (Button) findViewById(R.id.decline_button);
@@ -98,15 +107,11 @@ public class ViewResponseActivity extends BaseGameActivity {
         challenge_pic = (ImageButton) findViewById(R.id.challenge_picture);
         ParseHelper.GetChallengeImage(this.currentChallenge, new GetCallback<ParseObject>() {
             @Override
-            public void done(ParseObject data, ParseException e) {
+            public void done(ParseObject parseObject, ParseException e) {
                 if (e == null) {
-                    Bitmap bmp = null;
-                    try {
-                        bmp = BitmapFactory.decodeByteArray(data.getParseFile(ParseTableConstants.CHALLENGE_PICTURE).getData(), 0, data.getParseFile(ParseTableConstants.CHALLENGE_PICTURE).getData().length);
-                    } catch (ParseException e1) {
-                        Log.e(TAG, "Error: " + e1.getMessage());
-                    }
-                    challenge_pic.setImageBitmap(bmp);
+                    ParseFile parseFile = parseObject.getParseFile(ParseTableConstants.CHALLENGE_PICTURE);
+                    BitmapQueryWorkerTask workerTask = new BitmapQueryWorkerTask(challenge_pic, parseFile);
+                    workerTask.execute();
                 } else {
                     Log.e(TAG, "Error: " + e.getMessage());
                 }
@@ -130,14 +135,9 @@ public class ViewResponseActivity extends BaseGameActivity {
                         TextView responderTextView = (TextView) findViewById(R.id.responder_name);
                         responderTextView.setText(response.getResponder().getName());
 
-                        Bitmap bmp = null;
-                        try {
-                            byte[] data = parseObjects.get(0).getParseFile(ParseTableConstants.RESPONSE_PICTURE).getData();
-                            bmp = BitmapFactory.decodeByteArray(data, 0, data.length);
-                            response_pic.setImageBitmap(bmp);
-                        } catch (ParseException e1) {
-                            Log.e(TAG, "Error: " + e1.getMessage());
-                        }
+                        ParseFile parseFile = parseObjects.get(0).getParseFile(ParseTableConstants.RESPONSE_PICTURE);
+                        BitmapQueryWorkerTask workerTask = new BitmapQueryWorkerTask(response_pic, parseFile);
+                        workerTask.execute();
                     }
                 } else {
                     Log.e(TAG, "Error: " + e.getMessage());
@@ -150,14 +150,68 @@ public class ViewResponseActivity extends BaseGameActivity {
         acceptButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ParseHelper.SetResponseStatusAccepted(response,
-                        getSaveCallback(getString(R.string.response_accepted)),
-                        getSaveCallback(getString(R.string.challenge_closed)));
+                ParseHelper.SetResponseStatusAccepted(response, getSaveCallback(getString(R.string.response_accepted)));
+                ParseHelper.SetChallengeInactive(currentChallenge, getSaveCallback(getString(R.string.challenge_closed)));
                 if(loggedIntoGoogleGames()){
                     currentUser.incrementScore(Score.REPLY_RESPONSE);
                     currentUser.updateScore(getApiClient());
                     Games.Achievements.unlock(getApiClient(), Achievement.ACCEPT_RESPONSE);
                 }
+
+                // Create our Installation query
+                ParseQuery pushQuery = ParseInstallation.getQuery();
+                pushQuery.whereEqualTo("user", response.getResponder().getId());
+
+                // Send push notification to query
+                ParsePush push = new ParsePush();
+                push.setQuery(pushQuery); // Set our Installation query
+                push.setMessage("Congratulations! You are the winner of the challenge \""+ currentChallenge.getTitle()+"\"");
+
+                push.sendInBackground(new SendCallback() {
+                    @Override
+                    public void done(ParseException e) {
+                        if (e==null){
+                            Log.i(TAG, "Push sent successfully!");
+                        }else{
+                            Log.e(TAG, e.getMessage());
+
+                        }
+                    }
+                });
+
+                if (currentChallenge.isMultiplayer()){
+
+                    ArrayList<String> listOfLoserIDs = new ArrayList<String>();
+                    for (User challenged : currentChallenge.getChallengedList()){
+                        if (!challenged.getId().equals(response.getResponder().getId())){
+                            listOfLoserIDs.add(challenged.getId());
+                        }
+                    }
+
+                    // Create our Installation query
+                    ParseQuery pushQuery2 = ParseInstallation.getQuery();
+                    pushQuery2.whereContainedIn("user", listOfLoserIDs);
+
+                    // Send push notification to query
+                    ParsePush push2 = new ParsePush();
+                    push2.setQuery(pushQuery2); // Set our Installation query
+                    push2.setMessage("The winner of the challenge \"" + currentChallenge.getTitle()
+                            + "\" is " + response.getResponder().getName() +". Sorry you lost");
+
+                    push2.sendInBackground(new SendCallback() {
+                        @Override
+                        public void done(ParseException e) {
+                            if (e==null){
+                                Log.i(TAG, "Push sent successfully!");
+                            }else{
+                                Log.e(TAG, "Error:"+e.getMessage());
+
+                            }
+                        }
+                    });
+                }
+
+
                 finish();
             }
         });
@@ -165,13 +219,35 @@ public class ViewResponseActivity extends BaseGameActivity {
         declineButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ParseHelper.SetResponseStatusDeclined(response,
-                        getSaveCallback(getString(R.string.response_declined)));
+                ParseHelper.SetResponseStatusDeclined(response, getSaveCallback(getString(R.string.response_declined)));
                 if(loggedIntoGoogleGames()){
                     currentUser.incrementScore(Score.REPLY_RESPONSE);
                     currentUser.updateScore(getApiClient());
                     Games.Achievements.unlock(getApiClient(), Achievement.DECLINE_RESPONSE);
                 }
+
+                // Create our Installation query
+                ParseQuery pushQuery = ParseInstallation.getQuery();
+                pushQuery.whereEqualTo("user", response.getResponder().getId());
+
+                // Send push notification to query
+                ParsePush push = new ParsePush();
+                push.setQuery(pushQuery); // Set our Installation query
+                push.setMessage("Your response to the challenge \""+ currentChallenge.getTitle()+"\""
+                    + " has been declined by " + BaseGameActivity.currentUser.getName());
+
+                push.sendInBackground(new SendCallback() {
+                    @Override
+                    public void done(ParseException e) {
+                        if (e==null){
+                            Log.i(TAG, "Push sent successfully!");
+                        }else{
+                            Log.e(TAG, e.getMessage());
+
+                        }
+                    }
+                });
+
                 finish();
             }
         });

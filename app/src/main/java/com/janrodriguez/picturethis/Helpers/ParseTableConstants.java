@@ -14,6 +14,8 @@ public class ParseTableConstants {
     static public final String CHALLENGE_ACTIVE = "active";
     static public final String CHALLENGE_CHALLENGED = "challenged";
     static public final String CHALLENGE_MULTIPLAYER = "multiplayer";
+    static public final String CHALLENGE_RESPONSES = "responses";
+    static public final String CHALLENGE_ICON = "icon";
 
     static public final String RESPONSE_TABLE = "Response";
     static public final String RESPONSE_RESPONDER = "responder";
@@ -27,4 +29,8 @@ public class ParseTableConstants {
     static public final String USER_GOOGLE_ID = "googleId";
     static public final String USER_SCORE = "Score";
 
+    static public final int IMAGE_WIDTH = 500;
+    static public final int IMAGE_HEIGHT = 500;
+    static public final int ICON_WIDTH = 48;
+    static public final int ICON_HEIGHT = 48;
 }
