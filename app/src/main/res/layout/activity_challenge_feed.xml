@@ -41,9 +41,9 @@
                 android:layout_alignParentBottom="true"
                 android:layout_marginRight="24dp"
                 android:layout_marginBottom="24dp"
-                android:background="@color/accent"
+                android:background="#1E88E5"
                 materialdesign:iconDrawable="@drawable/ic_action_new" />
-        </RelativeLayout>
+        </RelativeLayout>-
     </FrameLayout>
 
     <!-- android:layout_gravity="start" tells DrawerLayout to treat

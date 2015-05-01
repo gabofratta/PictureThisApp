@@ -167,7 +167,7 @@ public class CreateChallengeActivity extends BaseGameActivity {
 
         challengedList = new ArrayList<User>();
         usersList = new ArrayList<User>();
-        usersAdapter = new ArrayAdapter<User>(this, android.R.layout.simple_list_item_multiple_choice, usersList);
+        usersAdapter = new ArrayAdapter<User>(this, R.layout.list_item_multiple_choice, usersList);
 
         usersListView = (ListView) findViewById(R.id.usersListView);
         usersListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
