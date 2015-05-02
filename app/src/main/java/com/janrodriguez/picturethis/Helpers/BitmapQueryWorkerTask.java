@@ -4,7 +4,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.widget.ImageView;
+import android.widget.ImageButton;
+import android.widget.ViewSwitcher;
 
 import com.parse.ParseException;
 import com.parse.ParseFile;
@@ -18,11 +19,13 @@ public class BitmapQueryWorkerTask extends AsyncTask<Integer, Void, Bitmap> {
 
     static public final String TAG = "BitmapQueryWorkerTask";
 
-    private final WeakReference<ImageView> imageViewReference;
+    private final WeakReference<ViewSwitcher> switcherReference;
+    private final WeakReference<ImageButton> imageButtonReference;
     private ParseFile parseFile;
 
-    public BitmapQueryWorkerTask(ImageView imageView, ParseFile parseFile) {
-        imageViewReference = new WeakReference<ImageView>(imageView);
+    public BitmapQueryWorkerTask(ViewSwitcher switcher, ImageButton imageButton, ParseFile parseFile) {
+        this.switcherReference = new WeakReference<ViewSwitcher>(switcher);
+        this.imageButtonReference = new WeakReference<ImageButton>(imageButton);
         this.parseFile = parseFile;
     }
 
@@ -42,10 +45,11 @@ public class BitmapQueryWorkerTask extends AsyncTask<Integer, Void, Bitmap> {
     // Once complete, see if ImageView is still around and set bitmap.
     @Override
     protected void onPostExecute(Bitmap bitmap) {
-        if (imageViewReference != null && bitmap != null) {
-            final ImageView imageView = imageViewReference.get();
-            if (imageView != null) {
-                imageView.setImageBitmap(bitmap);
+        if (imageButtonReference != null && bitmap != null) {
+            final ImageButton imageButton = imageButtonReference.get();
+            if (imageButton != null) {
+                imageButton.setImageBitmap(bitmap);
+                switcherReference.get().showNext();
             }
         }
     }

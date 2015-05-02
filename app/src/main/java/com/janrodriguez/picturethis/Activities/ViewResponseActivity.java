@@ -12,6 +12,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ViewSwitcher;
 
 import com.google.android.gms.games.Games;
 import com.janrodriguez.picturethis.Helpers.Achievement;
@@ -52,7 +53,8 @@ public class ViewResponseActivity extends BaseGameActivity {
 
     private Button acceptButton;
     private Button declineButton;
-
+    private ViewSwitcher challengeSwitcher;
+    private ViewSwitcher responseSwitcher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +63,9 @@ public class ViewResponseActivity extends BaseGameActivity {
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
+
+        challengeSwitcher = (ViewSwitcher) findViewById(R.id.challenge_switcher);
+        responseSwitcher = (ViewSwitcher) findViewById(R.id.response_switcher);
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
@@ -112,7 +117,7 @@ public class ViewResponseActivity extends BaseGameActivity {
             public void done(ParseObject parseObject, ParseException e) {
                 if (e == null) {
                     ParseFile parseFile = parseObject.getParseFile(ParseTableConstants.CHALLENGE_PICTURE);
-                    BitmapQueryWorkerTask workerTask = new BitmapQueryWorkerTask(challenge_pic, parseFile);
+                    BitmapQueryWorkerTask workerTask = new BitmapQueryWorkerTask(challengeSwitcher, challenge_pic, parseFile);
                     workerTask.execute();
                 } else {
                     Log.e(TAG, "Error: " + e.getMessage());
@@ -138,8 +143,10 @@ public class ViewResponseActivity extends BaseGameActivity {
                         responderTextView.setText(response.getResponder().getName());
 
                         ParseFile parseFile = parseObjects.get(0).getParseFile(ParseTableConstants.RESPONSE_PICTURE);
-                        BitmapQueryWorkerTask workerTask = new BitmapQueryWorkerTask(response_pic, parseFile);
+                        BitmapQueryWorkerTask workerTask = new BitmapQueryWorkerTask(responseSwitcher, response_pic, parseFile);
                         workerTask.execute();
+                    } else {
+                        responseSwitcher.showNext();
                     }
                 } else {
                     Log.e(TAG, "Error: " + e.getMessage());
@@ -212,7 +219,6 @@ public class ViewResponseActivity extends BaseGameActivity {
                         }
                     });
                 }
-
 
                 finish();
             }
