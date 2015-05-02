@@ -71,6 +71,10 @@ public class ViewResponseActivity extends BaseGameActivity {
         if (extras != null) {
             currentChallenge = (Challenge) extras.getParcelable(Challenge.INTENT_TAG);
 
+            if(!currentChallenge.isActive()){
+                getSupportActionBar().setTitle("Completed Challenge");
+            }
+
             displayResponse();
 
             Button button = (Button) findViewById(R.id.view_map_button);
