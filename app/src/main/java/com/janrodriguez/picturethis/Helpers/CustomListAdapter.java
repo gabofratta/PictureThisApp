@@ -1,7 +1,9 @@
 package com.janrodriguez.picturethis.Helpers;
 
 import android.app.Activity;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,7 +49,7 @@ public class CustomListAdapter extends ArrayAdapter<Challenge> {
 
             holder = new ViewHolder();
 
-            holder.baseView = v;
+            holder.baseView = (CardView) v;
             holder.imgageView = (ImageView) v.findViewById(R.id.icon);
             holder.titleTextView = (TextView) v.findViewById(R.id.item);
             holder.subTitleTextView = (TextView) v.findViewById(R.id.textView1);
@@ -65,26 +67,28 @@ public class CustomListAdapter extends ArrayAdapter<Challenge> {
             holder.imgageView.setImageBitmap(bitmap);
         }
 
+        Resources resources = this.context.getResources();
+
         if (type == TYPE_RECEIVED_CHALLENGE) {
             holder.subTitleTextView.setText("From: " + challenge.getChallenger().toString());
 
             if (challenge.isActive() && challenge.getChallengedStatus() == Challenge.Status.WAITING) {
-                holder.baseView.setBackgroundResource(R.drawable.rounded_corners_no_action);
+                holder.baseView.setCardBackgroundColor(resources.getColor(R.color.no_action));
             } else if (challenge.isActive() && challenge.getChallengedStatus() == Challenge.Status.NEED_ACTION) {
-                holder.baseView.setBackgroundResource(R.drawable.rounded_corners_action_needed);
+                holder.baseView.setCardBackgroundColor(resources.getColor(R.color.action_needed));
             } else {
-                holder.baseView.setBackgroundResource(R.drawable.rounded_corners_history);
+                holder.baseView.setCardBackgroundColor(resources.getColor(R.color.history_color));
             }
         } else {
             String challenged = challenge.getChallengedList().toString();
             holder.subTitleTextView.setText("To: " + challenged.substring(1, challenged.length() - 1));
 
             if (challenge.isActive() && challenge.getChallengerStatus() == Challenge.Status.WAITING) {
-                holder.baseView.setBackgroundResource(R.drawable.rounded_corners_no_action);
+                holder.baseView.setCardBackgroundColor(resources.getColor(R.color.no_action));
             } else if (challenge.isActive() && challenge.getChallengerStatus() == Challenge.Status.NEED_ACTION) {
-                holder.baseView.setBackgroundResource(R.drawable.rounded_corners_action_needed);
+                holder.baseView.setCardBackgroundColor(resources.getColor(R.color.action_needed));
             } else {
-                holder.baseView.setBackgroundResource(R.drawable.rounded_corners_history);
+                holder.baseView.setCardBackgroundColor(resources.getColor(R.color.history_color));
             }
         }
 
@@ -106,7 +110,7 @@ public class CustomListAdapter extends ArrayAdapter<Challenge> {
     }
 
     static class ViewHolder {
-        View baseView;
+        CardView baseView;
         ImageView imgageView;
         TextView titleTextView;
         TextView subTitleTextView;

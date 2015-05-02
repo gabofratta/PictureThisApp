@@ -26,6 +26,9 @@
     <color name="secondary_text">#727272</color>
     <color name="divider">#b6b6b6</color>
     <color name="accent">#ffd740</color>
+    <color name="history_color">#BBDEFB</color>
+    <color name="no_action">#DCEDC8</color>
+    <color name="action_needed">#FFCDD2</color>
 
     <drawable name="pressed_gray">#0c000000</drawable>
     <drawable name="selected_gray">#2c000000</drawable>
