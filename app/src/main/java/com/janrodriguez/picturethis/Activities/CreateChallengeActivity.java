@@ -96,6 +96,19 @@ public class CreateChallengeActivity extends BaseGameActivity {
 
     @Override
     public void onSignInSucceeded() {
+        if (!ParseHelper.haveNetworkConnection(CreateChallengeActivity.this)) {
+            AlertDialog.Builder dialog = new AlertDialog.Builder(CreateChallengeActivity.this);
+            dialog.setMessage(getString(R.string.error_no_internet));
+
+            dialog.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface paramDialogInterface, int paramInt) {}
+            });
+
+            dialog.show();
+            return;
+        }
+
         super.onSignInSucceeded();
         initializeUsersList();
     }
@@ -105,7 +118,7 @@ public class CreateChallengeActivity extends BaseGameActivity {
             @Override
             public void onResult(People.LoadPeopleResult peopleData) {
                 if (peopleData.getStatus().getStatusCode() == CommonStatusCodes.SUCCESS) {
-                    usersList.clear();
+                    ArrayList<User> googleFriends = new ArrayList<User>();
                     PersonBuffer personBuffer = peopleData.getPersonBuffer();
                     try {
                         int count = personBuffer.getCount();
@@ -113,14 +126,14 @@ public class CreateChallengeActivity extends BaseGameActivity {
                             String googleId = personBuffer.get(i).getId();
                             
                             if (!googleId.equals(currentUser.getGoogleId())) {
-                                usersList.add(new User(googleId, personBuffer.get(i).getDisplayName()));
+                                googleFriends.add(new User(googleId, personBuffer.get(i).getDisplayName()));
                             }
                         }
                     } finally {
                         personBuffer.close();
                     }
 
-                    ParseHelper.GetMatchingUsers(usersList, new FindCallback<ParseObject>() {
+                    ParseHelper.GetMatchingUsers(googleFriends, new FindCallback<ParseObject>() {
                         @Override
                         public void done(List<ParseObject> parseObjects, ParseException e) {
                             if (e == null) {

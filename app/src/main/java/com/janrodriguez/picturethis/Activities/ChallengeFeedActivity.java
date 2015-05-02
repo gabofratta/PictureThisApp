@@ -1,5 +1,7 @@
 package com.janrodriguez.picturethis.Activities;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -120,13 +122,21 @@ public class ChallengeFeedActivity extends BaseSidePanelActivity implements Acti
 
     @Override
     public void onSignInSucceeded () {
+        if (!ParseHelper.haveNetworkConnection(ChallengeFeedActivity.this)) {
+            AlertDialog.Builder dialog = new AlertDialog.Builder(ChallengeFeedActivity.this);
+            dialog.setMessage(getString(R.string.error_no_internet));
+
+            dialog.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface paramDialogInterface, int paramInt) {}
+            });
+
+            dialog.show();
+            return;
+        }
+
+        super.onSignInSucceeded();
         fetchData();
-
-    }
-
-    @Override
-    public void onStop () {
-        super.onStop();
     }
 
     protected static void fetchData(){
@@ -269,6 +279,19 @@ public class ChallengeFeedActivity extends BaseSidePanelActivity implements Acti
             receivedRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                 @Override
                 public void onRefresh() {
+                    if (!ParseHelper.haveNetworkConnection(getActivity())) {
+                        AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
+                        dialog.setMessage(getString(R.string.error_no_internet));
+
+                        dialog.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface paramDialogInterface, int paramInt) {}
+                        });
+
+                        dialog.show();
+                        receivedRefreshLayout.setRefreshing(false);
+                        return;
+                    }
                     fetchData();
                 }
             });
@@ -323,6 +346,19 @@ public class ChallengeFeedActivity extends BaseSidePanelActivity implements Acti
             sentRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                 @Override
                 public void onRefresh() {
+                    if (!ParseHelper.haveNetworkConnection(getActivity())) {
+                        AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
+                        dialog.setMessage(getString(R.string.error_no_internet));
+
+                        dialog.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface paramDialogInterface, int paramInt) {}
+                        });
+
+                        dialog.show();
+                        sentRefreshLayout.setRefreshing(false);
+                        return;
+                    }
                     fetchData();
                 }
             });

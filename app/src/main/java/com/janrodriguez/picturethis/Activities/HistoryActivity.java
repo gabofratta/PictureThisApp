@@ -1,5 +1,7 @@
 package com.janrodriguez.picturethis.Activities;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -165,12 +167,20 @@ public class HistoryActivity extends BaseGameActivity implements ActionBar.TabLi
 
     @Override
     public void onSignInSucceeded () {
-        populateChallengeListViews();
-    }
+        if (!ParseHelper.haveNetworkConnection(HistoryActivity.this)) {
+            AlertDialog.Builder dialog = new AlertDialog.Builder(HistoryActivity.this);
+            dialog.setMessage(getString(R.string.error_no_internet));
 
-    @Override
-    public void onStop () {
-        super.onStop();
+            dialog.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface paramDialogInterface, int paramInt) {}
+            });
+
+            dialog.show();
+            return;
+        }
+
+        populateChallengeListViews();
     }
 
     @Override
@@ -267,6 +277,19 @@ public class HistoryActivity extends BaseGameActivity implements ActionBar.TabLi
             receivedRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                 @Override
                 public void onRefresh() {
+                    if (!ParseHelper.haveNetworkConnection(getActivity())) {
+                        AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
+                        dialog.setMessage(getString(R.string.error_no_internet));
+
+                        dialog.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface paramDialogInterface, int paramInt) {}
+                        });
+
+                        dialog.show();
+                        receivedRefreshLayout.setRefreshing(false);
+                        return;
+                    }
                     populateChallengeListViews();
                 }
             });
@@ -321,6 +344,19 @@ public class HistoryActivity extends BaseGameActivity implements ActionBar.TabLi
             sentRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                 @Override
                 public void onRefresh() {
+                    if (!ParseHelper.haveNetworkConnection(getActivity())) {
+                        AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
+                        dialog.setMessage(getString(R.string.error_no_internet));
+
+                        dialog.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface paramDialogInterface, int paramInt) {}
+                        });
+
+                        dialog.show();
+                        sentRefreshLayout.setRefreshing(false);
+                        return;
+                    }
                     populateChallengeListViews();
                 }
             });
