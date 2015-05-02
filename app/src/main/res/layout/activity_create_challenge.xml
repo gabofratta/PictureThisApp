@@ -7,129 +7,126 @@
     tools:context="com.example.janrodriguez.picturethis.Activities.CreateChallengeActivity"
     android:id="@+id/root">
 
-    <LinearLayout
-        android:orientation="horizontal"
+    <TableLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:id="@+id/linearLayout1">
+        android:id="@+id/tableLayout"
+        android:stretchColumns="2">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="@string/title"
-            android:id="@+id/textView9"
-            android:singleLine="false" />
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
 
-        <EditText
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:maxLength="30"
-            android:id="@+id/titleEditText"
-            android:layout_weight="1"
-            android:singleLine="true" />
-    </LinearLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="@string/title"
+                android:id="@+id/textView9"
+                android:singleLine="false" />
 
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/linearLayout1"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:id="@+id/linearLayout2">
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxLength="30"
+                android:id="@+id/titleEditText"
+                android:layout_weight="1"
+                android:singleLine="true" />
+        </TableRow>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="@string/location"
-            android:id="@+id/textView10"
-            android:layout_below="@+id/linearLayout"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true" />
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
 
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/location_icon"
-            android:src="@drawable/ic_action_location_searching"
-            android:layout_margin="10dp" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="@string/location"
+                android:id="@+id/textView10" />
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/view_map"
-            android:id="@+id/viewMapBtn" />
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/location_icon"
+                android:src="@drawable/ic_action_location_searching"
+                android:layout_margin="10dp" />
 
-    </LinearLayout>
+            <Button
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/view_map"
+                android:id="@+id/viewMapBtn" />
+        </TableRow>
 
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/linearLayout2"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:id="@+id/linearLayout3"
-        android:layout_alignParentRight="false"
-        android:layout_alignParentEnd="false">
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="@string/users"
-            android:id="@+id/textView11" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="@string/users"
+                android:id="@+id/textView11" />
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/select"
-            android:id="@+id/selectUsersBtn" />
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/select"
+                android:id="@+id/selectUsersBtn" />
 
-    </LinearLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:paddingLeft="5dp"
+                android:id="@+id/usersTextView" />
+        </TableRow>
+    </TableLayout>
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/send_challenge"
         android:id="@+id/sendChallengeBtn"
-        android:layout_below="@+id/picture"
-        android:layout_centerHorizontal="true" />
-
-    <ImageButton
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:id="@+id/picture"
-        android:src="@drawable/camera1"
+        android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:maxWidth="250dp"
-        android:maxHeight="250dp"
-        android:scaleType="centerInside"
-        android:layout_below="@+id/linearLayout3" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:id="@+id/usersTextView"
-        android:layout_toRightOf="@+id/linearLayout3"
-        android:layout_alignTop="@+id/linearLayout3"
-        android:layout_marginTop="10dp" />
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:background="@color/accent"
+        android:textColor="@color/primary_text"/>
 
     <ListView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/usersListView"
         android:visibility="invisible"
-        android:layout_toRightOf="@+id/linearLayout3"
-        android:layout_alignTop="@+id/linearLayout3"
         android:background="#ffffffff"
-        android:layout_alignParentEnd="false" />
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignTop="@+id/relativeLayout"
+        android:layout_alignLeft="@+id/sendChallengeBtn"
+        android:layout_alignStart="@+id/sendChallengeBtn" />
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_below="@+id/tableLayout"
+        android:layout_above="@+id/sendChallengeBtn"
+        android:layout_alignRight="@+id/usersListView"
+        android:layout_alignEnd="@+id/usersListView"
+        android:id="@+id/relativeLayout">
+
+        <ImageButton
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:id="@+id/picture"
+            android:src="@drawable/ic_action_camera"
+            android:scaleType="centerInside"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true" />
+    </RelativeLayout>
 
 </RelativeLayout>
 
