@@ -135,40 +135,68 @@ public class ViewChallengeActivity extends BaseGameActivity {
             }
         });
 
-        // Fetching the responses
-        ParseHelper.GetUsersLatestResponseToChallenge(BaseGameActivity.currentUser, currentChallenge, new FindCallback<ParseObject>() {
-            @Override
-            public void done(List<ParseObject> parseObjects, ParseException e) {
-                if (e == null) {
-                    TextView statusTextView = (TextView) findViewById(R.id.status_text);
+        if (currentChallenge.isActive()) {
+            ParseHelper.GetUsersLatestResponseToChallenge(BaseGameActivity.currentUser, currentChallenge, new FindCallback<ParseObject>() {
+                @Override
+                public void done(List<ParseObject> parseObjects, ParseException e) {
+                    if (e == null) {
+                        TextView statusTextView = (TextView) findViewById(R.id.status_text);
 
-                    if (parseObjects.size() != 0) {
-                        Response response = new Response(parseObjects.get(0));
-                        statusTextView.setText(response.getStatus());
+                        if (parseObjects.size() != 0) {
+                            Response response = new Response(parseObjects.get(0));
+                            statusTextView.setText(response.getStatus());
 
-                        if (response.getStatus().equals(Response.STATUS_DECLINED)) {
+                            if (response.getStatus().equals(Response.STATUS_DECLINED)) {
+                                sendResponseButton.setVisibility(View.VISIBLE);
+                                setClickListeners();
+                            } else {
+                                ParseFile parseFile = parseObjects.get(0).getParseFile(ParseTableConstants.RESPONSE_PICTURE);
+                                BitmapQueryWorkerTask workerTask = new BitmapQueryWorkerTask(responseSwitcher, response_pic, parseFile);
+                                workerTask.execute();
+                            }
+                        }
+                        else
+                        {
+                            responseSwitcher.showNext();
+                            statusTextView.setText(Response.STATUS_OPEN);
                             sendResponseButton.setVisibility(View.VISIBLE);
                             setClickListeners();
-                        } else {
-                            ParseFile parseFile = parseObjects.get(0).getParseFile(ParseTableConstants.RESPONSE_PICTURE);
-                            BitmapQueryWorkerTask workerTask = new BitmapQueryWorkerTask(responseSwitcher, response_pic, parseFile);
-                            workerTask.execute();
                         }
                     }
                     else
                     {
-                        responseSwitcher.showNext();
-                        statusTextView.setText(Response.STATUS_OPEN);
-                        sendResponseButton.setVisibility(View.VISIBLE);
-                        setClickListeners();
+                        Log.e(TAG, "Error: " + e.getMessage());
                     }
                 }
-                else
-                {
-                    Log.e(TAG, "Error: " + e.getMessage());
+            });
+        } else {
+            ParseHelper.GetAcceptedResponseToChallenge(currentChallenge, new FindCallback<ParseObject>() {
+                @Override
+                public void done(List<ParseObject> parseObjects, ParseException e) {
+                    if (e == null) {
+                        TextView statusTextView = (TextView) findViewById(R.id.status_text);
+
+                        if (parseObjects.size() != 0) {
+                            Response response = new Response(parseObjects.get(0));
+
+                            String status = (response.getResponder().getGoogleId().equals(currentUser.getGoogleId())) ?
+                                    getString(R.string.status_winner) : getString(R.string.status_loser);
+                            statusTextView.setText(status);
+
+                            ParseFile parseFile = parseObjects.get(0).getParseFile(ParseTableConstants.RESPONSE_PICTURE);
+                            BitmapQueryWorkerTask workerTask = new BitmapQueryWorkerTask(responseSwitcher, response_pic, parseFile);
+                            workerTask.execute();
+                        }
+                        else
+                        {
+                            Log.e(TAG, "Error: No accepted response found for a challenge in history");
+                        }
+                    } else {
+                        Log.e(TAG, "Error: " + e.getMessage());
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 
     private void setClickListeners() {
