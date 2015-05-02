@@ -1,5 +1,7 @@
 package com.janrodriguez.picturethis.Activities;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -259,6 +261,24 @@ public class ViewChallengeActivity extends BaseGameActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public void onSignInSucceeded() {
+        if (!ParseHelper.haveNetworkConnection(ViewChallengeActivity.this)) {
+            AlertDialog.Builder dialog = new AlertDialog.Builder(ViewChallengeActivity.this);
+            dialog.setMessage(getString(R.string.error_no_internet));
+
+            dialog.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface paramDialogInterface, int paramInt) {}
+            });
+
+            dialog.show();
+            return;
+        }
+
+        super.onSignInSucceeded();
     }
 
 }

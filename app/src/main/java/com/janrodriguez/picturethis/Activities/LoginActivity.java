@@ -1,11 +1,14 @@
 package com.janrodriguez.picturethis.Activities;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import com.google.android.gms.common.SignInButton;
+import com.janrodriguez.picturethis.Helpers.ParseHelper;
 import com.janrodriguez.picturethis.Helpers.User;
 import com.janrodriguez.picturethis.R;
 
@@ -50,9 +53,22 @@ public class LoginActivity extends BaseGameActivity {
         signinBtn = (SignInButton)findViewById(R.id.sign_in_button);
         signinBtn.setOnClickListener(this);
     }
-    //Connected to google acount, start main activity and close this one
+
+    //Connected to google account, start main activity and close this one
     @Override
     public void onSignInSucceeded() {
+        if (!ParseHelper.haveNetworkConnection(LoginActivity.this)) {
+            AlertDialog.Builder dialog = new AlertDialog.Builder(LoginActivity.this);
+            dialog.setMessage(getString(R.string.error_no_internet));
+
+            dialog.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface paramDialogInterface, int paramInt) {}
+            });
+
+            dialog.show();
+            return;
+        }
 
         super.onSignInSucceeded();
 

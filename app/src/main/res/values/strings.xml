@@ -71,4 +71,6 @@
     <string name="responder">Responder</string>
     <string name="accept">Accept</string>
     <string name="decline">Decline</string>
+    <string name="error_no_internet">You are not connected to the internet. Please connect and try again.</string>
+    <string name="ok">OK</string>
 </resources>
