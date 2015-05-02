@@ -114,6 +114,10 @@ public class ViewResponseActivity extends BaseGameActivity {
         challenge_pic = (ImageButton) findViewById(R.id.challenge_picture);
         response_pic = (ImageButton) findViewById(R.id.response_picture);
 
+        if(!currentChallenge.isActive()){
+            response_pic.setBackground(null);
+        }
+
         // Setting the Challenge Picture
         challenge_pic = (ImageButton) findViewById(R.id.challenge_picture);
         ParseHelper.GetChallengeImage(this.currentChallenge, new GetCallback<ParseObject>() {

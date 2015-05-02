@@ -117,6 +117,10 @@ public class ViewChallengeActivity extends BaseGameActivity {
         response_pic = (ImageButton) findViewById(R.id.response_picture);
         sendResponseButton = (Button) findViewById(R.id.sendResponse_button);
 
+        if(!currentChallenge.isActive()){
+            response_pic.setBackground(null);
+        }
+
         ImageView multiplayerIcon = (ImageView) findViewById(R.id.multiplayer_icon);
         if (currentChallenge.isMultiplayer()) {
             multiplayerIcon.setImageResource(R.drawable.ic_action_group);
