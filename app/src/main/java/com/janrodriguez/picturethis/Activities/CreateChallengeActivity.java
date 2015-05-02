@@ -71,6 +71,7 @@ public class CreateChallengeActivity extends BaseGameActivity {
     private Button mapButton;
     private Button usersButton;
     private Button sendButton;
+    private TextView usersTextView;
 
     private ResultCallback<People.LoadPeopleResult> resultCallback;
     private Uri currentPictureUri;
@@ -195,6 +196,8 @@ public class CreateChallengeActivity extends BaseGameActivity {
             }
         });
 
+        usersTextView = (TextView) findViewById(R.id.usersTextView);
+
         imageView = (ImageButton) findViewById(R.id.picture);
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -249,6 +252,7 @@ public class CreateChallengeActivity extends BaseGameActivity {
                     closeListViewAndSaveSelection();
                 } else {
                     usersListView.setVisibility(View.VISIBLE);
+                    usersListView.bringToFront();
                     listViewOpen = true;
                 }
             }
@@ -396,13 +400,15 @@ public class CreateChallengeActivity extends BaseGameActivity {
 
             if (checked.valueAt(i)) {
                 User user = usersAdapter.getItem(position);
-                usersDisplayText.append(user.getName()).append(", ");
                 challengedList.add(user);
+                if(challengedList.size() == 1){
+                    usersDisplayText.append(user.getName());
+                }
             }
         }
 
-        TextView usersTextView = (TextView) findViewById(R.id.usersTextView);
-        String displayText = (usersDisplayText.length() > 2) ? usersDisplayText.substring(0, usersDisplayText.length() - 2) : "";
+
+        String displayText = (challengedList.size() > 1) ? usersDisplayText.toString() + " + " + (challengedList.size() - 1) : usersDisplayText.toString();
         usersTextView.setText(displayText);
 
         usersListView.setVisibility(View.INVISIBLE);
