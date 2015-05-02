@@ -14,6 +14,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ViewSwitcher;
 
 import com.google.android.gms.games.Games;
 import com.janrodriguez.picturethis.Helpers.Achievement;
@@ -57,6 +58,8 @@ public class ViewChallengeActivity extends BaseGameActivity {
     private ImageButton challenge_pic;
     private ImageButton response_pic;
     private Button sendResponseButton;
+    private ViewSwitcher challengeSwitcher;
+    private ViewSwitcher responseSwitcher;
 
     private Uri tempPictureUri;
     private Uri currentPictureUri;
@@ -69,6 +72,9 @@ public class ViewChallengeActivity extends BaseGameActivity {
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
+
+        challengeSwitcher = (ViewSwitcher) findViewById(R.id.challenge_switcher);
+        responseSwitcher = (ViewSwitcher) findViewById(R.id.response_switcher);
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
@@ -121,7 +127,7 @@ public class ViewChallengeActivity extends BaseGameActivity {
             public void done(ParseObject parseObject, ParseException e) {
                 if (e == null) {
                     ParseFile parseFile = parseObject.getParseFile(ParseTableConstants.CHALLENGE_PICTURE);
-                    BitmapQueryWorkerTask workerTask = new BitmapQueryWorkerTask(challenge_pic, parseFile);
+                    BitmapQueryWorkerTask workerTask = new BitmapQueryWorkerTask(challengeSwitcher, challenge_pic, parseFile);
                     workerTask.execute();
                 } else {
                     Log.e("Tag", "Error: " + e.getMessage());
@@ -145,12 +151,13 @@ public class ViewChallengeActivity extends BaseGameActivity {
                             setClickListeners();
                         } else {
                             ParseFile parseFile = parseObjects.get(0).getParseFile(ParseTableConstants.RESPONSE_PICTURE);
-                            BitmapQueryWorkerTask workerTask = new BitmapQueryWorkerTask(response_pic, parseFile);
+                            BitmapQueryWorkerTask workerTask = new BitmapQueryWorkerTask(responseSwitcher, response_pic, parseFile);
                             workerTask.execute();
                         }
                     }
                     else
                     {
+                        responseSwitcher.showNext();
                         statusTextView.setText(Response.STATUS_OPEN);
                         sendResponseButton.setVisibility(View.VISIBLE);
                         setClickListeners();
