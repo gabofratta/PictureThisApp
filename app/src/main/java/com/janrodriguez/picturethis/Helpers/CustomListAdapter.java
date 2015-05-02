@@ -37,47 +37,59 @@ public class CustomListAdapter extends ArrayAdapter<Challenge> {
     }
 
     public View getView(int position,View view,ViewGroup parent) {
-        LayoutInflater inflater = context.getLayoutInflater();
-        final View rowView=inflater.inflate(R.layout.my_list, null,true);
 
-        TextView txtTitle = (TextView) rowView.findViewById(R.id.item);
-        final ImageView imageView = (ImageView) rowView.findViewById(R.id.icon);
-        TextView extratxt = (TextView) rowView.findViewById(R.id.textView1);
+        View v = view;
+        ViewHolder holder;
+
+        if(v == null){
+            LayoutInflater inflater = context.getLayoutInflater();
+            v = inflater.inflate(R.layout.challenge_card_view, null,true);
+
+            holder = new ViewHolder();
+
+            holder.baseView = v;
+            holder.imgageView = (ImageView) v.findViewById(R.id.icon);
+            holder.titleTextView = (TextView) v.findViewById(R.id.item);
+            holder.subTitleTextView = (TextView) v.findViewById(R.id.textView1);
+
+            v.setTag(holder);
+        } else {
+            holder = (ViewHolder) v.getTag();
+        }
 
         Challenge challenge = challenges.get(position);
-        txtTitle.setText(challenge.getTitle());
-//        imageView.setImageResource(R.drawable.picturethis);
+        holder.titleTextView.setText(challenge.getTitle());
 
         Bitmap bitmap = challenge.getPictureBitmap();
         if (bitmap != null) {
-            imageView.setImageBitmap(bitmap);
+            holder.imgageView.setImageBitmap(bitmap);
         }
-//        rowView.setBackgroundColor(Color.RED);
 
         if (type == TYPE_RECEIVED_CHALLENGE) {
-            extratxt.setText("Challenger: " + challenge.getChallenger().toString());
+            holder.subTitleTextView.setText("From: " + challenge.getChallenger().toString());
 
             if (challenge.isActive() && challenge.getChallengedStatus() == Challenge.Status.WAITING) {
-                rowView.setBackgroundResource(R.drawable.rounded_corners_no_action);
+                holder.baseView.setBackgroundResource(R.drawable.rounded_corners_no_action);
             } else if (challenge.isActive() && challenge.getChallengedStatus() == Challenge.Status.NEED_ACTION) {
-                rowView.setBackgroundResource(R.drawable.rounded_corners_action_needed);
+                holder.baseView.setBackgroundResource(R.drawable.rounded_corners_action_needed);
             } else {
-                rowView.setBackgroundResource(R.drawable.rounded_corners_history);
+                holder.baseView.setBackgroundResource(R.drawable.rounded_corners_history);
             }
         } else {
             String challenged = challenge.getChallengedList().toString();
-            extratxt.setText("Challenged: " + challenged.substring(1, challenged.length() - 1));
+            holder.subTitleTextView.setText("To: " + challenged.substring(1, challenged.length() - 1));
 
             if (challenge.isActive() && challenge.getChallengerStatus() == Challenge.Status.WAITING) {
-                rowView.setBackgroundResource(R.drawable.rounded_corners_no_action);
+                holder.baseView.setBackgroundResource(R.drawable.rounded_corners_no_action);
             } else if (challenge.isActive() && challenge.getChallengerStatus() == Challenge.Status.NEED_ACTION) {
-                rowView.setBackgroundResource(R.drawable.rounded_corners_action_needed);
+                holder.baseView.setBackgroundResource(R.drawable.rounded_corners_action_needed);
             } else {
-                rowView.setBackgroundResource(R.drawable.rounded_corners_history);
+                holder.baseView.setBackgroundResource(R.drawable.rounded_corners_history);
             }
         }
 
-        return rowView;
+
+        return holder.baseView;
     }
 
     @Override
@@ -91,6 +103,13 @@ public class CustomListAdapter extends ArrayAdapter<Challenge> {
         }
 
         super.notifyDataSetChanged();
+    }
+
+    static class ViewHolder {
+        View baseView;
+        ImageView imgageView;
+        TextView titleTextView;
+        TextView subTitleTextView;
     }
 
 }
