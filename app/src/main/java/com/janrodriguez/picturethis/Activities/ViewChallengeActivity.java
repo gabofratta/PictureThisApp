@@ -138,7 +138,8 @@ public class ViewChallengeActivity extends BaseGameActivity {
                     BitmapQueryWorkerTask workerTask = new BitmapQueryWorkerTask(challengeSwitcher, challenge_pic, parseFile);
                     workerTask.execute();
                 } else {
-                    Log.e("Tag", "Error: " + e.getMessage());
+                    //TODO: Getting weird concurrency issues here
+                    Log.e(TAG, "Error: " + e.getMessage());
                 }
             }
         });
