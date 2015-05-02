@@ -2,12 +2,12 @@ package com.janrodriguez.picturethis.Helpers;
 
 import android.app.Activity;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.janrodriguez.picturethis.R;
@@ -23,11 +23,8 @@ public class CustomListAdapter extends ArrayAdapter<Challenge> {
     private final int type;
     public static int TYPE_RECEIVED_CHALLENGE = 1;
     public static int TYPE_SENT_CHALLENGE = 2;
-    private View rootView;
-
-    private static int COLOR_NEED_ACTION = Color.parseColor("#FFCDD2");
-    private static int COLOR_NO_NEED_ACTION = Color.parseColor("#DCEDC8");
-
+    private TextView emptyText;
+    private RelativeLayout loadingPanel;
     private ArrayList<Challenge> challenges;
 
     public CustomListAdapter(int type, Activity context, ArrayList<Challenge> challenges, View rootView) {
@@ -35,7 +32,8 @@ public class CustomListAdapter extends ArrayAdapter<Challenge> {
         this.type = type;
         this.context = context;
         this.challenges = challenges;
-        this.rootView = rootView;
+        this.emptyText = (TextView) rootView.findViewById(R.id.empty_challenges);
+        this.loadingPanel = (RelativeLayout) rootView.findViewById(R.id.loadingPanel);
     }
 
     public View getView(int position,View view,ViewGroup parent) {
@@ -84,7 +82,7 @@ public class CustomListAdapter extends ArrayAdapter<Challenge> {
 
     @Override
     public void notifyDataSetChanged() {
-        TextView emptyText = (TextView) rootView.findViewById(R.id.empty_challenges);
+        loadingPanel.setVisibility(View.GONE);
 
         if (getCount() == 0) {
             emptyText.setVisibility(View.VISIBLE);
