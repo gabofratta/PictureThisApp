@@ -26,12 +26,13 @@
                 android:singleLine="false" />
 
             <EditText
-                android:layout_width="wrap_content"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:maxLength="30"
                 android:id="@+id/titleEditText"
                 android:layout_weight="1"
-                android:singleLine="true" />
+                android:singleLine="true"
+                android:layout_span="2" />
         </TableRow>
 
         <TableRow
