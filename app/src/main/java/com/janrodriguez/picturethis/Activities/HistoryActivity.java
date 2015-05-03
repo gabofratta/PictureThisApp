@@ -71,6 +71,16 @@ public class HistoryActivity extends BaseGameActivity implements ActionBar.TabLi
         getSupportActionBar().setHomeButtonEnabled(true);
 
         initializeTabs();
+
+        // resetting for logging in with different account
+        if (receivedChallengeAdapter != null) {
+            receivedChallenges.clear();
+            receivedChallengeAdapter.notifyDataSetChanged();
+        }
+        if (sentChallengeAdapter != null) {
+            sentChallenges.clear();
+            sentChallengeAdapter.notifyDataSetChanged();
+        }
     }
 
     private void initializeTabs() {
