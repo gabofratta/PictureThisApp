@@ -26,7 +26,7 @@ public class PictureThisApp extends Application {
         ParseACL.setDefaultACL(defaultAcl, true);
 
         // Parse init
-        Parse.enableLocalDatastore(this);
+//        Parse.enableLocalDatastore(this);
         Parse.initialize(this, APPLICATION_ID, CLIENT_KEY);
         ParseInstallation.getCurrentInstallation().saveInBackground();
     }
