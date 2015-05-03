@@ -158,6 +158,7 @@ public class ViewChallengeActivity extends BaseGameActivity {
                             if (response.getStatus().equals(Response.STATUS_DECLINED)) {
                                 sendResponseButton.setVisibility(View.VISIBLE);
                                 setClickListeners();
+                                responseSwitcher.showNext();
                             } else {
                                 ParseFile parseFile = parseObjects.get(0).getParseFile(ParseTableConstants.RESPONSE_PICTURE);
                                 BitmapQueryWorkerTask workerTask = new BitmapQueryWorkerTask(responseSwitcher, response_pic, parseFile);
