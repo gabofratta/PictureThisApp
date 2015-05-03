@@ -118,6 +118,16 @@ public class ChallengeFeedActivity extends BaseSidePanelActivity implements Acti
         mSlidingTabLayout = (SlidingTabLayout)findViewById(R.id.sliding_tabs);
         mSlidingTabLayout.setDistributeEvenly(true);
         mSlidingTabLayout.setViewPager(mViewPager);
+
+        // resetting for logging in with different account
+        if (adapter1 != null) {
+            listOfReceivedChallenges.clear();
+            adapter1.notifyDataSetChanged();
+        }
+        if (adapter2 != null) {
+            listOfSentChallenges.clear();
+            adapter2.notifyDataSetChanged();
+        }
     }
 
     @Override
