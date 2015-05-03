@@ -251,7 +251,15 @@ public abstract class BaseGameActivity extends AppCompatActivity implements
 
                             ParseInstallation installation = ParseInstallation.getCurrentInstallation();
                             installation.put("user", currentUser.getId());
-                            installation.saveInBackground();
+                            installation.saveInBackground(new SaveCallback() {
+                                @Override
+                                public void done(ParseException e) {
+                                    if(e!=null) {
+                                        Log.e(TAG, e.getMessage());
+                                    }
+                                }
+                            });
+
                         }
                     } else {
                         Log.e(TAG, "Error getting user from google plus id");
