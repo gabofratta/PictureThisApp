@@ -80,8 +80,8 @@ public abstract class BaseGameActivity extends AppCompatActivity implements
     public static final String SHARED_PREF_NAME = "userinfo";
 
      //Requested clients. By default, that's just the games client.
-//    protected int mRequestedClients = CLIENT_GAMES | CLIENT_PLUS;
-    protected int mRequestedClients = CLIENT_PLUS;
+    protected int mRequestedClients = CLIENT_GAMES | CLIENT_PLUS;
+//    protected int mRequestedClients = CLIENT_PLUS;
 
     private final static String TAG = "BaseGameActivity";
     protected boolean mDebugLog = false;
