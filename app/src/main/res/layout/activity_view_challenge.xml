@@ -76,7 +76,8 @@
                             android:id="@+id/challenge_progressbar"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_centerHorizontal="true" />
+                            android:layout_centerHorizontal="true"
+                            android:layout_centerVertical="true" />
 
                     </RelativeLayout>
 
@@ -105,7 +106,8 @@
                             android:id="@+id/response_progressbar"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_centerHorizontal="true" />
+                            android:layout_centerHorizontal="true"
+                            android:layout_centerVertical="true" />
 
                     </RelativeLayout>
 
