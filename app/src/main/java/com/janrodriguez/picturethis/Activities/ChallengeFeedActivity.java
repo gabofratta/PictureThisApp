@@ -22,6 +22,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.gc.materialdesign.views.ButtonFloat;
 import com.google.android.gms.games.Games;
 import com.janrodriguez.picturethis.Helpers.Achievement;
 import com.janrodriguez.picturethis.Helpers.Challenge;
@@ -29,7 +30,6 @@ import com.janrodriguez.picturethis.Helpers.CustomListAdapter;
 import com.janrodriguez.picturethis.Helpers.ParseHelper;
 import com.janrodriguez.picturethis.Layouts.SlidingTabLayout;
 import com.janrodriguez.picturethis.R;
-import com.gc.materialdesign.views.ButtonFloat;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -144,12 +144,12 @@ public class ChallengeFeedActivity extends BaseSidePanelActivity implements Acti
                 }
             });
 
-            if(loggedIntoGoogleGames()) {
-                Games.Achievements.unlock(getApiClient(), Achievement.INSTALL_AND_SIGN_IN);
-            }
-
             dialog.show();
             return;
+        }
+
+        if(loggedIntoGoogleGames()) {
+            Games.Achievements.unlock(getApiClient(), Achievement.INSTALL_AND_SIGN_IN);
         }
 
         super.onSignInSucceeded();

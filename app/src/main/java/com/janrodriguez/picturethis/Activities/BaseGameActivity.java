@@ -236,6 +236,7 @@ public abstract class BaseGameActivity extends AppCompatActivity implements
                                         Log.e(TAG, "Error creating user.");
                                         return;
                                     }else{
+                                        currentUser = new User(userPO);
                                         ParseInstallation installation = ParseInstallation.getCurrentInstallation();
                                         installation.put("user", userPO.getObjectId());
                                         installation.saveInBackground();
