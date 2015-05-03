@@ -22,6 +22,8 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.google.android.gms.games.Games;
+import com.janrodriguez.picturethis.Helpers.Achievement;
 import com.janrodriguez.picturethis.Helpers.Challenge;
 import com.janrodriguez.picturethis.Helpers.CustomListAdapter;
 import com.janrodriguez.picturethis.Helpers.ParseHelper;
@@ -138,8 +140,13 @@ public class ChallengeFeedActivity extends BaseSidePanelActivity implements Acti
 
             dialog.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
                 @Override
-                public void onClick(DialogInterface paramDialogInterface, int paramInt) {}
+                public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+                }
             });
+
+            if(loggedIntoGoogleGames()) {
+                Games.Achievements.unlock(getApiClient(), Achievement.INSTALL_AND_SIGN_IN);
+            }
 
             dialog.show();
             return;
