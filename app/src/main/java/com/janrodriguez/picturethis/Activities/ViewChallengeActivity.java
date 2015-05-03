@@ -117,7 +117,7 @@ public class ViewChallengeActivity extends BaseGameActivity {
         response_pic = (ImageButton) findViewById(R.id.response_picture);
         sendResponseButton = (Button) findViewById(R.id.sendResponse_button);
 
-        if(!currentChallenge.isActive()){
+        if(!currentChallenge.isActive() || currentChallenge.getChallengedStatus() == Challenge.Status.WAITING){
             response_pic.setBackground(null);
         }
 
