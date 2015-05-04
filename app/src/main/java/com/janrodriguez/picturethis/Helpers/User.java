@@ -114,9 +114,12 @@ public class User implements Parcelable {
                 if (e != null) {
                     Log.e(TAG, "Error setting score: " + e.getMessage());
                 }
-                Games.Leaderboards.submitScore(client, Leaderboard.ID, getScore());
             }
         });
+
+        if(client.isConnected()){
+            Games.Leaderboards.submitScore(client, Leaderboard.ID, getScore());
+        }
     }
     @Override
     public String toString() {
