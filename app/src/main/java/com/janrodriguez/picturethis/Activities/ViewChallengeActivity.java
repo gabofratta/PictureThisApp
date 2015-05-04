@@ -117,7 +117,7 @@ public class ViewChallengeActivity extends BaseGameActivity {
         response_pic = (ImageButton) findViewById(R.id.response_picture);
         sendResponseButton = (Button) findViewById(R.id.sendResponse_button);
 
-        if(!currentChallenge.isActive() || currentChallenge.getChallengedStatus() == Challenge.Status.WAITING){
+        if(!currentChallenge.isActive()){
             response_pic.setBackground(null);
         }
 
@@ -163,6 +163,7 @@ public class ViewChallengeActivity extends BaseGameActivity {
                                 ParseFile parseFile = parseObjects.get(0).getParseFile(ParseTableConstants.RESPONSE_PICTURE);
                                 BitmapQueryWorkerTask workerTask = new BitmapQueryWorkerTask(responseSwitcher, response_pic, parseFile);
                                 workerTask.execute();
+                                response_pic.setBackground(null);
                             }
                         }
                         else
