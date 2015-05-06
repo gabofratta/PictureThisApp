@@ -248,6 +248,33 @@ public class ParseHelper {
 
         return haveConnectedWifi || haveConnectedMobile;
     }
+
+//    static public void GetAll(User user, FindCallback<ParseObject> callback) {
+//        JSONObject challenged;
+//        try {
+//            challenged = new JSONObject()
+//                    .put("__type", "Pointer")
+//                    .put("className", "User")
+//                    .put("objectId", user.getId());
+//        } catch (JSONException e) {
+//            Log.e(TAG, "Error: " + e.getMessage());
+//            return;
+//        }
+//
+//        String responseDotResponder = new StringBuilder(ParseTableConstants.CHALLENGE_RESPONSES)
+//                .append(".")
+//                .append(ParseTableConstants.RESPONSE_RESPONDER)
+//                .toString();
+//
+//        ParseQuery<ParseObject> query = ParseQuery.getQuery(ParseTableConstants.CHALLENGE_TABLE);
+//        query.include(ParseTableConstants.CHALLENGE_CHALLENGER);
+//        query.include(ParseTableConstants.CHALLENGE_CHALLENGED);
+//        query.include(ParseTableConstants.CHALLENGE_RESPONSES);
+//        query.include(responseDotResponder);
+//        query.orderByDescending(ParseTableConstants.CHALLENGE_CREATED_AT);
+//        query.findInBackground(callback);
+//    }
+
 }
 
 

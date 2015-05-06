@@ -160,6 +160,9 @@ public class ChallengeFeedActivity extends BaseSidePanelActivity implements Acti
         ParseHelper.GetActiveChallengesReceivedByUser(BaseGameActivity.currentUser, getFindCallbackReceived());
         ParseHelper.GetActiveChallengesInitiatedByUser(BaseGameActivity.currentUser, getFindCallbackSent());
 
+//        ParseHelper.GetAll(BaseGameActivity.currentUser, getFindCallbackReceived());
+//        ParseHelper.GetAll(BaseGameActivity.currentUser, getFindCallbackSent());
+
     }
 
     private static FindCallback<ParseObject> getFindCallbackReceived() {
@@ -174,8 +177,11 @@ public class ChallengeFeedActivity extends BaseSidePanelActivity implements Acti
                         listOfReceivedChallenges.add(challenge);
 
                         if (challenge.getIcon() != null) {
-                            ImageProcess process = new ImageProcess(challenge, adapter1);
-                            process.execute(challenge.getIcon());
+//                            ImageProcess process = new ImageProcess(challenge, adapter1);
+//                            process.execute(challenge.getIcon());
+
+                            Bitmap bitmapIcon = BitmapFactory.decodeByteArray(challenge.getIcon(), 0, challenge.getIcon().length);
+                            challenge.setIconBitmap(bitmapIcon);
                         }
                     }
 
@@ -289,8 +295,11 @@ public class ChallengeFeedActivity extends BaseSidePanelActivity implements Acti
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_received_challenge_feed, container, false);
 
-
             listView = (ListView)rootView.findViewById(R.id.listView2);
+
+            adapter1 = new CustomListAdapter(CustomListAdapter.TYPE_RECEIVED_CHALLENGE,
+                    getActivity(), listOfReceivedChallenges, rootView);
+            listView.setAdapter(adapter1);
 
             receivedRefreshLayout = (SwipeRefreshLayout)rootView.findViewById(R.id.refresh_received);
             receivedRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -312,10 +321,6 @@ public class ChallengeFeedActivity extends BaseSidePanelActivity implements Acti
                     fetchData();
                 }
             });
-
-            adapter1 = new CustomListAdapter(CustomListAdapter.TYPE_RECEIVED_CHALLENGE,
-                    getActivity(), listOfReceivedChallenges, rootView);
-            listView.setAdapter(adapter1);
 
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
@@ -359,6 +364,10 @@ public class ChallengeFeedActivity extends BaseSidePanelActivity implements Acti
 
             listView = (ListView)rootView.findViewById(R.id.listView3);
 
+            adapter2 = new CustomListAdapter(CustomListAdapter.TYPE_SENT_CHALLENGE,
+                    getActivity(), listOfSentChallenges, rootView);
+            listView.setAdapter(adapter2);
+
             sentRefreshLayout = (SwipeRefreshLayout)rootView.findViewById(R.id.refresh_sent);
             sentRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                 @Override
@@ -379,10 +388,6 @@ public class ChallengeFeedActivity extends BaseSidePanelActivity implements Acti
                     fetchData();
                 }
             });
-
-            adapter2 = new CustomListAdapter(CustomListAdapter.TYPE_SENT_CHALLENGE,
-                    getActivity(), listOfSentChallenges, rootView);
-            listView.setAdapter(adapter2);
 
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
@@ -412,14 +417,14 @@ class ImageProcess extends AsyncTask<byte[], Void, Void> {
 
     @Override
     protected Void doInBackground(byte[]... params) {
-        Bitmap iconBitmap = BitmapFactory.decodeByteArray(params[0], 0, params[0].length);
-        challenge.setBitmap(iconBitmap);
+        Bitmap picture = BitmapFactory.decodeByteArray(params[0], 0, params[0].length);
+        challenge.setIconBitmap(picture);
         return null;
     }
 
     @Override
     protected void onPostExecute(Void aVoid) {
-        if (challenge.getPictureBitmap()!=null){
+        if (challenge.getIconBitmap()!=null){
             adapter.notifyDataSetChanged();
         }
     }

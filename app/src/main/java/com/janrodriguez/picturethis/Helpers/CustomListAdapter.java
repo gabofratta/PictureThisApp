@@ -62,9 +62,9 @@ public class CustomListAdapter extends ArrayAdapter<Challenge> {
         Challenge challenge = challenges.get(position);
         holder.titleTextView.setText(challenge.getTitle());
 
-        Bitmap bitmap = challenge.getPictureBitmap();
-        if (bitmap != null) {
-            holder.imgageView.setImageBitmap(bitmap);
+        Bitmap picture = challenge.getIconBitmap();
+        if (picture != null) {
+            holder.imgageView.setImageBitmap(picture);
         }
 
         Resources resources = this.context.getResources();
