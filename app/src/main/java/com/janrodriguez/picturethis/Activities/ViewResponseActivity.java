@@ -127,6 +127,14 @@ public class ViewResponseActivity extends BaseGameActivity {
                     ParseFile parseFile = parseObject.getParseFile(ParseTableConstants.CHALLENGE_PICTURE);
                     BitmapQueryWorkerTask workerTask = new BitmapQueryWorkerTask(challengeSwitcher, challenge_pic, parseFile);
                     workerTask.execute();
+                    challenge_pic.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent = new Intent(ViewResponseActivity.this, LargePictureActivity.class);
+                            intent.putExtra(Challenge.INTENT_TAG, currentChallenge);
+                            startActivity(intent);
+                        }
+                    });
                 } else {
                     Log.e(TAG, "Error: " + e.getMessage());
                 }
@@ -139,7 +147,7 @@ public class ViewResponseActivity extends BaseGameActivity {
             public void done(List<ParseObject> parseObjects, ParseException e) {
                 if (e == null) {
                     if (parseObjects.size() != 0) {
-                        Response response = new Response(parseObjects.get(0));
+                        final Response response = new Response(parseObjects.get(0));
 
                         if (response.getStatus().equals(Response.STATUS_PENDING)) {
                             acceptButton.setVisibility(View.VISIBLE);
@@ -153,6 +161,15 @@ public class ViewResponseActivity extends BaseGameActivity {
                         ParseFile parseFile = parseObjects.get(0).getParseFile(ParseTableConstants.RESPONSE_PICTURE);
                         BitmapQueryWorkerTask workerTask = new BitmapQueryWorkerTask(responseSwitcher, response_pic, parseFile);
                         workerTask.execute();
+
+                        response_pic.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Intent intent = new Intent(ViewResponseActivity.this, LargePictureActivity.class);
+                                intent.putExtra(LargePictureActivity.RESPONSE_INTENT, response);
+                                startActivity(intent);
+                            }
+                        });
                     } else {
                         responseSwitcher.showNext();
                     }

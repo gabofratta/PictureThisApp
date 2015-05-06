@@ -256,12 +256,13 @@ public class Challenge implements Parcelable {
                 .toString();
     }
 
-    private Bitmap picture;
-    public void setBitmap(Bitmap bitmap){
-        this.picture = bitmap;
+    private Bitmap picture = null;
+
+    public void setIconBitmap(Bitmap picture){
+        this.picture = picture;
     }
 
-    public Bitmap getPictureBitmap(){
+    public Bitmap getIconBitmap(){
         return this.picture;
     }
 }

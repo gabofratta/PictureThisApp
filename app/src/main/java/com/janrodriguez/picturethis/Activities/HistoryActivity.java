@@ -3,6 +3,8 @@ package com.janrodriguez.picturethis.Activities;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -139,6 +141,7 @@ public class HistoryActivity extends BaseGameActivity implements ActionBar.TabLi
                         if (challenge.getIcon() != null) {
                             ImageProcess process = new ImageProcess(challenge, sentChallengeAdapter);
                             process.execute(challenge.getIcon());
+
                         }
                     }
 
@@ -163,6 +166,7 @@ public class HistoryActivity extends BaseGameActivity implements ActionBar.TabLi
                         if (challenge.getIcon() != null) {
                             ImageProcess process = new ImageProcess(challenge, receivedChallengeAdapter);
                             process.execute(challenge.getIcon());
+
                         }
                     }
 

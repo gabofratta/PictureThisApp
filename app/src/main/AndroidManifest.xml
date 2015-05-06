@@ -7,7 +7,6 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
@@ -15,8 +14,10 @@
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 
-    <permission android:protectionLevel="signature"
-        android:name="com.janrodriguez.picturethis.permission.C2D_MESSAGE" />
+    <permission
+        android:name="com.janrodriguez.picturethis.permission.C2D_MESSAGE"
+        android:protectionLevel="signature" />
+
     <uses-permission android:name="com.janrodriguez.picturethis.permission.C2D_MESSAGE" />
 
     <uses-feature
@@ -35,29 +36,27 @@
         <meta-data
             android:name="com.google.android.gms.games.APP_ID"
             android:value="@string/app_id" />
-
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyC1Hr2VmBjN2jrGz_SKlsYh8kID_FOxnto" />
 
         <activity
             android:name=".Activities.ViewResponseActivity"
-            android:label="@string/title_activity_received">
+            android:label="@string/title_activity_received" >
         </activity>
         <activity
             android:name=".Activities.ViewChallengeActivity"
-            android:label="@string/title_activity_sent">
+            android:label="@string/title_activity_sent" >
         </activity>
         <activity
             android:name=".Activities.LoginActivity"
-            android:theme="@style/AppThemeNoActionBar"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:theme="@style/AppThemeNoActionBar" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
         </activity>
         <activity
             android:name=".Activities.CreateChallengeActivity"
@@ -76,35 +75,41 @@
             android:label="@string/title_activity_challenge_feed" >
         </activity>
 
-        <!--android:theme="@style/AppThemeNoActionBar">-->
+        <!-- android:theme="@style/AppThemeNoActionBar"> -->
 
         <service android:name="com.parse.PushService" />
-        <receiver android:name="com.parse.ParseBroadcastReceiver">
+
+        <receiver android:name="com.parse.ParseBroadcastReceiver" >
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="android.intent.action.USER_PRESENT" />
             </intent-filter>
         </receiver>
-        <receiver android:name="com.parse.ParsePushBroadcastReceiver"
-            android:exported="false">
+        <receiver
+            android:name="com.parse.ParsePushBroadcastReceiver"
+            android:exported="false" >
             <intent-filter>
                 <action android:name="com.parse.push.intent.RECEIVE" />
                 <action android:name="com.parse.push.intent.DELETE" />
                 <action android:name="com.parse.push.intent.OPEN" />
             </intent-filter>
         </receiver>
-        <receiver android:name="com.parse.GcmBroadcastReceiver"
-            android:permission="com.google.android.c2dm.permission.SEND">
+        <receiver
+            android:name="com.parse.GcmBroadcastReceiver"
+            android:permission="com.google.android.c2dm.permission.SEND" >
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
                 <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
 
-                <!--
-                  IMPORTANT: Change "com.parse.starter" to match your app's package name.
-                -->
+<!--                   IMPORTANT: Change "com.parse.starter" to match your app's package name. -->
                 <category android:name="com.janrodriguez.picturethis" />
             </intent-filter>
         </receiver>
+
+        <activity
+            android:name=".Activities.LargePictureActivity"
+            android:label="@string/title_activity_large_picture" >
+        </activity>
     </application>
 
 </manifest>

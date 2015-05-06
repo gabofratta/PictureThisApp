@@ -134,9 +134,17 @@ public class ViewChallengeActivity extends BaseGameActivity {
             @Override
             public void done(ParseObject parseObject, ParseException e) {
                 if (e == null) {
-                    ParseFile parseFile = parseObject.getParseFile(ParseTableConstants.CHALLENGE_PICTURE);
+                    final ParseFile parseFile = parseObject.getParseFile(ParseTableConstants.CHALLENGE_PICTURE);
                     BitmapQueryWorkerTask workerTask = new BitmapQueryWorkerTask(challengeSwitcher, challenge_pic, parseFile);
                     workerTask.execute();
+                    challenge_pic.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent = new Intent(ViewChallengeActivity.this, LargePictureActivity.class);
+                            intent.putExtra(Challenge.INTENT_TAG, currentChallenge);
+                            startActivity(intent);
+                        }
+                    });
                 } else {
                     //TODO: Getting weird concurrency issues here
                     Log.e(TAG, "Error: " + e.getMessage());
@@ -152,7 +160,7 @@ public class ViewChallengeActivity extends BaseGameActivity {
                         TextView statusTextView = (TextView) findViewById(R.id.status_text);
 
                         if (parseObjects.size() != 0) {
-                            Response response = new Response(parseObjects.get(0));
+                            final Response response = new Response(parseObjects.get(0));
                             statusTextView.setText(response.getStatus());
 
                             if (response.getStatus().equals(Response.STATUS_DECLINED)) {
@@ -164,6 +172,15 @@ public class ViewChallengeActivity extends BaseGameActivity {
                                 BitmapQueryWorkerTask workerTask = new BitmapQueryWorkerTask(responseSwitcher, response_pic, parseFile);
                                 workerTask.execute();
                                 response_pic.setBackground(null);
+
+                                response_pic.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        Intent intent = new Intent(ViewChallengeActivity.this, LargePictureActivity.class);
+                                        intent.putExtra(LargePictureActivity.RESPONSE_INTENT, response);
+                                        startActivity(intent);
+                                    }
+                                });
                             }
                         }
                         else
@@ -188,7 +205,7 @@ public class ViewChallengeActivity extends BaseGameActivity {
                         TextView statusTextView = (TextView) findViewById(R.id.status_text);
 
                         if (parseObjects.size() != 0) {
-                            Response response = new Response(parseObjects.get(0));
+                            final Response response = new Response(parseObjects.get(0));
 
                             String status = (response.getResponder().getGoogleId().equals(currentUser.getGoogleId())) ?
                                     getString(R.string.status_winner) : getString(R.string.status_loser);
@@ -197,6 +214,15 @@ public class ViewChallengeActivity extends BaseGameActivity {
                             ParseFile parseFile = parseObjects.get(0).getParseFile(ParseTableConstants.RESPONSE_PICTURE);
                             BitmapQueryWorkerTask workerTask = new BitmapQueryWorkerTask(responseSwitcher, response_pic, parseFile);
                             workerTask.execute();
+
+                            response_pic.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    Intent intent = new Intent(ViewChallengeActivity.this, LargePictureActivity.class);
+                                    intent.putExtra(LargePictureActivity.RESPONSE_INTENT, response);
+                                    startActivity(intent);
+                                }
+                            });
                         }
                         else
                         {
