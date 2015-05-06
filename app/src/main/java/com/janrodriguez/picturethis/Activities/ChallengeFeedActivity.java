@@ -177,11 +177,8 @@ public class ChallengeFeedActivity extends BaseSidePanelActivity implements Acti
                         listOfReceivedChallenges.add(challenge);
 
                         if (challenge.getIcon() != null) {
-//                            ImageProcess process = new ImageProcess(challenge, adapter1);
-//                            process.execute(challenge.getIcon());
-
-                            Bitmap bitmapIcon = BitmapFactory.decodeByteArray(challenge.getIcon(), 0, challenge.getIcon().length);
-                            challenge.setIconBitmap(bitmapIcon);
+                            ImageProcess process = new ImageProcess(challenge, adapter1);
+                            process.execute(challenge.getIcon());
                         }
                     }
 
