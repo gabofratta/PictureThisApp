@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.ViewSwitcher;
 
 import com.janrodriguez.picturethis.Helpers.Challenge;
 import com.janrodriguez.picturethis.Helpers.ParseHelper;
@@ -28,6 +29,7 @@ public class LargePictureActivity extends AppCompatActivity {
     public static final String RESPONSE_INTENT = "Response";
 
     ImageButton imageButton;
+    ViewSwitcher switcher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +39,7 @@ public class LargePictureActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         imageButton = (ImageButton)findViewById(R.id.largeImage);
+        switcher = (ViewSwitcher) findViewById(R.id.switcher);
 
         Intent intent = getIntent();
         Challenge challenge = (Challenge)intent.getParcelableExtra(Challenge.INTENT_TAG);
@@ -145,7 +148,7 @@ public class LargePictureActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Bitmap bitmap) {
             imageButton.setImageBitmap(bitmap);
-
+            switcher.showNext();
         }
     }
 }
