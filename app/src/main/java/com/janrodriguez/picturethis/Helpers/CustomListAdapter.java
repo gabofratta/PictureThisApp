@@ -14,7 +14,7 @@ import android.widget.TextView;
 
 import com.janrodriguez.picturethis.R;
 
-import java.util.ArrayList;
+import java.util.Vector;
 
 /**
  * Created by Emily on 4/24/15.
@@ -27,9 +27,9 @@ public class CustomListAdapter extends ArrayAdapter<Challenge> {
     public static int TYPE_SENT_CHALLENGE = 2;
     private TextView emptyText;
     private RelativeLayout loadingPanel;
-    private ArrayList<Challenge> challenges;
+    private Vector<Challenge> challenges;
 
-    public CustomListAdapter(int type, Activity context, ArrayList<Challenge> challenges, View rootView) {
+    public CustomListAdapter(int type, Activity context, Vector<Challenge> challenges, View rootView) {
         super(context,R.layout.challenge_card_view, challenges);
         this.type = type;
         this.context = context;

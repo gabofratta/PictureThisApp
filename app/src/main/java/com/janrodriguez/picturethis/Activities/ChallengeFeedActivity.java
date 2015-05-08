@@ -33,13 +33,17 @@ import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Vector;
 
 public class ChallengeFeedActivity extends BaseSidePanelActivity implements ActionBar.TabListener {
 
     static private final String TAG = "ChallengeFeedActivity";
+
+    public static final int INTENT_CREATE_CHALLENGE = 1;
+    public static final int INTENT_VIEW_RECEIVED_ITEM = 2;
+    public static final int INTENT_VIEW_SENT_ITEM = 3;
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -61,8 +65,8 @@ public class ChallengeFeedActivity extends BaseSidePanelActivity implements Acti
     private static SwipeRefreshLayout receivedRefreshLayout;
     private static SwipeRefreshLayout sentRefreshLayout;
 
-    static ArrayList<Challenge> listOfReceivedChallenges = new ArrayList<>();
-    static ArrayList<Challenge> listOfSentChallenges = new ArrayList<>();
+    static Vector<Challenge> listOfReceivedChallenges = new Vector<>();
+    static Vector<Challenge> listOfSentChallenges = new Vector<>();
     static CustomListAdapter adapter1;
     static CustomListAdapter adapter2;
 
@@ -78,7 +82,7 @@ public class ChallengeFeedActivity extends BaseSidePanelActivity implements Acti
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(ChallengeFeedActivity.this, com.janrodriguez.picturethis.Activities.CreateChallengeActivity.class);
-                startActivity(intent);
+                startActivityForResult(intent, INTENT_CREATE_CHALLENGE);
             }
         });
 
@@ -133,7 +137,6 @@ public class ChallengeFeedActivity extends BaseSidePanelActivity implements Acti
 
     @Override
     public void onSignInSucceeded () {
-
         if (!ParseHelper.haveNetworkConnection(ChallengeFeedActivity.this)) {
             AlertDialog.Builder dialog = new AlertDialog.Builder(ChallengeFeedActivity.this);
             dialog.setMessage(getString(R.string.error_no_internet));
@@ -170,12 +173,14 @@ public class ChallengeFeedActivity extends BaseSidePanelActivity implements Acti
             @Override
             public void done(List<ParseObject> parseObjects, ParseException e) {
                 if (e == null) {
+
                     listOfReceivedChallenges.clear();
 
                     for (ParseObject parseObject : parseObjects) {
                         Challenge challenge = new Challenge(parseObject);
                         listOfReceivedChallenges.add(challenge);
                     }
+
 
                     ImageProcess process = new ImageProcess(listOfReceivedChallenges, adapter1);
                     process.execute();
@@ -209,6 +214,22 @@ public class ChallengeFeedActivity extends BaseSidePanelActivity implements Acti
                 }
             }
         };
+    }
+
+    @Override
+    protected void onActivityResult(int request, int response, Intent data) {
+//        Log.e(TAG, request+","+response);
+
+        if (request == INTENT_CREATE_CHALLENGE && response == RESULT_OK){
+            RefreshTask refreshTask = new RefreshTask(SENT_TAB);
+            refreshTask.execute();
+            return;
+        }
+        if (response == RESULT_OK){
+            RefreshTask refreshTask = new RefreshTask();
+            refreshTask.execute();
+            return;
+        }
     }
 
     @Override
@@ -265,6 +286,7 @@ public class ChallengeFeedActivity extends BaseSidePanelActivity implements Acti
             }
             return null;
         }
+
     }
 
     public static class ReceivedChallengeFeedFragment extends Fragment {
@@ -285,7 +307,7 @@ public class ChallengeFeedActivity extends BaseSidePanelActivity implements Acti
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
 
-            View rootView = inflater.inflate(R.layout.fragment_received_challenge_feed, container, false);
+            final View rootView = inflater.inflate(R.layout.fragment_received_challenge_feed, container, false);
 
             listView = (ListView)rootView.findViewById(R.id.listView2);
 
@@ -319,9 +341,9 @@ public class ChallengeFeedActivity extends BaseSidePanelActivity implements Acti
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view,
                                         int position, long id) {
-                    Intent intent = new Intent(getActivity(), ViewChallengeActivity.class);
+                    Intent intent = new Intent(view.getContext(), ViewChallengeActivity.class);
                     intent.putExtra(Challenge.INTENT_TAG, listOfReceivedChallenges.get(position));
-                    startActivity(intent);
+                    startActivityForResult(intent, INTENT_VIEW_RECEIVED_ITEM);
                 }
             });
 
@@ -350,7 +372,7 @@ public class ChallengeFeedActivity extends BaseSidePanelActivity implements Acti
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_sent_challenge_feed, container, false);
+            final View rootView = inflater.inflate(R.layout.fragment_sent_challenge_feed, container, false);
 
             listView = (ListView)rootView.findViewById(R.id.listView3);
 
@@ -384,9 +406,9 @@ public class ChallengeFeedActivity extends BaseSidePanelActivity implements Acti
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view,
                                         int position, long id) {
-                    Intent intent = new Intent(getActivity(), ViewResponseActivity.class);
+                    Intent intent = new Intent(view.getContext(), ViewResponseActivity.class);
                     intent.putExtra(Challenge.INTENT_TAG, listOfSentChallenges.get(position));
-                    startActivity(intent);
+                    startActivityForResult(intent, INTENT_VIEW_SENT_ITEM);
 
                 }
             });
@@ -394,26 +416,63 @@ public class ChallengeFeedActivity extends BaseSidePanelActivity implements Acti
             return rootView;
         }
     }
+
+    public static final int RECEIVED_TAB = 0;
+    public static final int SENT_TAB = 1;
+    class RefreshTask extends AsyncTask<Void, Void, Void>{
+        int tab = -1;
+
+        public RefreshTask(){
+
+        }
+        public RefreshTask(int tab){
+            this.tab = tab;
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            try {
+//                Log.e("RefreshTask:", "Sleep in background");
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            fetchData();
+            if (tab != -1){
+                mViewPager.setCurrentItem(tab);
+            }
+        }
+    }
 }
 
 class ImageProcess extends AsyncTask<Void, Void, Void> {
-    ArrayList<Challenge> challenges;
+    public static final String TAG = "ImageProcess";
+
+    Vector<Challenge> challenges;
     CustomListAdapter adapter;
 
-    public ImageProcess(ArrayList<Challenge> challenges, CustomListAdapter adapter){
+    public ImageProcess(Vector<Challenge> challenges, CustomListAdapter adapter){
         this.challenges = challenges;
         this.adapter = adapter;
     }
 
     @Override
     protected Void doInBackground(Void... params) {
-        synchronized (challenges){
-            for (Challenge challenge: challenges){
+        try{
+            for (int i=0;i<challenges.size();i++){
+                Challenge challenge = challenges.get(i);
                 if (challenge.getIcon()!=null){
                     Bitmap picture = BitmapFactory.decodeByteArray(challenge.getIcon(), 0, challenge.getIcon().length);
                     challenge.setIconBitmap(picture);
                 }
             }
+        }catch (Exception e){
+            Log.e(TAG, e.toString());
         }
         return null;
     }
@@ -423,3 +482,4 @@ class ImageProcess extends AsyncTask<Void, Void, Void> {
         adapter.notifyDataSetChanged();
     }
 }
+
