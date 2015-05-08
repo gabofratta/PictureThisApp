@@ -225,6 +225,7 @@ public class CreateChallengeActivity extends BaseGameActivity {
                     imageFile = ImageHelper.CreateImageFile();
                 } catch (IOException e) {
                     Log.e(TAG, "Error: " + e.getMessage());
+                    return;
                 }
 
                 tempPictureUri = Uri.fromFile(imageFile);
