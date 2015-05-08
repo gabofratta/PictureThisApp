@@ -245,6 +245,8 @@ public class ViewResponseActivity extends BaseGameActivity {
                     });
                 }
 
+                Intent returnIntent = new Intent();
+                setResult(RESULT_OK, returnIntent);
                 finish();
             }
         });
@@ -281,6 +283,8 @@ public class ViewResponseActivity extends BaseGameActivity {
                     }
                 });
 
+                Intent returnIntent = new Intent();
+                setResult(RESULT_OK, returnIntent);
                 finish();
             }
         });
@@ -306,6 +310,8 @@ public class ViewResponseActivity extends BaseGameActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         switch (item.getItemId()) {
             case android.R.id.home:
+                Intent returnIntent = new Intent();
+                setResult(RESULT_CANCELED, returnIntent);
                 finish();
                 return true;
             default:

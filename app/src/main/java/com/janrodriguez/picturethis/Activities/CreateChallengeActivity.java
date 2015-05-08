@@ -344,6 +344,8 @@ public class CreateChallengeActivity extends BaseGameActivity {
                     }
                 });
 
+                Intent returnIntent = new Intent();
+                setResult(RESULT_OK, returnIntent);
                 finish();
             }
         });
@@ -447,6 +449,8 @@ public class CreateChallengeActivity extends BaseGameActivity {
 
         switch (item.getItemId()) {
             case android.R.id.home:
+                Intent returnIntent = new Intent();
+                setResult(RESULT_CANCELED, returnIntent);
                 finish();
                 return true;
             default:

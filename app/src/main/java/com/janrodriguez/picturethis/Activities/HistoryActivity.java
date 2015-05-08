@@ -28,9 +28,9 @@ import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Vector;
 
 public class HistoryActivity extends BaseGameActivity implements ActionBar.TabListener {
 
@@ -56,10 +56,10 @@ public class HistoryActivity extends BaseGameActivity implements ActionBar.TabLi
     private static SwipeRefreshLayout receivedRefreshLayout;
     private static SwipeRefreshLayout sentRefreshLayout;
 
-    private static ArrayList<Challenge> sentChallenges = new ArrayList<Challenge>();
+    private static Vector<Challenge> sentChallenges = new Vector<Challenge>();
     private static CustomListAdapter sentChallengeAdapter;
 
-    private static ArrayList<Challenge> receivedChallenges = new ArrayList<Challenge>();
+    private static Vector<Challenge> receivedChallenges = new Vector<Challenge>();
     private static CustomListAdapter receivedChallengeAdapter;
 
     @Override

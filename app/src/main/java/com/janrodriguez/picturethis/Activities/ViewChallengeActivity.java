@@ -303,6 +303,9 @@ public class ViewChallengeActivity extends BaseGameActivity {
                     currentUser.updateScore(getApiClient());
                     Games.Achievements.unlock(getApiClient(), Achievement.SEND_RESPONSE);
                 }
+
+                Intent returnIntent = new Intent();
+                setResult(RESULT_OK, returnIntent);
                 finish();
             }
         });
@@ -327,6 +330,8 @@ public class ViewChallengeActivity extends BaseGameActivity {
 
         switch (item.getItemId()) {
             case android.R.id.home:
+                Intent returnIntent = new Intent();
+                setResult(RESULT_CANCELED, returnIntent);
                 finish();
                 return true;
 
