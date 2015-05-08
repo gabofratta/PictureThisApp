@@ -433,7 +433,7 @@ public class ChallengeFeedActivity extends BaseSidePanelActivity implements Acti
         protected Void doInBackground(Void... params) {
             try {
 //                Log.e("RefreshTask:", "Sleep in background");
-                Thread.sleep(1000);
+                Thread.sleep(3000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
