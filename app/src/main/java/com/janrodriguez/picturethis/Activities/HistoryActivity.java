@@ -3,8 +3,6 @@ package com.janrodriguez.picturethis.Activities;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -137,15 +135,11 @@ public class HistoryActivity extends BaseGameActivity implements ActionBar.TabLi
                     for (ParseObject parseObject : parseObjects) {
                         Challenge challenge = new Challenge(parseObject);
                         sentChallenges.add(challenge);
-
-                        if (challenge.getIcon() != null) {
-                            ImageProcess process = new ImageProcess(challenge, sentChallengeAdapter);
-                            process.execute(challenge.getIcon());
-
-                        }
                     }
 
-                    sentChallengeAdapter.notifyDataSetChanged();
+                    ImageProcess process = new ImageProcess(sentChallenges, sentChallengeAdapter);
+                    process.execute();
+
                     sentRefreshLayout.setRefreshing(false);
                 } else {
                     Log.e(TAG, "Error: " + e.getMessage());
@@ -162,15 +156,11 @@ public class HistoryActivity extends BaseGameActivity implements ActionBar.TabLi
                     for (ParseObject parseObject : parseObjects) {
                         Challenge challenge = new Challenge(parseObject);
                         receivedChallenges.add(challenge);
-
-                        if (challenge.getIcon() != null) {
-                            ImageProcess process = new ImageProcess(challenge, receivedChallengeAdapter);
-                            process.execute(challenge.getIcon());
-
-                        }
                     }
 
-                    receivedChallengeAdapter.notifyDataSetChanged();
+                    ImageProcess process = new ImageProcess(receivedChallenges, receivedChallengeAdapter);
+                    process.execute();
+
                     receivedRefreshLayout.setRefreshing(false);
                 } else {
                     Log.e(TAG, "Error: " + e.getMessage());
@@ -287,6 +277,10 @@ public class HistoryActivity extends BaseGameActivity implements ActionBar.TabLi
 
             listView = (ListView)rootView.findViewById(R.id.listView2);
 
+            receivedChallengeAdapter = new CustomListAdapter(CustomListAdapter.TYPE_RECEIVED_CHALLENGE,
+                    getActivity(), receivedChallenges, rootView);
+            listView.setAdapter(receivedChallengeAdapter);
+
             receivedRefreshLayout = (SwipeRefreshLayout)rootView.findViewById(R.id.refresh_received);
             receivedRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                 @Override
@@ -307,10 +301,6 @@ public class HistoryActivity extends BaseGameActivity implements ActionBar.TabLi
                     populateChallengeListViews();
                 }
             });
-
-            receivedChallengeAdapter = new CustomListAdapter(CustomListAdapter.TYPE_RECEIVED_CHALLENGE,
-                    getActivity(), receivedChallenges, rootView);
-            listView.setAdapter(receivedChallengeAdapter);
 
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
@@ -354,6 +344,10 @@ public class HistoryActivity extends BaseGameActivity implements ActionBar.TabLi
 
             listView = (ListView)rootView.findViewById(R.id.listView3);
 
+            sentChallengeAdapter = new CustomListAdapter(CustomListAdapter.TYPE_SENT_CHALLENGE,
+                    getActivity(), sentChallenges, rootView);
+            listView.setAdapter(sentChallengeAdapter);
+
             sentRefreshLayout = (SwipeRefreshLayout)rootView.findViewById(R.id.refresh_sent);
             sentRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                 @Override
@@ -374,10 +368,6 @@ public class HistoryActivity extends BaseGameActivity implements ActionBar.TabLi
                     populateChallengeListViews();
                 }
             });
-
-            sentChallengeAdapter = new CustomListAdapter(CustomListAdapter.TYPE_SENT_CHALLENGE,
-                    getActivity(), sentChallenges, rootView);
-            listView.setAdapter(sentChallengeAdapter);
 
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
