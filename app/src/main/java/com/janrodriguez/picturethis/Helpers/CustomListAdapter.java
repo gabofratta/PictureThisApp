@@ -30,7 +30,7 @@ public class CustomListAdapter extends ArrayAdapter<Challenge> {
     private ArrayList<Challenge> challenges;
 
     public CustomListAdapter(int type, Activity context, ArrayList<Challenge> challenges, View rootView) {
-        super(context, R.layout.my_list, challenges);
+        super(context,R.layout.challenge_card_view, challenges);
         this.type = type;
         this.context = context;
         this.challenges = challenges;
@@ -39,7 +39,6 @@ public class CustomListAdapter extends ArrayAdapter<Challenge> {
     }
 
     public View getView(int position,View view,ViewGroup parent) {
-
         View v = view;
         ViewHolder holder;
 

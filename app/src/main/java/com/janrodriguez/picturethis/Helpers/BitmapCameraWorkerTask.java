@@ -39,6 +39,7 @@ public class BitmapCameraWorkerTask extends AsyncTask<Integer, Void, Bitmap> {
             if (imageView != null) {
                 ImageHelper.SaveImage(bitmap, pictureUri);
                 imageView.setImageBitmap(bitmap);
+                imageView.setBackground(null);
             }
         }
     }

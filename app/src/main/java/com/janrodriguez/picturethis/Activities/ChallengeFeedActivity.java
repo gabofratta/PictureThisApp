@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -134,6 +133,7 @@ public class ChallengeFeedActivity extends BaseSidePanelActivity implements Acti
 
     @Override
     public void onSignInSucceeded () {
+
         if (!ParseHelper.haveNetworkConnection(ChallengeFeedActivity.this)) {
             AlertDialog.Builder dialog = new AlertDialog.Builder(ChallengeFeedActivity.this);
             dialog.setMessage(getString(R.string.error_no_internet));
@@ -175,14 +175,11 @@ public class ChallengeFeedActivity extends BaseSidePanelActivity implements Acti
                     for (ParseObject parseObject : parseObjects) {
                         Challenge challenge = new Challenge(parseObject);
                         listOfReceivedChallenges.add(challenge);
-
-                        if (challenge.getIcon() != null) {
-                            ImageProcess process = new ImageProcess(challenge, adapter1);
-                            process.execute(challenge.getIcon());
-                        }
                     }
 
-                    adapter1.notifyDataSetChanged();
+                    ImageProcess process = new ImageProcess(listOfReceivedChallenges, adapter1);
+                    process.execute();
+
                     receivedRefreshLayout.setRefreshing(false);
                 } else {
                     Log.e(TAG, "Error: " + e.getMessage());
@@ -201,14 +198,11 @@ public class ChallengeFeedActivity extends BaseSidePanelActivity implements Acti
                     for (ParseObject parseObject : parseObjects) {
                         Challenge challenge = new Challenge(parseObject);
                         listOfSentChallenges.add(challenge);
-
-                        if (challenge.getIcon() != null) {
-                            ImageProcess process = new ImageProcess(challenge, adapter2);
-                            process.execute(challenge.getIcon());
-                        }
                     }
 
-                    adapter2.notifyDataSetChanged();
+                    ImageProcess process = new ImageProcess(listOfSentChallenges, adapter2);
+                    process.execute();
+
                     sentRefreshLayout.setRefreshing(false);
                 } else {
                     Log.e(TAG, "Error: " + e.getMessage());
@@ -236,7 +230,7 @@ public class ChallengeFeedActivity extends BaseSidePanelActivity implements Acti
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
      * one of the sections/tabs/pages.
      */
-    public class SectionsPagerAdapter extends FragmentStatePagerAdapter {
+    public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
         public SectionsPagerAdapter(FragmentManager fm) {
             super(fm);
@@ -290,6 +284,7 @@ public class ChallengeFeedActivity extends BaseSidePanelActivity implements Acti
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
+
             View rootView = inflater.inflate(R.layout.fragment_received_challenge_feed, container, false);
 
             listView = (ListView)rootView.findViewById(R.id.listView2);
@@ -327,8 +322,6 @@ public class ChallengeFeedActivity extends BaseSidePanelActivity implements Acti
                     Intent intent = new Intent(getActivity(), ViewChallengeActivity.class);
                     intent.putExtra(Challenge.INTENT_TAG, listOfReceivedChallenges.get(position));
                     startActivity(intent);
-
-
                 }
             });
 
@@ -403,26 +396,30 @@ public class ChallengeFeedActivity extends BaseSidePanelActivity implements Acti
     }
 }
 
-class ImageProcess extends AsyncTask<byte[], Void, Void> {
-    Challenge challenge;
+class ImageProcess extends AsyncTask<Void, Void, Void> {
+    ArrayList<Challenge> challenges;
     CustomListAdapter adapter;
 
-    public ImageProcess(Challenge challenge, CustomListAdapter adapter){
-        this.challenge = challenge;
+    public ImageProcess(ArrayList<Challenge> challenges, CustomListAdapter adapter){
+        this.challenges = challenges;
         this.adapter = adapter;
     }
 
     @Override
-    protected Void doInBackground(byte[]... params) {
-        Bitmap picture = BitmapFactory.decodeByteArray(params[0], 0, params[0].length);
-        challenge.setIconBitmap(picture);
+    protected Void doInBackground(Void... params) {
+        synchronized (challenges){
+            for (Challenge challenge: challenges){
+                if (challenge.getIcon()!=null){
+                    Bitmap picture = BitmapFactory.decodeByteArray(challenge.getIcon(), 0, challenge.getIcon().length);
+                    challenge.setIconBitmap(picture);
+                }
+            }
+        }
         return null;
     }
 
     @Override
     protected void onPostExecute(Void aVoid) {
-        if (challenge.getIconBitmap()!=null){
-            adapter.notifyDataSetChanged();
-        }
+        adapter.notifyDataSetChanged();
     }
 }
