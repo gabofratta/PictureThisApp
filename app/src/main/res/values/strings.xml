@@ -76,5 +76,6 @@
     <string name="status_winner">winner</string>
     <string name="status_loser">loser</string>
     <string name="title_activity_large_picture">View Large Picture</string>
+    <string name="type">Type</string>
 
 </resources>
