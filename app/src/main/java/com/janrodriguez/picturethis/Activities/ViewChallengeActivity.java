@@ -245,6 +245,7 @@ public class ViewChallengeActivity extends BaseGameActivity {
                     imageFile = ImageHelper.CreateImageFile();
                 } catch (IOException e) {
                     Log.e(TAG, "Error: " + e.getMessage());
+                    return;
                 }
 
                 tempPictureUri = Uri.fromFile(imageFile);
@@ -320,7 +321,7 @@ public class ViewChallengeActivity extends BaseGameActivity {
         } else if (resultCode == RESULT_CANCELED && requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
             ImageHelper.DeleteImageFile(tempPictureUri);
         }
-    };
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

@@ -80,8 +80,8 @@ public abstract class BaseGameActivity extends AppCompatActivity implements
     public static final String SHARED_PREF_NAME = "userinfo";
 
      //Requested clients. By default, that's just the games client.
-//    protected int mRequestedClients = CLIENT_GAMES | CLIENT_PLUS;
-    protected int mRequestedClients = CLIENT_PLUS;
+    protected int mRequestedClients = CLIENT_GAMES | CLIENT_PLUS;
+//    protected int mRequestedClients = CLIENT_PLUS;
 
     private final static String TAG = "BaseGameActivity";
     protected boolean mDebugLog = false;
@@ -131,6 +131,17 @@ public abstract class BaseGameActivity extends AppCompatActivity implements
     @Override
     protected void onCreate(Bundle b) {
         super.onCreate(b);
+
+        if(b != null){
+
+            String uId = b.getString(STATE_USERID);
+            String uGoogId = b.getString(STATE_USER_GOOG_ID);
+            String uName = b.getString(STATE_USERNAME);
+            int score = b.getInt(STATE_USER_SCORE);
+            if(uId != null) {
+                currentUser = new User(uId, uGoogId, uName, score);
+            }
+        }
 
         if (mHelper == null) {
             getGameHelper();
@@ -277,6 +288,18 @@ public abstract class BaseGameActivity extends AppCompatActivity implements
         editor.putString(STATE_USERID, currentUser.getId());
         editor.putInt(STATE_USER_SCORE, currentUser.getScore());
         editor.commit();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle bundle) {
+        super.onSaveInstanceState(bundle);
+        if(currentUser != null) {
+            bundle.putString(STATE_USERNAME, currentUser.getName());
+            bundle.putString(STATE_USER_GOOG_ID, currentUser.getGoogleId());
+            bundle.putString(STATE_USERID, currentUser.getId());
+            bundle.putInt(STATE_USER_SCORE, currentUser.getScore());
+        }
+
     }
 
     @Override
