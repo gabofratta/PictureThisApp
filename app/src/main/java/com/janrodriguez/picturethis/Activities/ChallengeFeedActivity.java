@@ -177,10 +177,13 @@ public class ChallengeFeedActivity extends BaseSidePanelActivity implements Acti
                     listOfReceivedChallenges.clear();
 
                     for (ParseObject parseObject : parseObjects) {
-                        Challenge challenge = new Challenge(parseObject);
-                        listOfReceivedChallenges.add(challenge);
+                        try{
+                            Challenge challenge = new Challenge(parseObject);
+                            listOfReceivedChallenges.add(challenge);
+                        } catch(Exception e1){
+                            Log.e(TAG, "e1: " + parseObject.getObjectId() +"; "+ e1.getMessage());
+                        }
                     }
-
 
                     ImageProcess process = new ImageProcess(listOfReceivedChallenges, adapter1);
                     process.execute();
@@ -201,10 +204,13 @@ public class ChallengeFeedActivity extends BaseSidePanelActivity implements Acti
                     listOfSentChallenges.clear();
 
                     for (ParseObject parseObject : parseObjects) {
-                        Challenge challenge = new Challenge(parseObject);
-                        listOfSentChallenges.add(challenge);
+                        try {
+                            Challenge challenge = new Challenge(parseObject);
+                            listOfSentChallenges.add(challenge);
+                        } catch(Exception e1){
+                            Log.e(TAG, "e1: " + parseObject.getObjectId() +"; "+ e1.getMessage());
+                        }
                     }
-
                     ImageProcess process = new ImageProcess(listOfSentChallenges, adapter2);
                     process.execute();
 

@@ -133,8 +133,13 @@ public class HistoryActivity extends BaseGameActivity implements ActionBar.TabLi
                     sentChallenges.clear();
 
                     for (ParseObject parseObject : parseObjects) {
-                        Challenge challenge = new Challenge(parseObject);
-                        sentChallenges.add(challenge);
+                        try {
+                            Challenge challenge = new Challenge(parseObject);
+                            sentChallenges.add(challenge);
+                        }catch(Exception e1){
+                            Log.e(TAG, "e1: " + parseObject.getObjectId() +"; "+ e1.getMessage());
+                        }
+
                     }
 
                     ImageProcess process = new ImageProcess(sentChallenges, sentChallengeAdapter);
@@ -154,8 +159,12 @@ public class HistoryActivity extends BaseGameActivity implements ActionBar.TabLi
                     receivedChallenges.clear();
 
                     for (ParseObject parseObject : parseObjects) {
-                        Challenge challenge = new Challenge(parseObject);
-                        receivedChallenges.add(challenge);
+                        try{
+                            Challenge challenge = new Challenge(parseObject);
+                            receivedChallenges.add(challenge);
+                        } catch(Exception e1){
+                            Log.e(TAG, "e1: " + parseObject.getObjectId() +"; "+ e1.getMessage());
+                        }
                     }
 
                     ImageProcess process = new ImageProcess(receivedChallenges, receivedChallengeAdapter);
