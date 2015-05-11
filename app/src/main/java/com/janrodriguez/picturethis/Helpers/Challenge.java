@@ -63,9 +63,14 @@ public class Challenge implements Parcelable {
         ArrayList<ParseObject> responses = (ArrayList<ParseObject>)po.get(ParseTableConstants.CHALLENGE_RESPONSES);
         if (responses != null) {
             for (ParseObject responsePO : responses) {
-                Response response = new Response(responsePO);
+                Response response;
+                try {
+                    response = new Response(responsePO);
 //                this.responseList.add(response);
-
+                } catch (Exception e) {
+                    Log.e(TAG, "Error: " + e.getMessage());
+                    continue;
+                }
                 if (response.getStatus().equals(Response.STATUS_PENDING)) {
                     this.challengerStatus = Status.NEED_ACTION;
                     if (response.getResponder().getId().equals(BaseGameActivity.currentUser.getId())) {

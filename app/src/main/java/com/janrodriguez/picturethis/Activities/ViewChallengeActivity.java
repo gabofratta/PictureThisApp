@@ -250,7 +250,7 @@ public class ViewChallengeActivity extends BaseGameActivity {
 
                 tempPictureUri = Uri.fromFile(imageFile);
                 Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                if (intent.resolveActivity(getPackageManager()) != null && imageFile != null) {
+                if (intent.resolveActivity(getPackageManager()) != null && imageFile != null && tempPictureUri != null) {
                     intent.putExtra(MediaStore.EXTRA_OUTPUT, tempPictureUri);
                     startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
                 }
