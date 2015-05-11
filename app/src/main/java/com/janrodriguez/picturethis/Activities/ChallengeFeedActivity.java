@@ -222,21 +222,21 @@ public class ChallengeFeedActivity extends BaseSidePanelActivity implements Acti
         };
     }
 
-    @Override
-    protected void onActivityResult(int request, int response, Intent data) {
+//    @Override
+//    protected void onActivityResult(int request, int response, Intent data) {
 //        Log.e(TAG, request+","+response);
 
-        if (request == INTENT_CREATE_CHALLENGE && response == RESULT_OK){
-            RefreshTask refreshTask = new RefreshTask(SENT_TAB);
-            refreshTask.execute();
-            return;
-        }
-        if (response == RESULT_OK){
-            RefreshTask refreshTask = new RefreshTask();
-            refreshTask.execute();
-            return;
-        }
-    }
+//        if (request == INTENT_CREATE_CHALLENGE && response == RESULT_OK){
+//            RefreshTask refreshTask = new RefreshTask(SENT_TAB);
+//            refreshTask.execute();
+//            return;
+//        }
+//        if (response == RESULT_OK){
+//            RefreshTask refreshTask = new RefreshTask();
+//            refreshTask.execute();
+//            return;
+//        }
+//    }
 
     @Override
     public void onTabSelected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
