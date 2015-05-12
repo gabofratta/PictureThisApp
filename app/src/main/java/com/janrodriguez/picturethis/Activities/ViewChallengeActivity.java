@@ -47,6 +47,7 @@ import java.util.Locale;
 public class ViewChallengeActivity extends BaseGameActivity {
 
     private static final String TAG = "ViewChallengeActivity" ;
+    private static final String STATE_PICTURE_URI = "pictureuri";
     private static final int HEIGHT = 500;
     private static final int WIDTH = 500;
 
@@ -75,6 +76,14 @@ public class ViewChallengeActivity extends BaseGameActivity {
 
         challengeSwitcher = (ViewSwitcher) findViewById(R.id.challenge_switcher);
         responseSwitcher = (ViewSwitcher) findViewById(R.id.response_switcher);
+
+        if (savedInstanceState != null) {
+            String picUriString = savedInstanceState.getString(STATE_PICTURE_URI);
+
+            if (picUriString != null) {
+                tempPictureUri = Uri.parse(picUriString);
+            }
+        }
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
@@ -182,17 +191,13 @@ public class ViewChallengeActivity extends BaseGameActivity {
                                     }
                                 });
                             }
-                        }
-                        else
-                        {
+                        } else {
                             responseSwitcher.showNext();
                             statusTextView.setText(Response.STATUS_OPEN);
                             sendResponseButton.setVisibility(View.VISIBLE);
                             setClickListeners();
                         }
-                    }
-                    else
-                    {
+                    } else {
                         Log.e(TAG, "Error: " + e.getMessage());
                     }
                 }
@@ -223,9 +228,7 @@ public class ViewChallengeActivity extends BaseGameActivity {
                                     startActivity(intent);
                                 }
                             });
-                        }
-                        else
-                        {
+                        } else {
                             Log.e(TAG, "Error: No accepted response found for a challenge in history");
                         }
                     } else {
@@ -320,6 +323,15 @@ public class ViewChallengeActivity extends BaseGameActivity {
             workerTask.execute();
         } else if (resultCode == RESULT_CANCELED && requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
             ImageHelper.DeleteImageFile(tempPictureUri);
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle bundle) {
+        super.onSaveInstanceState(bundle);
+
+        if (tempPictureUri != null) {
+            bundle.putString(STATE_PICTURE_URI, tempPictureUri.toString());
         }
     }
 

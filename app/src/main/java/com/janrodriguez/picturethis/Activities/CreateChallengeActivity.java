@@ -59,6 +59,7 @@ public class CreateChallengeActivity extends BaseGameActivity {
 
     private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
     private static final String TAG = "CreateChallengeActivity";
+    private static final String STATE_PICTURE_URI = "pictureuri";
     private static final int HEIGHT = 500;
     private static final int WIDTH = 500;
 
@@ -90,6 +91,14 @@ public class CreateChallengeActivity extends BaseGameActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
 
+        if (savedInstanceState != null) {
+            String picUriString = savedInstanceState.getString(STATE_PICTURE_URI);
+
+            if (picUriString != null) {
+                tempPictureUri = Uri.parse(picUriString);
+            }
+        }
+
         initializeUiComponents();
         initializeLocationServices();
     }
@@ -102,7 +111,8 @@ public class CreateChallengeActivity extends BaseGameActivity {
 
             dialog.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
                 @Override
-                public void onClick(DialogInterface paramDialogInterface, int paramInt) {}
+                public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+                }
             });
 
             dialog.show();
@@ -439,6 +449,15 @@ public class CreateChallengeActivity extends BaseGameActivity {
             workerTask.execute();
         } else if (resultCode == RESULT_CANCELED && requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
             ImageHelper.DeleteImageFile(tempPictureUri);
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle bundle) {
+        super.onSaveInstanceState(bundle);
+
+        if (tempPictureUri != null) {
+            bundle.putString(STATE_PICTURE_URI, tempPictureUri.toString());
         }
     }
 
