@@ -11,8 +11,8 @@ import com.parse.ParseInstallation;
  */
 public class PictureThisApp extends Application {
 
-    private static final String APPLICATION_ID = "NJb4JPoE4FuysgID0eFJuoZnpadAbqng69bfO61Z";
-    private static final String CLIENT_KEY = "cb4uD5M680fPaPXwPCE2YkuWDiXkATFXxXsBSR7l";
+    private static final String APPLICATION_ID = "***";
+    private static final String CLIENT_KEY = "***";
 
     @Override
     public void onCreate()
